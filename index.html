@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>En Construcción | Instantetrips</title>
+    <title>Instantetrips</title>
     <style>
         :root {
-            /* Variables Modo Claro (Por defecto) */
-            --bg-color: #f5f5f7; /* Un gris muy claro, casi blanco */
+            /* Variables Modo Claro */
+            --bg-color: #f5f5f7;
             --text-color: #000000;
-            --logo-filter: none; /* Logo original (asumiendo que es negro) */
+            --secondary-text: #86868b; /* Gris para elementos inactivos */
+            --logo-filter: none; 
         }
 
         @media (prefers-color-scheme: dark) {
@@ -17,7 +18,8 @@
                 /* Variables Modo Oscuro */
                 --bg-color: #000000;
                 --text-color: #ffffff;
-                --logo-filter: invert(1); /* Invierte el logo negro a blanco */
+                --secondary-text: #6e6e73;
+                --logo-filter: invert(1);
             }
         }
 
@@ -38,59 +40,87 @@
             align-items: center;
             text-align: center;
             transition: background-color 0.3s ease, color 0.3s ease;
-            padding: 20px;
         }
 
         .container {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 2rem;
-            animation: fadeIn 1.5s ease-out; /* Animación de entrada suave */
+            gap: 2.5rem; /* Espacio entre elementos */
+            animation: fadeIn 1.5s ease-out;
         }
 
+        /* LOGO 150% MAS GRANDE */
         .logo {
-            width: 150px; /* Ajusta este tamaño según necesites */
+            width: 375px; /* Aumentado de 150px a 375px */
+            max-width: 90vw; /* Para que no se salga en celulares muy pequeños */
             height: auto;
             filter: var(--logo-filter);
             transition: filter 0.3s ease;
         }
 
+        /* TEXTO SITIO EN CONSTRUCCION (PEQUEÑO Y FINO) */
         h1 {
-            font-size: 1.5rem;
-            font-weight: 600;
-            letter-spacing: -0.5px;
+            font-size: 0.9rem; /* Mucho más pequeño */
+            font-weight: 300; /* Letra fina, no bold */
+            letter-spacing: 2px;
             text-transform: uppercase;
+            opacity: 0.7;
+            margin-top: -10px; /* Un pequeño ajuste visual hacia arriba */
         }
 
-        p {
-            font-size: 1rem;
+        /* LISTA DE DESTINOS */
+        .destinations {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .dest-link {
+            font-size: 1.1rem;
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 400;
+            letter-spacing: 0.5px;
+            transition: opacity 0.2s ease;
+            cursor: pointer;
+        }
+
+        .dest-link:hover {
+            opacity: 0.6;
+        }
+
+        /* ESTILO PARA LOS DESTINOS AÚN NO DISPONIBLES */
+        .coming-soon {
+            color: var(--secondary-text);
+            cursor: default;
             font-weight: 300;
-            opacity: 0.8;
-            letter-spacing: 1px;
-            text-transform: lowercase;
+        }
+        
+        .coming-soon:hover {
+            opacity: 1; /* No cambia opacidad al pasar el mouse porque no es clickeable */
         }
 
-        /* Animación */
         @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <img src="logo.svg" alt="Logo Instantetrips" class="logo">
+        <img src="logo.svg" alt="Instantetrips Logo" class="logo">
         
         <h1>Sitio en construcción</h1>
-        <p>Espéralo</p>
+
+        <nav class="destinations">
+            <a href="destinos_argentina/" class="dest-link">Argentina</a>
+            
+            <span class="dest-link coming-soon">España</span>
+            <span class="dest-link coming-soon">Colombia</span>
+        </nav>
     </div>
 
 </body>
