@@ -8,17 +8,19 @@
         :root {
             /* Variables Modo Claro */
             --bg-color: #f5f5f7;
-            --text-color: #000000;
-            --secondary-text: #86868b; /* Gris para elementos inactivos */
-            --logo-filter: none; 
+            --text-color: #1d1d1f;
+            --inactive-color: #86868b; 
+            --separator-color: #d2d2d7; 
+            --logo-filter: none;
         }
 
         @media (prefers-color-scheme: dark) {
             :root {
                 /* Variables Modo Oscuro */
                 --bg-color: #000000;
-                --text-color: #ffffff;
-                --secondary-text: #6e6e73;
+                --text-color: #f5f5f7;
+                --inactive-color: #6e6e73;
+                --separator-color: #424245;
                 --logo-filter: invert(1);
             }
         }
@@ -40,66 +42,80 @@
             align-items: center;
             text-align: center;
             transition: background-color 0.3s ease, color 0.3s ease;
+            padding: 20px;
         }
 
         .container {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 2.5rem; /* Espacio entre elementos */
+            gap: 2rem;
             animation: fadeIn 1.5s ease-out;
+            max-width: 100%;
         }
 
-        /* LOGO 150% MAS GRANDE */
+        /* LOGO GRANDE */
         .logo {
-            width: 375px; /* Aumentado de 150px a 375px */
-            max-width: 90vw; /* Para que no se salga en celulares muy pequeños */
+            width: 375px; 
+            max-width: 85vw;
             height: auto;
             filter: var(--logo-filter);
             transition: filter 0.3s ease;
         }
 
-        /* TEXTO SITIO EN CONSTRUCCION (PEQUEÑO Y FINO) */
+        /* TÍTULO */
         h1 {
-            font-size: 0.9rem; /* Mucho más pequeño */
-            font-weight: 300; /* Letra fina, no bold */
+            font-size: 0.85rem;
+            font-weight: 600;
             letter-spacing: 2px;
             text-transform: uppercase;
-            opacity: 0.7;
-            margin-top: -10px; /* Un pequeño ajuste visual hacia arriba */
+            margin-bottom: 5px;
         }
 
-        /* LISTA DE DESTINOS */
-        .destinations {
+        /* BARRA DE NAVEGACIÓN */
+        .nav-links {
             display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            margin-top: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            font-size: 1rem;
+            font-weight: 300;
         }
 
-        .dest-link {
-            font-size: 1.1rem;
-            text-decoration: none;
+        /* --- ESTILOS DE ANIMACIÓN --- */
+        
+        /* Clase base para todos los items (activos e inactivos) */
+        .nav-item {
+            display: inline-block; /* Necesario para que funcione la transformación */
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.2s ease, opacity 0.2s ease;
+            /* El cubic-bezier le da un efecto de "rebote" muy sutil y elegante */
+        }
+
+        /* Efecto al pasar el cursor (Hover) para TODOS */
+        .nav-item:hover {
+            transform: scale(1.15); /* Crece un 15% */
+            opacity: 1; /* Se vuelve totalmente visible */
+        }
+
+        /* Estilo específico para el enlace ACTIVO (Argentina) */
+        a.nav-item.active {
             color: var(--text-color);
-            font-weight: 400;
-            letter-spacing: 0.5px;
-            transition: opacity 0.2s ease;
+            text-decoration: none;
             cursor: pointer;
         }
 
-        .dest-link:hover {
-            opacity: 0.6;
+        /* Estilo específico para los INACTIVOS */
+        span.nav-item.inactive {
+            color: var(--inactive-color);
+            cursor: default; /* Mantiene el cursor normal para no confundir */
         }
 
-        /* ESTILO PARA LOS DESTINOS AÚN NO DISPONIBLES */
-        .coming-soon {
-            color: var(--secondary-text);
-            cursor: default;
-            font-weight: 300;
-        }
-        
-        .coming-soon:hover {
-            opacity: 1; /* No cambia opacidad al pasar el mouse porque no es clickeable */
+        /* Separadores ( | ) - Estos NO se animan */
+        .separator {
+            color: var(--separator-color);
+            font-weight: 200;
+            user-select: none;
         }
 
         @keyframes fadeIn {
@@ -111,15 +127,24 @@
 <body>
 
     <div class="container">
-        <img src="logo.svg" alt="Instantetrips Logo" class="logo">
+        <img src="logo.svg" alt="Instantetrips" class="logo">
         
-        <h1>Sitio en construcción</h1>
+        <h1>Nuestros Destinos</h1>
 
-        <nav class="destinations">
-            <a href="destinos_argentina/" class="dest-link">Argentina</a>
+        <nav class="nav-links">
+            <a href="destinos_argentina/" class="nav-item active">Argentina</a>
             
-            <span class="dest-link coming-soon">España</span>
-            <span class="dest-link coming-soon">Colombia</span>
+            <span class="separator">|</span>
+            
+            <span class="nav-item inactive">Colombia</span>
+            
+            <span class="separator">|</span>
+            
+            <span class="nav-item inactive">España</span>
+            
+            <span class="separator">|</span>
+            
+            <span class="nav-item inactive">México</span>
         </nav>
     </div>
 
