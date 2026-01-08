@@ -2,96 +2,16 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>En Construcción | Instantetrips</title>
+    <title>Instant Trips and Tips</title>
     <style>
-        :root {
-            /* Variables Modo Claro (Por defecto) */
-            --bg-color: #f5f5f7; /* Un gris muy claro, casi blanco */
-            --text-color: #000000;
-            --logo-filter: none; /* Logo original (asumiendo que es negro) */
-        }
-
-        @media (prefers-color-scheme: dark) {
-            :root {
-                /* Variables Modo Oscuro */
-                --bg-color: #000000;
-                --text-color: #ffffff;
-                --logo-filter: invert(1); /* Invierte el logo negro a blanco */
-            }
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            transition: background-color 0.3s ease, color 0.3s ease;
-            padding: 20px;
-        }
-
-        .container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 2rem;
-            animation: fadeIn 1.5s ease-out; /* Animación de entrada suave */
-        }
-
-        .logo {
-            width: 150px; /* Ajusta este tamaño según necesites */
-            height: auto;
-            filter: var(--logo-filter);
-            transition: filter 0.3s ease;
-        }
-
-        h1 {
-            font-size: 1.5rem;
-            font-weight: 600;
-            letter-spacing: -0.5px;
-            text-transform: uppercase;
-        }
-
-        p {
-            font-size: 1rem;
-            font-weight: 300;
-            opacity: 0.8;
-            letter-spacing: 1px;
-            text-transform: lowercase;
-        }
-
-        /* Animación */
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+        body { background: #000; color: white; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+        h1 { color: #C5A059; text-transform: uppercase; letter-spacing: 2px; }
+        .btn { border: 2px solid #C5A059; color: white; padding: 15px 30px; text-decoration: none; border-radius: 50px; margin-top: 20px; transition: 0.3s; text-transform: uppercase; font-weight: bold; }
+        .btn:hover { background: #C5A059; color: black; }
     </style>
 </head>
 <body>
-
-    <div class="container">
-        <img src="logo.svg" alt="Logo Instantetrips" class="logo">
-        
-        <h1>Sitio en construcción</h1>
-        <p>Espéralo</p>
-    </div>
-<a href="/destinos_argentina/">Ir a Argentina 2026</a>
+    <h1>Mis Destinos</h1>
+    <a href="/destinos_argentina/" class="btn">🇦🇷 Ir a Argentina 2026</a>
 </body>
 </html>
