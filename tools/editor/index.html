@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="es" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Editor | Instante Trips Tools</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+  
+  <style>
+    /* Estilos Base */
+    body { font-family: 'Space Grotesk', sans-serif; }
+    .mono { font-family: 'JetBrains Mono', monospace; }
+    
+    /* Tema Oscuro Profesional */
+    .gradient-bg { background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%); }
+
+    /* Efecto Cristal */
+    .card-glass {
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    
+    /* Inputs */
+    .input-dark {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.2s ease;
+      color: white;
+    }
+    .input-dark:focus {
+      border-color: #6366f1;
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+      outline: none;
+    }
+    
+    /* Botones */
+    .btn-primary { background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); color: white; }
+    .btn-secondary { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: white; }
+    .btn-secondary:hover { background: rgba(255, 255, 255, 0.1); }
+    
+    /* Chips */
+    .tag-chip { background: rgba(99, 102, 241, 0.2); border: 1px solid rgba(99, 102, 241, 0.3); color: #a5b4fc; }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
+  </style>
+ </head>
+ <body class="h-full gradient-bg text-white overflow-auto">
+  <div class="min-h-full p-4 md:p-6 lg:p-8">
+   
+   <header class="max-w-7xl mx-auto mb-6">
+    <div class="flex items-center justify-between">
+     <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+       <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+      </div>
+      <div>
+       <h1 class="text-xl font-bold text-white">Instante Trips Editor</h1>
+       <p class="text-sm text-white/50">Herramienta Interna de Redacción</p>
+      </div>
+     </div>
+     <div class="flex gap-2">
+       <button id="download-btn" class="btn-secondary px-4 py-2 rounded-lg text-sm flex items-center gap-2">Descargar .md</button> 
+       <button id="copy-btn" class="btn-primary px-4 py-2 rounded-lg text-sm flex items-center gap-2">Copiar Todo</button>
+     </div>
+    </div>
+   </header>
+
+   <main class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6">
+     
+     <div class="space-y-4">
+      
+      <section class="card-glass rounded-2xl p-5">
+       <h2 class="text-xs font-semibold text-indigo-400 uppercase tracking-wider mb-4">Configuración del Post</h2>
+       <div class="space-y-4">
+        <div><label class="block text-[10px] uppercase text-white/40 mb-1">Título Principal</label> <input type="text" id="post-title" class="input-dark w-full px-4 py-3 rounded-xl" placeholder="Escribe el título aquí..."></div>
+        <div><label class="block text-[10px] uppercase text-white/40 mb-1">Descripción SEO</label> <textarea id="post-description" class="input-dark w-full px-4 py-3 rounded-xl resize-none" rows="2" placeholder="Resumen corto para Google..."></textarea></div>
+        
+        <div class="grid grid-cols-2 gap-4">
+         <div><label class="block text-[10px] uppercase text-white/40 mb-1">Fecha</label> <input type="date" id="post-date" class="input-dark w-full px-4 py-3 rounded-xl"></div>
+         <div>
+            <label class="block text-[10px] uppercase text-white/40 mb-1">Autor</label> 
+            <select id="post-author" class="input-dark w-full px-4 py-3 rounded-xl">
+                <option value="daniel-arana">Daniel Arana</option>
+                <option value="betzy-miramontes">Betzy Miramontes</option>
+                <option value="edgar-arana">Edgar Arana</option>
+                <option value="jonathan-arana">Jonathan Arana</option>
+            </select>
+         </div>
+        </div>
+
+        <div><label class="block text-[10px] uppercase text-white/40 mb-1">Imagen Portada (Link)</label> <input type="url" id="post-hero" class="input-dark w-full px-4 py-3 rounded-xl mono text-xs" placeholder="https://..."></div>
+        
+        <div>
+         <label class="block text-[10px] uppercase text-white/40 mb-1">Etiquetas</label>
+         <div class="flex flex-wrap gap-2 mb-2" id="tags-container"></div>
+         <div class="flex gap-2"><input type="text" id="tag-input" class="input-dark flex-1 px-4 py-2 rounded-lg text-sm" placeholder="Nueva etiqueta..."> <button id="add-tag-btn" class="btn-secondary px-4 py-2 rounded-lg text-sm">+</button></div>
+        </div>
+
+        <div class="pt-4 border-t border-white/10 mt-2">
+            <h3 class="text-[10px] font-semibold text-yellow-500 uppercase tracking-wider mb-2">Caja Dorada (Afiliados)</h3>
+            <div class="grid grid-cols-2 gap-2">
+                <input type="text" id="affiliate-title" class="input-dark px-3 py-2 rounded-lg text-sm" placeholder="Título (ej: Reserva hoy)">
+                <input type="text" id="affiliate-text" class="input-dark px-3 py-2 rounded-lg text-sm" placeholder="Botón (ej: Ver precios)">
+            </div>
+            <input type="url" id="affiliate-link" class="input-dark w-full mt-2 px-3 py-2 rounded-lg text-xs font-mono" placeholder="https://tu-link-afiliado.com">
+        </div>
+       </div>
+      </section>
+
+      <section class="card-glass rounded-2xl p-5">
+       <div class="flex flex-wrap gap-2 mb-4">
+        <button onclick="addBlock('heading')" class="btn-secondary px-3 py-1.5 rounded-lg text-xs hover:bg-white/10 transition">H2 Título</button> 
+        <button onclick="addBlock('paragraph')" class="btn-secondary px-3 py-1.5 rounded-lg text-xs hover:bg-white/10 transition">Párrafo</button> 
+        <button onclick="addBlock('quote')" class="btn-secondary px-3 py-1.5 rounded-lg text-xs hover:bg-white/10 transition">Cita</button> 
+        <button onclick="addBlock('list')" class="btn-secondary px-3 py-1.5 rounded-lg text-xs hover:bg-white/10 transition">Lista</button> 
+        <button onclick="addBlock('link')" class="btn-secondary px-3 py-1.5 rounded-lg text-xs hover:bg-white/10 transition">Enlace</button>
+       </div>
+       <div id="content-blocks" class="space-y-3 max-h-[400px] overflow-y-auto pr-2">
+        <div class="text-center py-12 text-white/20 text-sm border-2 border-dashed border-white/10 rounded-xl">
+            Toca un botón arriba para agregar contenido
+        </div>
+       </div>
+      </section>
+     </div>
+
+     <div class="card-glass rounded-2xl p-5 flex flex-col h-[600px] lg:h-auto sticky top-4">
+      <div class="flex items-center justify-between mb-4">
+       <h2 class="text-xs font-semibold text-emerald-400 uppercase tracking-wider">Resultado Markdown</h2>
+       <span id="char-count" class="text-[10px] text-white/40 font-mono">0 chars</span>
+      </div>
+      <div class="bg-black/20 rounded-xl p-4 flex-1 overflow-auto border border-white/5">
+       <pre id="markdown-output" class="mono text-xs sm:text-sm text-emerald-300/90 whitespace-pre-wrap break-words leading-relaxed"></pre>
+      </div>
+     </div>
+
+   </main>
+
+   <div id="toast" class="fixed bottom-6 right-6 bg-emerald-600 text-white px-6 py-3 rounded-xl shadow-2xl translate-y-24 opacity-0 transition-all duration-300 font-medium z-50">
+    ¡Copiado al portapapeles!
+   </div>
+  </div>
+
+  <script>
+    // --- LÓGICA DEL GENERADOR ---
+    let tags = [];
+    let contentBlocks = [];
+    let blockId = 0;
+
+    // Función Principal: Generar Markdown
+    function render() {
+      const title = document.getElementById('post-title').value;
+      const desc = document.getElementById('post-description').value;
+      const date = document.getElementById('post-date').value;
+      const author = document.getElementById('post-author').value;
+      const hero = document.getElementById('post-hero').value;
+      
+      const affTitle = document.getElementById('affiliate-title').value;
+      const affText = document.getElementById('affiliate-text').value;
+      const affLink = document.getElementById('affiliate-link').value;
+
+      let md = '---\n';
+      md += `layout: "../../layouts/BlogPost.astro"\n`;
+      md += `title: "${title}"\n`;
+      md += `description: "${desc}"\n`;
+      md += `publishDate: "${date}"\n`;
+      md += `author: "${author}"\n`;
+      
+      // Lógica inteligente para imágenes
+      if(hero.startsWith('http')) {
+        md += `heroImageLink: "${hero}"\nheroImage: ""\n`;
+      } else {
+        md += `heroImage: "${hero}"\nheroImageLink: ""\n`;
+      }
+
+      if (tags.length > 0) {
+        md += 'tags:\n';
+        tags.forEach(t => md += `  - ${t}\n`);
+      }
+
+      if (affLink) {
+        md += `affiliateTitle: "${affTitle || 'Reserva aquí'}"\n`;
+        md += `affiliateLink: "${affLink}"\n`;
+        md += `affiliateText: "${affText || 'Ver precios'}"\n`;
+      }
+      
+      md += '---\n\n';
+      
+      // Renderizar Bloques
+      contentBlocks.forEach(b => {
+        if (!b.content && b.type !== 'link') return;
+        
+        switch(b.type) {
+            case 'paragraph': md += `${b.content}\n\n`; break;
+            case 'heading': md += `## ${b.content}\n\n`; break;
+            case 'quote': md += `> ${b.content}\n\n`; break;
+            case 'list': 
+                b.content.split('\n').forEach(i => { if(i.trim()) md += `* ${i.trim()}\n` });
+                md += '\n'; 
+                break;
+            case 'link': md += `${b.emoji || '🔗'} [${b.content}](${b.url})\n\n`; break;
+        }
+      });
+
+      document.getElementById('markdown-output').textContent = md;
+      document.getElementById('char-count').innerText = md.length + " chars";
+    }
+
+    // Sistema de Tags
+    function renderTags() {
+        document.getElementById('tags-container').innerHTML = tags.map((t,i) => 
+            `<span class="tag-chip px-2 py-1 rounded text-xs cursor-pointer hover:bg-red-500/20 hover:border-red-500/50 transition" onclick="delTag(${i})">${t} ×</span>`
+        ).join('');
+        render();
+    }
+    document.getElementById('add-tag-btn').onclick = () => {
+        const inp = document.getElementById('tag-input');
+        if(inp.value) { tags.push(inp.value); inp.value=''; renderTags(); }
+    };
+    document.getElementById('tag-input').addEventListener('keypress', (e) => { if (e.key === 'Enter') document.getElementById('add-tag-btn').click(); });
+    window.delTag = (i) => { tags.splice(i,1); renderTags(); };
+
+    // Sistema de Bloques
+    window.addBlock = (type) => {
+        contentBlocks.push({id: blockId++, type, content:'', url:'', emoji:'🔗'});
+        renderBlocks();
+    }
+    
+    function renderBlocks() {
+        const c = document.getElementById('content-blocks');
+        c.innerHTML = '';
+        
+        if(contentBlocks.length === 0) {
+            c.innerHTML = '<div class="text-center py-12 text-white/20 text-sm border-2 border-dashed border-white/10 rounded-xl">Toca un botón arriba para agregar contenido</div>';
+            return;
+        }
+
+        contentBlocks.forEach(b => {
+            const div = document.createElement('div');
+            div.className = 'bg-black/20 p-3 rounded-xl mb-3 relative group border border-white/5 hover:border-white/10 transition';
+            
+            let input = '';
+            const commonClass = "input-dark w-full px-3 py-2 rounded-lg text-sm";
+            
+            if(b.type === 'paragraph') input = `<textarea class="${commonClass} resize-none" rows="3" placeholder="Escribe tu párrafo..." oninput="upd(${b.id}, 'content', this.value)">${b.content}</textarea>`;
+            else if(b.type === 'list') input = `<textarea class="${commonClass}" rows="3" placeholder="Elemento 1 (Enter) Elemento 2..." oninput="upd(${b.id}, 'content', this.value)">${b.content}</textarea>`;
+            else if(b.type === 'quote') input = `<textarea class="${commonClass} italic border-l-2 border-indigo-500" rows="2" placeholder="Cita memorable..." oninput="upd(${b.id}, 'content', this.value)">${b.content}</textarea>`;
+            else if(b.type === 'heading') input = `<input class="${commonClass} font-bold text-lg" placeholder="Subtítulo..." value="${b.content}" oninput="upd(${b.id}, 'content', this.value)">`;
+            else if(b.type === 'link') input = `
+                <div class="flex gap-2 mb-2">
+                    <input class="input-dark w-12 text-center rounded-lg" value="${b.emoji}" oninput="upd(${b.id}, 'emoji', this.value)"> 
+                    <input class="input-dark flex-1 px-3 rounded-lg" placeholder="Texto del enlace" value="${b.content}" oninput="upd(${b.id}, 'content', this.value)">
+                </div>
+                <input class="input-dark w-full px-3 rounded-lg text-xs font-mono" placeholder="URL (https://...)" value="${b.url}" oninput="upd(${b.id}, 'url', this.value)">`;
+
+            div.innerHTML = `
+                <div class="flex justify-between text-[10px] text-white/30 mb-2 uppercase tracking-wider font-semibold">
+                    <span>${b.type}</span> 
+                    <button onclick="delBlock(${b.id})" class="text-red-400/50 hover:text-red-400 transition">Eliminar</button>
+                </div>
+                ${input}`;
+            c.appendChild(div);
+        });
+        render();
+    }
+
+    window.upd = (id, field, val) => { contentBlocks.find(b=>b.id===id)[field] = val; render(); };
+    window.delBlock = (id) => { contentBlocks = contentBlocks.filter(b=>b.id!==id); renderBlocks(); };
+
+    // Listeners Globales
+    ['post-title','post-description','post-date','post-author','post-hero','affiliate-title','affiliate-text','affiliate-link'].forEach(id => {
+        document.getElementById(id).addEventListener('input', render);
+    });
+
+    // Funciones de Exportación
+    document.getElementById('copy-btn').onclick = () => {
+        navigator.clipboard.writeText(document.getElementById('markdown-output').textContent);
+        const t = document.getElementById('toast');
+        t.classList.remove('translate-y-24','opacity-0');
+        setTimeout(()=>t.classList.add('translate-y-24','opacity-0'), 2500);
+    };
+    
+    document.getElementById('download-btn').onclick = () => {
+        const title = document.getElementById('post-title').value || 'nuevo-post';
+        const blob = new Blob([document.getElementById('markdown-output').textContent], {type: "text/markdown"});
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = title.toLowerCase().replace(/[^a-z0-9]+/g,'-') + ".md";
+        a.click();
+    };
+
+    // Inicialización
+    document.getElementById('post-date').valueAsDate = new Date();
+    render();
+  </script>
+ </body>
+</html>
