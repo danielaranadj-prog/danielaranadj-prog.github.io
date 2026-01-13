@@ -103,21 +103,6 @@
       .scroll-area::-webkit-scrollbar-thumb:hover {
         background: rgba(0, 0, 0, 0.3);
       }
-
-      .rendered-view {
-        background: #ffffff !important;
-        color: #1e293b !important;
-      }
-
-      .rendered-view h1,
-      .rendered-view h2 {
-        color: #0f172a !important;
-      }
-
-      .rendered-view blockquote {
-        border-left-color: #6366f1 !important;
-        background: rgba(99, 102, 241, 0.05) !important;
-      }
     }
     
     .card-glass {
@@ -207,149 +192,53 @@
       background: rgba(255, 255, 255, 0.3);
     }
 
-    .view-tab {
-      color: rgba(255, 255, 255, 0.6);
-      cursor: pointer;
+    .slide-menu {
+      position: fixed;
+      top: 0;
+      right: -100%;
+      width: 280px;
+      height: 100%;
+      background: rgba(26, 26, 46, 0.98);
+      backdrop-filter: blur(20px);
+      box-shadow: -4px 0 20px rgba(0, 0, 0, 0.5);
+      transition: right 0.3s ease;
+      z-index: 1000;
+      overflow-y: auto;
     }
 
-    .view-tab:hover {
-      color: rgba(255, 255, 255, 0.9);
+    .slide-menu.open {
+      right: 0;
     }
 
-    .view-tab.active {
-      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-      color: white;
-    }
-
-    .hidden {
-      display: none !important;
-    }
-
-    /* Rendered blog styles */
-    .rendered-view {
-      background: #0a0a1a;
-      color: #e5e7eb;
-      padding: 3rem;
-      border-radius: 1rem;
-      max-width: 800px;
-      margin: 0 auto;
-    }
-
-    .rendered-view .hero-image {
-      width: 100%;
-      height: 400px;
-      object-fit: cover;
-      border-radius: 1rem;
-      margin-bottom: 2rem;
-      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-size: 1rem;
-    }
-
-    .rendered-view .post-meta {
-      display: flex;
-      gap: 1rem;
-      margin-bottom: 1.5rem;
-      font-size: 0.875rem;
-      color: rgba(255, 255, 255, 0.5);
-    }
-
-    .rendered-view h1 {
-      font-size: 2.5rem;
-      font-weight: 700;
-      margin-bottom: 1rem;
-      line-height: 1.2;
-      color: white;
-    }
-
-    .rendered-view h2 {
-      font-size: 1.875rem;
-      font-weight: 600;
-      margin-top: 2rem;
-      margin-bottom: 1rem;
-      color: white;
-    }
-
-    .rendered-view p {
-      font-size: 1.125rem;
-      line-height: 1.75;
-      margin-bottom: 1.5rem;
-      color: rgba(255, 255, 255, 0.85);
-    }
-
-    .rendered-view blockquote {
-      border-left: 4px solid #6366f1;
-      padding-left: 1.5rem;
-      margin: 2rem 0;
-      font-style: italic;
-      background: rgba(99, 102, 241, 0.1);
-      padding: 1rem 1.5rem;
-      border-radius: 0.5rem;
-    }
-
-    .rendered-view ul {
-      list-style: none;
-      margin: 1.5rem 0;
-      padding: 0;
-    }
-
-    .rendered-view ul li {
-      margin-bottom: 0.75rem;
-      padding-left: 1.5rem;
-      position: relative;
-    }
-
-    .rendered-view ul li::before {
-      content: "▸";
-      position: absolute;
+    .menu-overlay {
+      position: fixed;
+      top: 0;
       left: 0;
-      color: #6366f1;
-      font-weight: bold;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+      z-index: 999;
     }
 
-    .rendered-view a {
-      color: #6366f1;
-      text-decoration: none;
-      transition: color 0.2s;
-    }
-
-    .rendered-view a:hover {
-      color: #8b5cf6;
-      text-decoration: underline;
-    }
-
-    .rendered-view .tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-      margin-bottom: 2rem;
-    }
-
-    .rendered-view .tag {
-      background: rgba(99, 102, 241, 0.2);
-      color: #a5b4fc;
-      padding: 0.25rem 0.75rem;
-      border-radius: 9999px;
-      font-size: 0.875rem;
+    .menu-overlay.active {
+      opacity: 1;
+      visibility: visible;
     }
 
     @media (prefers-color-scheme: light) {
-      .view-tab {
-        color: rgba(0, 0, 0, 0.6);
-      }
-
-      .view-tab:hover {
-        color: rgba(0, 0, 0, 0.9);
+      .slide-menu {
+        background: rgba(255, 255, 255, 0.98);
+        box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
       }
     }
   </style>
   <style>@view-transition { navigation: auto; }</style>
   <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
  </head>
- <body class="h-full gradient-bg text-white overflow-auto">
+ <body class="h-full overflow-auto">
   <div class="min-h-full p-4 md:p-6 lg:p-8"><!-- Header -->
    <header class="max-w-7xl mx-auto mb-6">
     <div class="flex items-center justify-between gap-4"><!-- Logo -->
@@ -359,7 +248,13 @@
        <p class="text-sm text-white/50">Crea posts de blog visualmente</p>
       </div>
      </div><!-- Desktop Buttons -->
-     <div class="hidden md:flex flex-wrap gap-2"><button id="download-btn" class="btn-secondary px-4 py-2 rounded-lg font-medium text-sm flex items-center gap-2">
+     <div class="hidden md:flex flex-wrap gap-2"><button id="theme-toggle" class="btn-secondary px-4 py-2 rounded-lg font-medium text-sm flex items-center gap-2">
+       <svg id="theme-icon-sun" class="w-4 h-4 hidden" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+       </svg>
+       <svg id="theme-icon-moon" class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+       </svg></button> <button id="preview-toggle" class="btn-secondary px-4 py-2 rounded-lg font-medium text-sm flex items-center gap-2">
+       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+       </svg> Vista HTML </button> <button id="download-btn" class="btn-secondary px-4 py-2 rounded-lg font-medium text-sm flex items-center gap-2">
        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
        </svg> Descargar .md </button> <button id="copy-btn" class="btn-primary px-4 py-2 rounded-lg font-medium text-sm flex items-center gap-2">
        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
@@ -369,101 +264,101 @@
       </svg>
       <svg id="close-icon" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
       </svg></button>
-    </div><!-- Mobile Menu Dropdown -->
-    <div id="mobile-menu" class="hidden mt-4 card-glass rounded-xl p-4 space-y-3"><a href="https://www.instantetrips.com" target="_blank" rel="noopener noreferrer" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/5 transition-colors">
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-      </svg><span class="font-medium">Inicio</span> </a> <a href="https://blog.instantetrips.com" target="_blank" rel="noopener noreferrer" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/5 transition-colors">
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-      </svg><span class="font-medium">Blog</span> </a>
-     <div class="border-t border-white/10 pt-3 mt-3 space-y-2 md:hidden"><button id="download-btn-mobile" class="btn-secondary w-full px-4 py-3 rounded-lg font-medium text-sm flex items-center justify-center gap-2">
+    </div>
+   </header><!-- Menu Overlay -->
+   <div id="menu-overlay" class="menu-overlay"></div><!-- Slide Menu -->
+   <div id="slide-menu" class="slide-menu">
+    <div class="p-6">
+     <div class="flex items-center justify-between mb-8">
+      <h3 class="text-lg font-bold text-white">Menú</h3><button id="close-menu-btn" class="text-white/60 hover:text-white transition-colors">
+       <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+       </svg></button>
+     </div>
+     <nav class="space-y-2"><a href="https://www.instantetrips.com" target="_blank" rel="noopener noreferrer" class="menu-link flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition-colors text-white">
+       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+       </svg><span class="font-medium">Inicio</span> </a> <a href="https://blog.instantetrips.com" target="_blank" rel="noopener noreferrer" class="menu-link flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition-colors text-white">
+       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+       </svg><span class="font-medium">Blog</span> </a>
+     </nav>
+     <div class="border-t border-white/10 mt-6 pt-6 space-y-2 md:hidden"><button id="theme-toggle-slide" class="btn-secondary w-full px-4 py-3 rounded-lg font-medium text-sm flex items-center justify-center gap-2">
+       <svg id="theme-icon-sun-slide" class="w-4 h-4 hidden" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+       </svg>
+       <svg id="theme-icon-moon-slide" class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+       </svg> Cambiar Tema </button> <button id="preview-toggle-slide" class="btn-secondary w-full px-4 py-3 rounded-lg font-medium text-sm flex items-center justify-center gap-2">
+       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+       </svg> Vista HTML </button> <button id="download-btn-slide" class="btn-secondary w-full px-4 py-3 rounded-lg font-medium text-sm flex items-center justify-center gap-2">
        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-       </svg> Descargar .md </button> <button id="copy-btn-mobile" class="btn-primary w-full px-4 py-3 rounded-lg font-medium text-sm flex items-center justify-center gap-2">
+       </svg> Descargar .md </button> <button id="copy-btn-slide" class="btn-primary w-full px-4 py-3 rounded-lg font-medium text-sm flex items-center justify-center gap-2">
        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
        </svg> Copiar </button>
      </div>
     </div>
-   </header><!-- Main Content -->
-   <main class="max-w-7xl mx-auto"><!-- View Tabs -->
-    <div class="flex justify-center mb-6">
-     <div class="card-glass rounded-xl p-1 inline-flex gap-1"><button id="view-split" class="view-tab px-5 py-2.5 rounded-lg text-sm font-medium transition-all active"> ����� Editor + Código </button> <button id="view-rendered" class="view-tab px-5 py-2.5 rounded-lg text-sm font-medium transition-all"> 🎨 Vista Renderizada </button>
-     </div>
-    </div><!-- Split View Container -->
-    <div id="split-view-container">
-     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6"><!-- Editor Panel -->
-      <div class="space-y-4"><!-- Frontmatter Section -->
-       <section class="card-glass rounded-2xl p-5">
-        <h2 class="text-sm font-semibold text-indigo-400 uppercase tracking-wider mb-4 flex items-center gap-2">
-         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-         </svg> Metadatos del Post</h2>
-        <div class="space-y-4">
-         <div><label for="post-title" class="floating-label block mb-1.5">Título del Artículo</label> <input type="text" id="post-title" class="input-dark w-full px-4 py-3 rounded-xl text-white" placeholder="El título de tu artículo...">
+   </div><!-- Main Content -->
+   <main class="max-w-7xl mx-auto">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6"><!-- Editor Panel -->
+     <div class="space-y-4"><!-- Frontmatter Section -->
+      <section class="card-glass rounded-2xl p-5">
+       <h2 class="text-sm font-semibold text-indigo-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg> Metadatos del Post</h2>
+       <div class="space-y-4">
+        <div><label for="post-title" class="floating-label block mb-1.5">Título del Artículo</label> <input type="text" id="post-title" class="input-dark w-full px-4 py-3 rounded-xl text-white" placeholder="El título de tu artículo...">
+        </div>
+        <div><label for="post-description" class="floating-label block mb-1.5">Descripción (SEO)</label> <textarea id="post-description" class="input-dark w-full px-4 py-3 rounded-xl text-white resize-none" rows="2" placeholder="Una breve descripción para motores de búsqueda..."></textarea>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+         <div><label for="post-date" class="floating-label block mb-1.5">Fecha de Publicación</label> <input type="date" id="post-date" class="input-dark w-full px-4 py-3 rounded-xl text-white">
          </div>
-         <div><label for="post-description" class="floating-label block mb-1.5">Descripción (SEO)</label> <textarea id="post-description" class="input-dark w-full px-4 py-3 rounded-xl text-white resize-none" rows="2" placeholder="Una breve descripción para motores de búsqueda..."></textarea>
-         </div>
-         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div><label for="post-date" class="floating-label block mb-1.5">Fecha de Publicación</label> <input type="date" id="post-date" class="input-dark w-full px-4 py-3 rounded-xl text-white">
-          </div>
-          <div><label for="post-author" class="floating-label block mb-1.5">Autor</label> <input type="text" id="post-author" class="input-dark w-full px-4 py-3 rounded-xl text-white" placeholder="tu-nombre">
-          </div>
-         </div>
-         <div><label for="post-hero" class="floating-label block mb-1.5">Link de Imagen de Portada</label> <input type="url" id="post-hero" class="input-dark w-full px-4 py-3 rounded-xl text-white mono text-sm" placeholder="https://images.unsplash.com/...">
-         </div>
-         <div><label for="tag-input" class="floating-label block mb-1.5">Etiquetas (Tags)</label>
-          <div class="flex flex-wrap gap-2 mb-2" id="tags-container"></div>
-          <div class="flex gap-2"><input type="text" id="tag-input" class="input-dark flex-1 px-4 py-2 rounded-lg text-white text-sm" placeholder="Agregar tag..."> <button id="add-tag-btn" class="btn-secondary px-4 py-2 rounded-lg text-sm">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-            </svg></button>
-          </div>
+         <div><label for="post-author" class="floating-label block mb-1.5">Autor</label> <input type="text" id="post-author" class="input-dark w-full px-4 py-3 rounded-xl text-white" placeholder="tu-nombre">
          </div>
         </div>
-       </section><!-- Content Blocks Section -->
-       <section class="card-glass rounded-2xl p-5">
-        <div class="flex items-center justify-between mb-4">
-         <h2 class="text-sm font-semibold text-indigo-400 uppercase tracking-wider flex items-center gap-2">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
-          </svg> Contenido del Artículo</h2>
-        </div><!-- Block Type Buttons -->
-        <div class="flex flex-wrap gap-2 mb-4"><button data-block="heading" class="btn-secondary px-3 py-1.5 rounded-lg text-xs flex items-center gap-1.5">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
-          </svg> Título </button> <button data-block="paragraph" class="btn-secondary px-3 py-1.5 rounded-lg text-xs flex items-center gap-1.5">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
-          </svg> Párrafo </button> <button data-block="list" class="btn-secondary px-3 py-1.5 rounded-lg text-xs flex items-center gap-1.5">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
-          </svg> Lista </button> <button data-block="image" class="btn-secondary px-3 py-1.5 rounded-lg text-xs flex items-center gap-1.5">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-          </svg> Imagen </button> <button data-block="link" class="btn-secondary px-3 py-1.5 rounded-lg text-xs flex items-center gap-1.5">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-          </svg> Referidos </button>
-        </div><!-- Content Blocks Container -->
-        <div id="content-blocks" class="space-y-3 scroll-area max-h-80 overflow-y-auto pr-2">
-         <div class="text-center py-8 text-white/30 text-sm">
-          Haz clic en los botones de arriba para agregar contenido
+        <div><label for="post-hero" class="floating-label block mb-1.5">Link de Imagen de Portada</label> <input type="url" id="post-hero" class="input-dark w-full px-4 py-3 rounded-xl text-white mono text-sm" placeholder="https://images.unsplash.com/...">
+        </div>
+        <div><label for="tag-input" class="floating-label block mb-1.5">Etiquetas (Tags)</label>
+         <div class="flex flex-wrap gap-2 mb-2" id="tags-container"></div>
+         <div class="flex gap-2"><input type="text" id="tag-input" class="input-dark flex-1 px-4 py-2 rounded-lg text-white text-sm" placeholder="Agregar tag..."> <button id="add-tag-btn" class="btn-secondary px-4 py-2 rounded-lg text-sm">
+           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+           </svg></button>
          </div>
         </div>
-       </section>
-      </div><!-- Markdown Preview Panel -->
-      <div class="card-glass rounded-2xl p-5 flex flex-col">
-       <div class="flex items-center justify-between mb-4">
-        <h2 class="text-sm font-semibold text-emerald-400 uppercase tracking-wider flex items-center gap-2">
-         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-         </svg> Código Markdown</h2><span id="char-count" class="text-xs text-white/40">0 caracteres</span>
        </div>
-       <div class="preview-area rounded-xl p-4 flex-1 overflow-auto scroll-area">
-        <pre id="markdown-output" class="mono text-sm text-emerald-300/90 whitespace-pre-wrap break-words leading-relaxed"></pre>
+      </section><!-- Content Blocks Section -->
+      <section class="card-glass rounded-2xl p-5">
+       <div class="flex items-center justify-between mb-4">
+        <h2 class="text-sm font-semibold text-indigo-400 uppercase tracking-wider flex items-center gap-2">
+         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+         </svg> Contenido del Artículo</h2>
+       </div><!-- Block Type Buttons -->
+       <div class="flex flex-wrap gap-2 mb-4"><button data-block="heading" class="btn-secondary px-3 py-1.5 rounded-lg text-xs flex items-center gap-1.5"> <span class="font-bold">H2</span> Título </button> <button data-block="heading3" class="btn-secondary px-3 py-1.5 rounded-lg text-xs flex items-center gap-1.5"> <span class="font-bold">H3</span> Subtítulo </button> <button data-block="paragraph" class="btn-secondary px-3 py-1.5 rounded-lg text-xs flex items-center gap-1.5">
+         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+         </svg> Párrafo </button> <button data-block="image" class="btn-secondary px-3 py-1.5 rounded-lg text-xs flex items-center gap-1.5"> 🖼️ Imagen </button> <button data-block="video" class="btn-secondary px-3 py-1.5 rounded-lg text-xs flex items-center gap-1.5"> 📹 YouTube </button> <button data-block="list" class="btn-secondary px-3 py-1.5 rounded-lg text-xs flex items-center gap-1.5"> • Lista </button> <button data-block="link" class="btn-secondary px-3 py-1.5 rounded-lg text-xs flex items-center gap-1.5"> 🔗 Referidos </button>
+       </div><!-- Content Blocks Container -->
+       <div id="content-blocks" class="space-y-3 scroll-area max-h-80 overflow-y-auto pr-2">
+        <div class="text-center py-8 text-white/30 text-sm">
+         Haz clic en los botones de arriba para agregar contenido
+        </div>
+       </div>
+      </section>
+     </div><!-- Preview Panel -->
+     <div class="card-glass rounded-2xl p-5 flex flex-col">
+      <div class="flex items-center justify-between mb-4">
+       <h2 id="preview-title" class="text-sm font-semibold text-emerald-400 uppercase tracking-wider flex items-center gap-2">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+        </svg> Código Markdown</h2>
+       <div class="flex gap-3 text-xs text-white/40"><span>📝 <span id="word-count">0</span> palabras</span> <span>⏱️ <span id="read-time">0</span> min</span>
        </div>
       </div>
-     </div>
-    </div><!-- Rendered View Container -->
-    <div id="rendered-view-container" class="hidden">
-     <div class="card-glass rounded-2xl p-6">
-      <div class="rendered-view scroll-area" style="max-height: calc(100vh - 250px); overflow-y: auto;">
-       <div id="rendered-content"></div>
+      <div class="preview-area rounded-xl p-4 flex-1 overflow-auto scroll-area">
+       <pre id="markdown-output" class="mono text-sm text-emerald-300/90 whitespace-pre-wrap break-words leading-relaxed"></pre>
+       <div id="html-preview" class="hidden prose prose-invert max-w-none">
+        <div id="html-preview-content"></div>
+       </div>
       </div>
      </div>
     </div><!-- Footer -->
     <footer class="mt-8 text-center">
      <p class="text-xs text-white/40">Desarrollado por <span class="font-semibold">Instante Trips and Tips</span><br>
-       Prohibido su reproducción o modificaci��n</p>
+       Prohibido su reproducción o modificación</p>
     </footer>
    </main><!-- Toast Notification -->
    <div id="toast" class="fixed bottom-4 right-4 bg-emerald-500 text-white px-4 py-3 rounded-xl shadow-lg transform translate-y-20 opacity-0 transition-all duration-300 flex items-center gap-2 z-50">
@@ -473,19 +368,13 @@
   </div>
   <script>
     const defaultConfig = {
-      app_title: 'Generador de Markdown',
-      background_color: '#0f0f23',
-      surface_color: '#1a1a2e',
-      text_color: '#ffffff',
-      primary_action: '#6366f1',
-      secondary_action: '#8b5cf6'
+      app_title: 'Generador de Markdown'
     };
 
     let config = { ...defaultConfig };
     let tags = [];
     let contentBlocks = [];
     let blockIdCounter = 0;
-    let currentView = 'split';
 
     // Initialize Element SDK
     if (window.elementSdk) {
@@ -495,29 +384,8 @@
           config = { ...defaultConfig, ...newConfig };
           applyConfig();
         },
-        mapToCapabilities: (cfg) => ({
-          recolorables: [
-            {
-              get: () => cfg.background_color || defaultConfig.background_color,
-              set: (v) => { cfg.background_color = v; window.elementSdk.setConfig({ background_color: v }); }
-            },
-            {
-              get: () => cfg.surface_color || defaultConfig.surface_color,
-              set: (v) => { cfg.surface_color = v; window.elementSdk.setConfig({ surface_color: v }); }
-            },
-            {
-              get: () => cfg.text_color || defaultConfig.text_color,
-              set: (v) => { cfg.text_color = v; window.elementSdk.setConfig({ text_color: v }); }
-            },
-            {
-              get: () => cfg.primary_action || defaultConfig.primary_action,
-              set: (v) => { cfg.primary_action = v; window.elementSdk.setConfig({ primary_action: v }); }
-            },
-            {
-              get: () => cfg.secondary_action || defaultConfig.secondary_action,
-              set: (v) => { cfg.secondary_action = v; window.elementSdk.setConfig({ secondary_action: v }); }
-            }
-          ],
+        mapToCapabilities: () => ({
+          recolorables: [],
           borderables: [],
           fontEditable: undefined,
           fontSizeable: undefined
@@ -530,153 +398,47 @@
 
     function applyConfig() {
       document.getElementById('app-title').textContent = config.app_title || defaultConfig.app_title;
-      
-      const bgColor = config.background_color || defaultConfig.background_color;
-      const surfaceColor = config.surface_color || defaultConfig.surface_color;
-      const textColor = config.text_color || defaultConfig.text_color;
-      const primaryAction = config.primary_action || defaultConfig.primary_action;
-      const secondaryAction = config.secondary_action || defaultConfig.secondary_action;
-      
-      document.body.style.background = `linear-gradient(135deg, ${bgColor} 0%, ${surfaceColor} 50%, ${bgColor} 100%)`;
-      document.body.style.color = textColor;
-      
-      document.querySelectorAll('.btn-primary').forEach(btn => {
-        btn.style.background = `linear-gradient(135deg, ${primaryAction} 0%, ${secondaryAction} 100%)`;
-      });
-      
-      document.querySelectorAll('.card-glass').forEach(card => {
-        card.style.background = `${surfaceColor}15`;
-        card.style.borderColor = `${textColor}15`;
-      });
-      
-      document.querySelectorAll('.input-dark').forEach(input => {
-        input.style.background = `${bgColor}80`;
-        input.style.borderColor = `${textColor}15`;
-        input.style.color = textColor;
-      });
     }
 
-    // View Switching
-    document.getElementById('view-split').addEventListener('click', () => {
-      currentView = 'split';
-      document.getElementById('view-split').classList.add('active');
-      document.getElementById('view-rendered').classList.remove('active');
-      document.getElementById('split-view-container').classList.remove('hidden');
-      document.getElementById('rendered-view-container').classList.add('hidden');
-    });
+    // Menu functionality
+    const menuBtn = document.getElementById('menu-btn');
+    const slideMenu = document.getElementById('slide-menu');
+    const menuOverlay = document.getElementById('menu-overlay');
+    const closeMenuBtn = document.getElementById('close-menu-btn');
+    const menuIcon = document.getElementById('menu-icon');
+    const closeIcon = document.getElementById('close-icon');
 
-    document.getElementById('view-rendered').addEventListener('click', () => {
-      currentView = 'rendered';
-      document.getElementById('view-rendered').classList.add('active');
-      document.getElementById('view-split').classList.remove('active');
-      document.getElementById('split-view-container').classList.add('hidden');
-      document.getElementById('rendered-view-container').classList.remove('hidden');
-      renderBlogView();
-    });
+    function openMenu() {
+      slideMenu.classList.add('open');
+      menuOverlay.classList.add('active');
+      menuIcon.classList.add('hidden');
+      closeIcon.classList.remove('hidden');
+    }
 
-    // Render Blog View
-    function renderBlogView() {
-      const title = document.getElementById('post-title').value || 'Tu Título Aquí';
-      const description = document.getElementById('post-description').value;
-      const date = document.getElementById('post-date').value || new Date().toISOString().split('T')[0];
-      const author = document.getElementById('post-author').value || 'Autor';
-      const heroImage = document.getElementById('post-hero').value;
+    function closeMenu() {
+      slideMenu.classList.remove('open');
+      menuOverlay.classList.remove('active');
+      menuIcon.classList.remove('hidden');
+      closeIcon.classList.add('hidden');
+    }
 
-      let html = '';
-
-      // Hero Image
-      if (heroImage) {
-        html += `<img src="${heroImage}" alt="${title}" class="hero-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">`;
-        html += `<div class="hero-image" style="display:none;">📷 Imagen de portada</div>`;
+    menuBtn.addEventListener('click', () => {
+      if (slideMenu.classList.contains('open')) {
+        closeMenu();
       } else {
-        html += `<div class="hero-image">📷 Imagen de portada</div>`;
+        openMenu();
       }
+    });
 
-      // Tags
-      if (tags.length > 0) {
-        html += '<div class="tags">';
-        tags.forEach(tag => {
-          html += `<span class="tag">#${tag}</span>`;
-        });
-        html += '</div>';
-      }
-
-      // Title
-      html += `<h1>${title}</h1>`;
-
-      // Meta info
-      html += `<div class="post-meta">`;
-      html += `<span>📅 ${new Date(date).toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' })}</span>`;
-      html += `<span>✍️ ${author}</span>`;
-      html += `</div>`;
-
-      // Description
-      if (description) {
-        html += `<p><em>${description}</em></p>`;
-      }
-
-      // Content blocks
-      contentBlocks.forEach(block => {
-        switch (block.type) {
-          case 'paragraph':
-            if (block.content) {
-              let text = block.content;
-              if (block.bold) {
-                text = `<strong>${text}</strong>`;
-              }
-              html += `<p>${text}</p>`;
-            }
-            break;
-          case 'heading':
-            if (block.content) {
-              html += `<h2>${block.content}</h2>`;
-            }
-            break;
-          case 'image':
-            if (block.url) {
-              html += `<img src="${block.url}" alt="${block.content || 'Imagen del artículo'}" class="hero-image" style="height: 300px; margin: 2rem 0;" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">`;
-              html += `<div class="hero-image" style="display:none; height: 300px; margin: 2rem 0;">📷 Imagen no disponible</div>`;
-              if (block.content) {
-                html += `<p style="text-align: center; font-size: 0.875rem; color: rgba(255, 255, 255, 0.5); margin-top: -1rem;"><em>${block.content}</em></p>`;
-              }
-            }
-            break;
-          case 'list':
-            if (block.content) {
-              const items = block.content.split('\n').filter(item => item.trim());
-              html += '<ul>';
-              items.forEach(item => {
-                const parts = item.trim().split(':');
-                const label = parts[0];
-                const description = parts.slice(1).join(':');
-                if (description) {
-                  html += `<li><strong>${label}:</strong> ${description}</li>`;
-                } else {
-                  html += `<li>${label}</li>`;
-                }
-              });
-              html += '</ul>';
-            }
-            break;
-          case 'link':
-            if (block.content) {
-              const emoji = block.emoji || '🔗';
-              const url = block.url || '#';
-              html += `<p>${emoji} <a href="${url}" target="_blank" rel="noopener noreferrer">${block.content}</a></p>`;
-            }
-            break;
-        }
-      });
-
-      document.getElementById('rendered-content').innerHTML = html;
-    }
+    closeMenuBtn.addEventListener('click', closeMenu);
+    menuOverlay.addEventListener('click', closeMenu);
 
     // Tag Management
     function renderTags() {
       const container = document.getElementById('tags-container');
       container.innerHTML = tags.map((tag, index) => `
         <span class="tag-chip px-3 py-1 rounded-full text-xs flex items-center gap-1.5 text-indigo-300">
-          ${tag}
+          ${escapeHtml(tag)}
           <button onclick="removeTag(${index})" class="hover:text-white transition-colors">
             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
@@ -685,7 +447,6 @@
         </span>
       `).join('');
       generateMarkdown();
-      if (currentView === 'rendered') renderBlogView();
     }
 
     function addTag() {
@@ -703,6 +464,12 @@
       renderTags();
     };
 
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
     document.getElementById('add-tag-btn').addEventListener('click', addTag);
     document.getElementById('tag-input').addEventListener('keypress', (e) => {
       if (e.key === 'Enter') {
@@ -719,100 +486,240 @@
       
       let content = '';
       
+      const controlsHeader = `
+        <div class="flex items-center gap-1 mb-3">
+          <button class="move-up-btn btn-secondary w-7 h-7 rounded flex items-center justify-center text-xs" title="Subir">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"/>
+            </svg>
+          </button>
+          <button class="move-down-btn btn-secondary w-7 h-7 rounded flex items-center justify-center text-xs" title="Bajar">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </button>
+          <button class="remove-btn btn-secondary w-7 h-7 rounded flex items-center justify-center text-xs ml-auto hover:bg-red-500/20 hover:border-red-500/30" title="Eliminar">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+            </svg>
+          </button>
+        </div>
+      `;
+      
       switch (block.type) {
-        case 'paragraph':
-          content = `
-            <div class="flex items-start gap-3">
-              <div class="flex-1">
-                <div class="flex items-center gap-2 mb-2">
-                  <span class="text-xs text-white/40 uppercase tracking-wider">Párrafo</span>
-                  <div class="flex gap-1 ml-auto">
-                    <button onclick="toggleBold(${block.id})" class="btn-secondary w-6 h-6 rounded flex items-center justify-center text-xs font-bold ${block.bold ? 'bg-indigo-500/30' : ''}" title="Negrita">B</button>
-                  </div>
-                </div>
-                <textarea class="input-dark w-full px-3 py-2 rounded-lg text-white text-sm resize-none" rows="3" placeholder="Escribe tu párrafo aquí..." oninput="updateBlockContent(${block.id}, this.value)">${block.content || ''}</textarea>
-              </div>
-              <button onclick="removeBlock(${block.id})" class="text-white/30 hover:text-red-400 transition-colors mt-6">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                </svg>
-              </button>
-            </div>
-          `;
-          break;
-          
         case 'heading':
-          content = `
+          content = controlsHeader + `
             <div class="flex items-start gap-3">
               <div class="flex-1">
-                <span class="text-xs text-white/40 uppercase tracking-wider mb-2 block">Título</span>
+                <span class="text-xs text-white/40 uppercase tracking-wider mb-2 block">Título (H2)</span>
                 <input type="text" class="input-dark w-full px-3 py-2 rounded-lg text-white font-semibold" placeholder="Título de sección..." oninput="updateBlockContent(${block.id}, this.value)" value="${block.content || ''}">
               </div>
-              <button onclick="removeBlock(${block.id})" class="text-white/30 hover:text-red-400 transition-colors mt-6">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                </svg>
-              </button>
             </div>
           `;
           break;
-          
-        case 'image':
-          content = `
+
+        case 'heading3':
+          content = controlsHeader + `
+            <div class="flex items-start gap-3">
+              <div class="flex-1">
+                <span class="text-xs text-white/40 uppercase tracking-wider mb-2 block">Subtítulo (H3)</span>
+                <input type="text" class="input-dark w-full px-3 py-2 rounded-lg text-white font-medium" placeholder="Subtítulo de sección..." oninput="updateBlockContent(${block.id}, this.value)" value="${block.content || ''}">
+              </div>
+            </div>
+          `;
+          break;
+
+        case 'paragraph':
+          content = controlsHeader + `
+            <div class="flex items-start gap-3">
+              <div class="flex-1">
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-xs text-white/40 uppercase tracking-wider">Párrafo</span>
+                  <div class="flex gap-1">
+                    <button class="align-btn btn-secondary w-7 h-7 rounded flex items-center justify-center ${(block.align === 'left' || !block.align) ? 'bg-indigo-500/20 border-indigo-500/40' : ''}" data-align="left" title="Izquierda">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h10M4 18h16"/>
+                      </svg>
+                    </button>
+                    <button class="align-btn btn-secondary w-7 h-7 rounded flex items-center justify-center ${block.align === 'center' ? 'bg-indigo-500/20 border-indigo-500/40' : ''}" data-align="center" title="Centrar">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M7 12h10M4 18h16"/>
+                      </svg>
+                    </button>
+                    <button class="align-btn btn-secondary w-7 h-7 rounded flex items-center justify-center ${block.align === 'right' ? 'bg-indigo-500/20 border-indigo-500/40' : ''}" data-align="right" title="Derecha">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M10 12h10M4 18h16"/>
+                      </svg>
+                    </button>
+                    <button class="align-btn btn-secondary w-7 h-7 rounded flex items-center justify-center ${block.align === 'justify' ? 'bg-indigo-500/20 border-indigo-500/40' : ''}" data-align="justify" title="Justificar">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+                <div class="flex gap-1 mb-2">
+                  <button class="format-btn btn-secondary px-2 py-1 rounded text-xs" data-format="bold" title="Negrita">
+                    <strong>B</strong>
+                  </button>
+                  <button class="format-btn btn-secondary px-2 py-1 rounded text-xs" data-format="italic" title="Cursiva">
+                    <em>I</em>
+                  </button>
+                  <button class="format-btn btn-secondary px-2 py-1 rounded text-xs mono" data-format="code" title="Código">
+                    &lt;/&gt;
+                  </button>
+                </div>
+                <textarea class="input-dark w-full px-3 py-2 rounded-lg text-white text-sm resize-none" rows="4" placeholder="Escribe tu párrafo aquí..." oninput="updateBlockContent(${block.id}, this.value)">${block.content || ''}</textarea>
+              </div>
+            </div>
+          `;
+          break;
+
+        case 'quote':
+          content = controlsHeader + `
+            <div class="flex items-start gap-3">
+              <div class="flex-1">
+                <span class="text-xs text-white/40 uppercase tracking-wider mb-2 block">Cita / Quote</span>
+                <textarea class="input-dark w-full px-3 py-2 rounded-lg text-white text-sm resize-none" rows="3" placeholder="Escribe la cita aquí..." oninput="updateBlockContent(${block.id}, this.value)">${block.content || ''}</textarea>
+                <input type="text" class="input-dark w-full px-3 py-2 rounded-lg text-white text-sm mt-2" placeholder="Autor (opcional)" oninput="updateBlockAuthor(${block.id}, this.value)" value="${block.author || ''}">
+              </div>
+            </div>
+          `;
+          break;
+
+        case 'callout':
+          content = controlsHeader + `
             <div class="flex items-start gap-3">
               <div class="flex-1 space-y-2">
-                <span class="text-xs text-white/40 uppercase tracking-wider block">Imagen</span>
-                <input type="url" class="input-dark w-full px-3 py-2 rounded-lg text-white text-sm mono" placeholder="https://..." oninput="updateBlockUrl(${block.id}, this.value)" value="${block.url || ''}">
-                <input type="text" class="input-dark w-full px-3 py-2 rounded-lg text-white text-sm" placeholder="Créditos (texto debajo de la imagen)..." oninput="updateBlockContent(${block.id}, this.value)" value="${block.content || ''}">
+                <span class="text-xs text-white/40 uppercase tracking-wider block">Callout / Nota</span>
+                <select class="input-dark w-full px-3 py-2 rounded-lg text-white text-sm" onchange="updateCalloutType(${block.id}, this.value)">
+                  <option value="info" ${(block.calloutType || 'info') === 'info' ? 'selected' : ''}>💡 Info</option>
+                  <option value="warning" ${block.calloutType === 'warning' ? 'selected' : ''}>⚠️ Advertencia</option>
+                  <option value="tip" ${block.calloutType === 'tip' ? 'selected' : ''}>✅ Tip</option>
+                  <option value="danger" ${block.calloutType === 'danger' ? 'selected' : ''}>🚨 Peligro</option>
+                </select>
+                <input type="text" class="input-dark w-full px-3 py-2 rounded-lg text-white text-sm" placeholder="Título del callout..." oninput="updateCalloutTitle(${block.id}, this.value)" value="${block.calloutTitle || ''}">
+                <textarea class="input-dark w-full px-3 py-2 rounded-lg text-white text-sm resize-none" rows="3" placeholder="Contenido del callout..." oninput="updateBlockContent(${block.id}, this.value)">${block.content || ''}</textarea>
               </div>
-              <button onclick="removeBlock(${block.id})" class="text-white/30 hover:text-red-400 transition-colors mt-6">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                </svg>
-              </button>
+            </div>
+          `;
+          break;
+
+        case 'separator':
+          content = controlsHeader + `
+            <div class="flex items-center justify-center py-2">
+              <div class="w-full h-px bg-white/20"></div>
+              <span class="px-4 text-xs text-white/40">SEPARADOR</span>
+              <div class="w-full h-px bg-white/20"></div>
+            </div>
+          `;
+          break;
+
+        case 'video':
+          content = controlsHeader + `
+            <div class="flex items-start gap-3">
+              <div class="flex-1 space-y-2">
+                <span class="text-xs text-white/40 uppercase tracking-wider block">Video de YouTube</span>
+                <input type="url" class="input-dark w-full px-3 py-2 rounded-lg text-white text-sm mono" placeholder="https://www.youtube.com/watch?v=..." oninput="updateBlockUrl(${block.id}, this.value)" value="${block.url || ''}">
+                <p class="text-xs text-white/30">Pega el link completo de YouTube</p>
+              </div>
+            </div>
+          `;
+          break;
+
+        case 'image':
+          content = controlsHeader + `
+            <div class="flex items-start gap-3">
+              <div class="flex-1 space-y-2">
+                <span class="text-xs text-white/40 uppercase tracking-wider block">Imagen en Línea</span>
+                <input type="url" class="input-dark w-full px-3 py-2 rounded-lg text-white text-sm mono" placeholder="https://..." oninput="updateBlockUrl(${block.id}, this.value)" value="${block.url || ''}">
+                <input type="text" class="input-dark w-full px-3 py-2 rounded-lg text-white text-sm" placeholder="Texto alternativo (alt)..." oninput="updateBlockContent(${block.id}, this.value)" value="${block.content || ''}">
+              </div>
             </div>
           `;
           break;
           
         case 'list':
-          content = `
+          content = controlsHeader + `
             <div class="flex items-start gap-3">
               <div class="flex-1">
-                <span class="text-xs text-white/40 uppercase tracking-wider mb-2 block">Lista (un ítem por línea)</span>
+                <span class="text-xs text-white/40 uppercase tracking-wider mb-2 block">Lista con viñetas (un ítem por línea)</span>
                 <textarea class="input-dark w-full px-3 py-2 rounded-lg text-white text-sm resize-none" rows="4" placeholder="Ítem 1&#10;Ítem 2&#10;Ítem 3" oninput="updateBlockContent(${block.id}, this.value)">${block.content || ''}</textarea>
               </div>
-              <button onclick="removeBlock(${block.id})" class="text-white/30 hover:text-red-400 transition-colors mt-6">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                </svg>
-              </button>
             </div>
           `;
           break;
           
         case 'link':
-          content = `
+          content = controlsHeader + `
             <div class="flex items-start gap-3">
               <div class="flex-1 space-y-2">
-                <span class="text-xs text-white/40 uppercase tracking-wider block">Referidos</span>
+                <span class="text-xs text-white/40 uppercase tracking-wider block">Botón de Referidos</span>
                 <div class="flex items-center gap-2">
                   <span class="text-lg">${block.emoji || '🔗'}</span>
-                  <input type="text" class="input-dark flex-1 px-3 py-2 rounded-lg text-white text-sm" placeholder="Emoji (ej: 🎟️)" oninput="updateBlockEmoji(${block.id}, this.value)" value="${block.emoji || ''}" maxlength="4">
+                  <input type="text" class="input-dark flex-1 px-3 py-2 rounded-lg text-white text-sm" placeholder="Emoji (ej: ���️)" oninput="updateBlockEmoji(${block.id}, this.value)" value="${block.emoji || ''}" maxlength="4">
                 </div>
-                <input type="text" class="input-dark w-full px-3 py-2 rounded-lg text-white text-sm" placeholder="Texto del enlace..." oninput="updateBlockContent(${block.id}, this.value)" value="${block.content || ''}">
+                <input type="text" class="input-dark w-full px-3 py-2 rounded-lg text-white text-sm" placeholder="Texto del botón..." oninput="updateBlockContent(${block.id}, this.value)" value="${block.content || ''}">
                 <input type="url" class="input-dark w-full px-3 py-2 rounded-lg text-white text-sm mono" placeholder="https://..." oninput="updateBlockUrl(${block.id}, this.value)" value="${block.url || ''}">
               </div>
-              <button onclick="removeBlock(${block.id})" class="text-white/30 hover:text-red-400 transition-colors mt-6">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                </svg>
-              </button>
             </div>
           `;
           break;
       }
       
       div.innerHTML = content;
+      
+      const moveUpBtn = div.querySelector('.move-up-btn');
+      const moveDownBtn = div.querySelector('.move-down-btn');
+      const removeBtn = div.querySelector('.remove-btn');
+      
+      if (moveUpBtn) {
+        moveUpBtn.addEventListener('click', () => moveBlockUp(block.id));
+      }
+      if (moveDownBtn) {
+        moveDownBtn.addEventListener('click', () => moveBlockDown(block.id));
+      }
+      if (removeBtn) {
+        removeBtn.addEventListener('click', () => removeBlock(block.id));
+      }
+      
+      // Alignment buttons for paragraph
+      const alignBtns = div.querySelectorAll('.align-btn');
+      alignBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const align = btn.dataset.align;
+          updateBlockAlign(block.id, align);
+        });
+      });
+      
+      // Format buttons for paragraph
+      const formatBtns = div.querySelectorAll('.format-btn');
+      const textarea = div.querySelector('textarea');
+      formatBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          if (textarea) {
+            const format = btn.dataset.format;
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            const selectedText = textarea.value.substring(start, end);
+            
+            let formattedText = selectedText;
+            if (format === 'bold') {
+              formattedText = `**${selectedText}**`;
+            } else if (format === 'italic') {
+              formattedText = `*${selectedText}*`;
+            } else if (format === 'code') {
+              formattedText = `\`${selectedText}\``;
+            }
+            
+            textarea.value = textarea.value.substring(0, start) + formattedText + textarea.value.substring(end);
+            textarea.focus();
+            textarea.setSelectionRange(start, start + formattedText.length);
+            updateBlockContent(block.id, textarea.value);
+          }
+        });
+      });
+      
       return div;
     }
 
@@ -834,7 +741,6 @@
       });
       
       generateMarkdown();
-      if (currentView === 'rendered') renderBlogView();
     }
 
     function addBlock(type) {
@@ -842,7 +748,6 @@
         id: blockIdCounter++,
         type,
         content: '',
-        bold: false,
         emoji: type === 'link' ? '🔗' : '',
         url: ''
       };
@@ -850,12 +755,31 @@
       renderBlocks();
     }
 
+    function moveBlockUp(id) {
+      const index = contentBlocks.findIndex(b => b.id === id);
+      if (index > 0) {
+        const temp = contentBlocks[index];
+        contentBlocks[index] = contentBlocks[index - 1];
+        contentBlocks[index - 1] = temp;
+        renderBlocks();
+      }
+    }
+
+    function moveBlockDown(id) {
+      const index = contentBlocks.findIndex(b => b.id === id);
+      if (index < contentBlocks.length - 1) {
+        const temp = contentBlocks[index];
+        contentBlocks[index] = contentBlocks[index + 1];
+        contentBlocks[index + 1] = temp;
+        renderBlocks();
+      }
+    }
+
     window.updateBlockContent = function(id, content) {
       const block = contentBlocks.find(b => b.id === id);
       if (block) {
         block.content = content;
         generateMarkdown();
-        if (currentView === 'rendered') renderBlogView();
       }
     };
 
@@ -864,7 +788,6 @@
       if (block) {
         block.url = url;
         generateMarkdown();
-        if (currentView === 'rendered') renderBlogView();
       }
     };
 
@@ -873,28 +796,58 @@
       if (block) {
         block.emoji = emoji;
         generateMarkdown();
-        if (currentView === 'rendered') renderBlogView();
       }
     };
 
-    window.toggleBold = function(id) {
+    window.updateBlockAuthor = function(id, author) {
       const block = contentBlocks.find(b => b.id === id);
       if (block) {
-        block.bold = !block.bold;
-        renderBlocks();
+        block.author = author;
+        generateMarkdown();
       }
     };
 
-    window.removeBlock = function(id) {
-      contentBlocks = contentBlocks.filter(b => b.id !== id);
-      renderBlocks();
+    window.updateCalloutType = function(id, type) {
+      const block = contentBlocks.find(b => b.id === id);
+      if (block) {
+        block.calloutType = type;
+        generateMarkdown();
+      }
     };
 
-    // Block type buttons
+    window.updateCalloutTitle = function(id, title) {
+      const block = contentBlocks.find(b => b.id === id);
+      if (block) {
+        block.calloutTitle = title;
+        generateMarkdown();
+      }
+    };
+
+    function updateBlockAlign(id, align) {
+      const block = contentBlocks.find(b => b.id === id);
+      if (block) {
+        block.align = align;
+        renderBlocks();
+      }
+    }
+
+    function removeBlock(id) {
+      contentBlocks = contentBlocks.filter(b => b.id !== id);
+      renderBlocks();
+    }
+
     document.querySelectorAll('[data-block]').forEach(btn => {
       btn.addEventListener('click', () => {
         addBlock(btn.dataset.block);
       });
+    });
+
+    // Input listeners
+    ['post-title', 'post-description', 'post-date', 'post-author', 'post-hero'].forEach(id => {
+      const element = document.getElementById(id);
+      if (element) {
+        element.addEventListener('input', generateMarkdown);
+      }
     });
 
     // Generate Markdown
@@ -922,175 +875,306 @@
       
       markdown += '---\n\n';
       
-      // Content blocks
       contentBlocks.forEach(block => {
         switch (block.type) {
-          case 'paragraph':
-            if (block.content) {
-              let text = block.content;
-              if (block.bold) {
-                text = `**${text}**`;
-              }
-              markdown += `${text}\n\n`;
-            }
-            break;
           case 'heading':
             if (block.content) {
               markdown += `## ${block.content}\n\n`;
             }
             break;
+          case 'heading3':
+            if (block.content) {
+              markdown += `### ${block.content}\n\n`;
+            }
+            break;
+          case 'paragraph':
+            if (block.content) {
+              const align = block.align || 'left';
+              if (align === 'center') {
+                markdown += `<p style="text-align: center;">${block.content}</p>\n\n`;
+              } else if (align === 'right') {
+                markdown += `<p style="text-align: right;">${block.content}</p>\n\n`;
+              } else if (align === 'justify') {
+                markdown += `<p style="text-align: justify;">${block.content}</p>\n\n`;
+              } else {
+                markdown += `${block.content}\n\n`;
+              }
+            }
+            break;
+          case 'video':
+            if (block.url) {
+              let videoId = '';
+              const youtubeRegex = /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/;
+              const match = block.url.match(youtubeRegex);
+              if (match) {
+                videoId = match[1];
+                markdown += `<iframe width="560" height="315" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>\n\n`;
+              }
+            }
+            break;
           case 'image':
             if (block.url) {
-              markdown += `![${block.content || 'Imagen'}](${block.url})\n`;
-              if (block.content) {
-                markdown += `*${block.content}*\n`;
-              }
-              markdown += '\n';
+              markdown += `![${block.content || 'Imagen'}](${block.url})\n\n`;
             }
             break;
           case 'list':
             if (block.content) {
               const items = block.content.split('\n').filter(item => item.trim());
               items.forEach(item => {
-                markdown += `* **${item.trim().split(':')[0]}:** ${item.trim().split(':').slice(1).join(':') || ''}\n`;
+                markdown += `* ${item.trim()}\n`;
               });
               markdown += '\n';
             }
             break;
           case 'link':
-            if (block.content) {
+            if (block.content && block.url) {
               const emoji = block.emoji || '🔗';
-              const url = block.url || '#';
-              markdown += `${emoji} [${block.content}](${url})\n`;
+              markdown += `${emoji} [${block.content}](${block.url})\n\n`;
+            }
+            break;
+          case 'separator':
+            markdown += `---\n\n`;
+            break;
+          case 'quote':
+            if (block.content) {
+              markdown += `> ${block.content}\n`;
+              if (block.author) {
+                markdown += `>\n> — ${block.author}\n`;
+              }
+              markdown += '\n';
+            }
+            break;
+          case 'callout':
+            if (block.content) {
+              const calloutType = block.calloutType || 'info';
+              const icons = {
+                info: '💡',
+                warning: '⚠️',
+                tip: '✅',
+                danger: '🚨'
+              };
+              const icon = icons[calloutType];
+              const title = block.calloutTitle || calloutType.toUpperCase();
+              markdown += `> ${icon} **${title}**\n>\n> ${block.content}\n\n`;
             }
             break;
         }
       });
       
-      const output = document.getElementById('markdown-output');
-      output.textContent = markdown;
+      document.getElementById('markdown-output').textContent = markdown;
       
-      document.getElementById('char-count').textContent = `${markdown.length} caracteres`;
+      const words = markdown.split(/\s+/).filter(w => w.length > 0).length;
+      const readTime = Math.max(1, Math.ceil(words / 200));
+      document.getElementById('word-count').textContent = words;
+      document.getElementById('read-time').textContent = readTime;
     }
 
-    // Input listeners for live preview
-    ['post-title', 'post-description', 'post-date', 'post-author', 'post-hero'].forEach(id => {
-      document.getElementById(id).addEventListener('input', () => {
-        generateMarkdown();
-        if (currentView === 'rendered') renderBlogView();
+    function copyMarkdown() {
+      const markdown = document.getElementById('markdown-output').textContent;
+      navigator.clipboard.writeText(markdown).then(() => {
+        showToast('¡Markdown copiado al portapapeles!');
       });
-    });
+    }
 
-    // Copy to clipboard
-    document.getElementById('copy-btn').addEventListener('click', async () => {
-      const markdown = document.getElementById('markdown-output').textContent;
-      
-      try {
-        await navigator.clipboard.writeText(markdown);
-        showToast('¡Markdown copiado al portapapeles!');
-      } catch (err) {
-        const textarea = document.createElement('textarea');
-        textarea.value = markdown;
-        document.body.appendChild(textarea);
-        textarea.select();
-        document.execCommand('copy');
-        document.body.removeChild(textarea);
-        showToast('¡Markdown copiado al portapapeles!');
-      }
-    });
-
-    // Copy button mobile
-    document.getElementById('copy-btn-mobile').addEventListener('click', async () => {
-      const markdown = document.getElementById('markdown-output').textContent;
-      
-      try {
-        await navigator.clipboard.writeText(markdown);
-        showToast('¡Markdown copiado al portapapeles!');
-      } catch (err) {
-        const textarea = document.createElement('textarea');
-        textarea.value = markdown;
-        document.body.appendChild(textarea);
-        textarea.select();
-        document.execCommand('copy');
-        document.body.removeChild(textarea);
-        showToast('¡Markdown copiado al portapapeles!');
-      }
-      // Close menu after action
-      document.getElementById('mobile-menu').classList.add('hidden');
-      document.getElementById('menu-icon').classList.remove('hidden');
-      document.getElementById('close-icon').classList.add('hidden');
-    });
-
-    // Download as .md file
-    document.getElementById('download-btn').addEventListener('click', () => {
+    function downloadMarkdown() {
       const markdown = document.getElementById('markdown-output').textContent;
       const title = document.getElementById('post-title').value || 'post';
-      const filename = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') + '.md';
+      const filename = title.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '.md';
       
       const blob = new Blob([markdown], { type: 'text/markdown' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
       a.download = filename;
-      document.body.appendChild(a);
       a.click();
-      document.body.removeChild(a);
       URL.revokeObjectURL(url);
       
-      showToast('¡Archivo descargado exitosamente!');
-    });
-
-    // Download button mobile
-    document.getElementById('download-btn-mobile').addEventListener('click', () => {
-      const markdown = document.getElementById('markdown-output').textContent;
-      const title = document.getElementById('post-title').value || 'post';
-      const filename = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') + '.md';
-      
-      const blob = new Blob([markdown], { type: 'text/markdown' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-      
-      showToast('¡Archivo descargado exitosamente!');
-      // Close menu after action
-      document.getElementById('mobile-menu').classList.add('hidden');
-      document.getElementById('menu-icon').classList.remove('hidden');
-      document.getElementById('close-icon').classList.add('hidden');
-    });
-
-    // Hamburger menu toggle
-    document.getElementById('menu-btn').addEventListener('click', () => {
-      const menu = document.getElementById('mobile-menu');
-      const menuIcon = document.getElementById('menu-icon');
-      const closeIcon = document.getElementById('close-icon');
-      
-      menu.classList.toggle('hidden');
-      menuIcon.classList.toggle('hidden');
-      closeIcon.classList.toggle('hidden');
-    });
+      showToast('¡Archivo descargado!');
+    }
 
     function showToast(message) {
       const toast = document.getElementById('toast');
       const toastMessage = document.getElementById('toast-message');
       toastMessage.textContent = message;
-      toast.classList.remove('translate-y-20', 'opacity-0');
+      toast.style.transform = 'translateY(0)';
+      toast.style.opacity = '1';
       
       setTimeout(() => {
-        toast.classList.add('translate-y-20', 'opacity-0');
-      }, 2500);
+        toast.style.transform = 'translateY(5rem)';
+        toast.style.opacity = '0';
+      }, 3000);
     }
 
-    // Set default date to today
-    document.getElementById('post-date').valueAsDate = new Date();
+    document.getElementById('copy-btn').addEventListener('click', copyMarkdown);
+    document.getElementById('copy-btn-slide').addEventListener('click', () => {
+      copyMarkdown();
+      closeMenu();
+    });
+    
+    document.getElementById('download-btn').addEventListener('click', downloadMarkdown);
+    document.getElementById('download-btn-slide').addEventListener('click', () => {
+      downloadMarkdown();
+      closeMenu();
+    });
 
-    // Initial render
+    // Preview toggle functionality - separate buttons
+    function showMarkdownView() {
+      const markdownOutput = document.getElementById('markdown-output');
+      const htmlPreview = document.getElementById('html-preview');
+      const previewTitle = document.getElementById('preview-title');
+      
+      markdownOutput.classList.remove('hidden');
+      htmlPreview.classList.add('hidden');
+      previewTitle.innerHTML = `
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
+        </svg>
+        Código Markdown
+      `;
+    }
+    
+    function showPreviewView() {
+      const markdownOutput = document.getElementById('markdown-output');
+      const htmlPreview = document.getElementById('html-preview');
+      const previewTitle = document.getElementById('preview-title');
+      
+      markdownOutput.classList.add('hidden');
+      htmlPreview.classList.remove('hidden');
+      previewTitle.innerHTML = `
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+        </svg>
+        Vista Previa HTML
+      `;
+      generateHtmlPreview();
+    }
+    
+    document.getElementById('show-markdown-btn').addEventListener('click', showMarkdownView);
+    document.getElementById('show-markdown-btn-slide').addEventListener('click', () => {
+      showMarkdownView();
+      closeMenu();
+    });
+    
+    document.getElementById('show-preview-btn').addEventListener('click', showPreviewView);
+    document.getElementById('show-preview-btn-slide').addEventListener('click', () => {
+      showPreviewView();
+      closeMenu();
+    });
+    
+    function generateHtmlPreview() {
+      const previewContent = document.getElementById('html-preview-content');
+      const title = document.getElementById('post-title').value;
+      const heroImage = document.getElementById('post-hero').value;
+      
+      let html = '';
+      
+      if (heroImage) {
+        html += `<img src="${heroImage}" alt="${title}" style="width: 100%; max-height: 400px; object-fit: cover; border-radius: 8px; margin-bottom: 2rem;">`;
+      }
+      
+      if (title) {
+        html += `<h1 style="font-size: 2.5rem; font-weight: bold; margin-bottom: 1rem;">${title}</h1>`;
+      }
+      
+      contentBlocks.forEach(block => {
+        switch (block.type) {
+          case 'heading':
+            if (block.content) {
+              html += `<h2 style="font-size: 2rem; font-weight: bold; margin-top: 2rem; margin-bottom: 1rem;">${block.content}</h2>`;
+            }
+            break;
+          case 'heading3':
+            if (block.content) {
+              html += `<h3 style="font-size: 1.5rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.75rem;">${block.content}</h3>`;
+            }
+            break;
+          case 'paragraph':
+            if (block.content) {
+              const align = block.align || 'left';
+              const contentHtml = block.content
+                .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.+?)\*/g, '<em>$1</em>')
+                .replace(/`(.+?)`/g, '<code style="background: rgba(0,0,0,0.1); padding: 0.2rem 0.4rem; border-radius: 4px; font-family: monospace;">$1</code>');
+              html += `<p style="text-align: ${align}; margin-bottom: 1rem; line-height: 1.7;">${contentHtml}</p>`;
+            }
+            break;
+          case 'image':
+            if (block.url) {
+              html += `<img src="${block.url}" alt="${block.content || 'Imagen'}" style="width: 100%; max-width: 100%; border-radius: 8px; margin: 1.5rem 0;">`;
+            }
+            break;
+          case 'video':
+            if (block.url) {
+              const youtubeRegex = /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/;
+              const match = block.url.match(youtubeRegex);
+              if (match) {
+                const videoId = match[1];
+                html += `<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; margin: 1.5rem 0;"><iframe src="https://www.youtube.com/embed/${videoId}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; border-radius: 8px;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>`;
+              }
+            }
+            break;
+          case 'list':
+            if (block.content) {
+              const items = block.content.split('\n').filter(item => item.trim());
+              html += '<ul style="margin: 1rem 0; padding-left: 1.5rem;">';
+              items.forEach(item => {
+                html += `<li style="margin-bottom: 0.5rem;">${item.trim()}</li>`;
+              });
+              html += '</ul>';
+            }
+            break;
+          case 'link':
+            if (block.content && block.url) {
+              const emoji = block.emoji || '🔗';
+              html += `<p style="margin: 1rem 0;"><a href="${block.url}" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; gap: 0.5rem; background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); color: white; padding: 0.75rem 1.5rem; border-radius: 8px; text-decoration: none; font-weight: 500;"><span>${emoji}</span><span>${block.content}</span></a></p>`;
+            }
+            break;
+          case 'separator':
+            html += `<hr style="border: none; border-top: 2px solid rgba(255, 255, 255, 0.1); margin: 2rem 0;">`;
+            break;
+          case 'quote':
+            if (block.content) {
+              html += `<blockquote style="border-left: 4px solid #6366f1; padding-left: 1.5rem; margin: 1.5rem 0; font-style: italic; color: rgba(255, 255, 255, 0.8);">
+                <p style="margin: 0;">${block.content}</p>`;
+              if (block.author) {
+                html += `<footer style="margin-top: 0.5rem; font-size: 0.9rem; color: rgba(255, 255, 255, 0.6);">— ${block.author}</footer>`;
+              }
+              html += `</blockquote>`;
+            }
+            break;
+          case 'callout':
+            if (block.content) {
+              const calloutType = block.calloutType || 'info';
+              const styles = {
+                info: 'background: rgba(99, 102, 241, 0.1); border-left: 4px solid #6366f1;',
+                warning: 'background: rgba(245, 158, 11, 0.1); border-left: 4px solid #f59e0b;',
+                tip: 'background: rgba(34, 197, 94, 0.1); border-left: 4px solid #22c55e;',
+                danger: 'background: rgba(239, 68, 68, 0.1); border-left: 4px solid #ef4444;'
+              };
+              const icons = {
+                info: '💡',
+                warning: '⚠️',
+                tip: '✅',
+                danger: '🚨'
+              };
+              const style = styles[calloutType];
+              const icon = icons[calloutType];
+              const title = block.calloutTitle || calloutType.toUpperCase();
+              html += `<div style="${style} padding: 1rem 1.5rem; border-radius: 8px; margin: 1.5rem 0;">
+                <p style="margin: 0 0 0.5rem 0; font-weight: 600; display: flex; align-items: center; gap: 0.5rem;"><span>${icon}</span><span>${title}</span></p>
+                <p style="margin: 0; line-height: 1.6;">${block.content}</p>
+              </div>`;
+            }
+            break;
+        }
+      });
+      
+      previewContent.innerHTML = html;
+    }
+
     generateMarkdown();
     applyConfig();
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9bd51a8ad699f505',t:'MTc2ODMwOTUxMS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9bd59d0af0a7f505',t:'MTc2ODMxNDg1Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
