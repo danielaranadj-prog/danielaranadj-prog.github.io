@@ -45,6 +45,111 @@
             padding: 20px;
         }
 
+        /* --- ESTILOS DEL MENÚ HAMBURGUESA --- */
+        .hamburger-menu {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: #ffffff;
+            border: 2px solid #333;
+            border-radius: 8px;
+            padding: 10px;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .hamburger-icon {
+            width: 28px;
+            height: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .hamburger-icon span {
+            width: 100%;
+            height: 3px;
+            background: #333;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        /* Animación Icono X */
+        .hamburger-menu.active .hamburger-icon span:nth-child(1) {
+            transform: translateY(8.5px) rotate(45deg);
+        }
+        .hamburger-menu.active .hamburger-icon span:nth-child(2) {
+            opacity: 0;
+        }
+        .hamburger-menu.active .hamburger-icon span:nth-child(3) {
+            transform: translateY(-8.5px) rotate(-45deg);
+        }
+
+        /* Overlay y Backdrop */
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 280px;
+            height: 100%;
+            background: #ffffff;
+            box-shadow: -2px 0 10px rgba(0,0,0,0.2);
+            z-index: 999;
+            transition: right 0.3s ease;
+            padding: 80px 30px 30px;
+            text-align: left; /* Alineación para los links del menú */
+        }
+
+        .menu-overlay.active {
+            right: 0;
+        }
+
+        .menu-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 998;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .menu-backdrop.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .menu-items {
+            list-style: none;
+            padding: 0;
+        }
+
+        .menu-items li {
+            margin-bottom: 10px;
+        }
+
+        .menu-items a {
+            display: block;
+            padding: 15px 20px;
+            text-decoration: none;
+            color: #333;
+            font-size: 18px;
+            font-weight: 500;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .menu-items a:hover {
+            background: #f0f0f0;
+            color: #0066cc;
+        }
+
+        /* --- TUS ESTILOS ORIGINALES --- */
         .container {
             display: flex;
             flex-direction: column;
@@ -54,7 +159,6 @@
             max-width: 100%;
         }
 
-        /* LOGO GRANDE */
         .logo {
             width: 375px; 
             max-width: 85vw;
@@ -63,7 +167,6 @@
             transition: filter 0.3s ease;
         }
 
-        /* TÍTULO */
         h1 {
             font-size: 0.85rem;
             font-weight: 600;
@@ -72,7 +175,6 @@
             margin-bottom: 5px;
         }
 
-        /* BARRA DE NAVEGACIÓN */
         .nav-links {
             display: flex;
             flex-wrap: wrap;
@@ -83,35 +185,27 @@
             font-weight: 300;
         }
 
-        /* --- ESTILOS DE ANIMACIÓN --- */
-        
-        /* Clase base para todos los items (activos e inactivos) */
         .nav-item {
-            display: inline-block; /* Necesario para que funcione la transformación */
+            display: inline-block; 
             transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.2s ease, opacity 0.2s ease;
-            /* El cubic-bezier le da un efecto de "rebote" muy sutil y elegante */
         }
 
-        /* Efecto al pasar el cursor (Hover) para TODOS */
         .nav-item:hover {
-            transform: scale(1.15); /* Crece un 15% */
-            opacity: 1; /* Se vuelve totalmente visible */
+            transform: scale(1.15); 
+            opacity: 1; 
         }
 
-        /* Estilo específico para el enlace ACTIVO (Argentina) */
         a.nav-item.active {
             color: var(--text-color);
             text-decoration: none;
             cursor: pointer;
         }
 
-        /* Estilo específico para los INACTIVOS */
         span.nav-item.inactive {
             color: var(--inactive-color);
-            cursor: default; /* Mantiene el cursor normal para no confundir */
+            cursor: default; 
         }
 
-        /* Separadores ( | ) - Estos NO se animan */
         .separator {
             color: var(--separator-color);
             font-weight: 200;
@@ -126,6 +220,24 @@
 </head>
 <body>
 
+    <button class="hamburger-menu" id="hamburgerBtn" aria-label="Menú">
+        <div class="hamburger-icon">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </button>
+
+    <div class="menu-backdrop" id="menuBackdrop"></div>
+
+    <nav class="menu-overlay" id="menuOverlay">
+        <ul class="menu-items">
+            <li><a href="/"> <span class="menu-icon">🏠</span> Inicio </a></li>
+            <li><a href="/contacto"> <span class="menu-icon">✉️</span> Contacto </a></li>
+            <li><a href="https://www.instantetrips.com/tools/editor/" target="_blank" rel="noopener noreferrer"> <span class="menu-icon">✏️</span> Editocon </a></li>
+        </ul>
+    </nav>
+
     <div class="container">
         <img src="logo.svg" alt="Instantetrips" class="logo">
         
@@ -133,20 +245,35 @@
 
         <nav class="nav-links">
             <a href="destinos_argentina/" class="nav-item active">Argentina</a>
-            
             <span class="separator">|</span>
-            
             <span class="nav-item inactive">Colombia</span>
-            
             <span class="separator">|</span>
-            
             <span class="nav-item inactive">España</span>
-            
             <span class="separator">|</span>
-            
             <span class="nav-item inactive">México</span>
         </nav>
     </div>
 
+    <script>
+        const hamburgerBtn = document.getElementById('hamburgerBtn');
+        const menuOverlay = document.getElementById('menuOverlay');
+        const menuBackdrop = document.getElementById('menuBackdrop');
+
+        function toggleMenu() {
+            hamburgerBtn.classList.toggle('active');
+            menuOverlay.classList.toggle('active');
+            menuBackdrop.classList.toggle('active');
+        }
+
+        hamburgerBtn.addEventListener('click', toggleMenu);
+        menuBackdrop.addEventListener('click', toggleMenu);
+
+        // Cerrar menú con tecla Escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && menuOverlay.classList.contains('active')) {
+                toggleMenu();
+            }
+        });
+    </script>
 </body>
 </html>
