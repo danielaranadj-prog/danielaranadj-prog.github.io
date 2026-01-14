@@ -15,6 +15,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
     
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -47,6 +49,8 @@
             background-color: #f8fafc; 
             color: #334155;
             min-height: 100vh;
+            display: flex;
+            flex-direction: column;
             transition: background 0.3s ease, color 0.3s ease;
         }
 
@@ -108,14 +112,14 @@
 <body class="antialiased selection:bg-brand-100 selection:text-brand-700">
 
     <div id="mobile-menu" class="fixed inset-0 z-[100] bg-slate-900/95 backdrop-blur-sm transform translate-x-full transition-transform duration-300 md:hidden flex flex-col items-center justify-center gap-8">
-        <button id="close-menu" class="absolute top-6 right-6 text-white text-4xl opacity-80 hover:opacity-100">×</button>
+        <button id="close-menu" class="absolute top-6 right-6 text-white text-4xl opacity-80 hover:opacity-100"><i class="ph ph-x"></i></button>
         
         <div class="flex flex-col gap-6 text-center w-full px-10">
             <span class="text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Acciones</span>
-            <button onclick="togglePreviewMode(); closeMobMenu()" class="text-xl font-bold text-white hover:text-brand-500 transition">👁️ Vista Previa</button>
-            <button onclick="downloadMarkdown(); closeMobMenu()" class="text-xl font-bold text-white hover:text-brand-500 transition">📥 Descargar .md</button>
+            <button onclick="togglePreviewMode(); closeMobMenu()" class="text-xl font-bold text-white hover:text-brand-500 transition flex items-center justify-center gap-2"><i class="ph ph-eye"></i> Vista Previa</button>
+            <button onclick="downloadMarkdown(); closeMobMenu()" class="text-xl font-bold text-white hover:text-brand-500 transition flex items-center justify-center gap-2"><i class="ph ph-download-simple"></i> Descargar .md</button>
             <div class="h-px bg-slate-800 w-full my-2"></div>
-            <button onclick="logout(); closeMobMenu()" class="text-xl font-bold text-red-500 hover:text-red-400 transition">Salir del Editor</button>
+            <button onclick="logout(); closeMobMenu()" class="text-xl font-bold text-red-500 hover:text-red-400 transition flex items-center justify-center gap-2"><i class="ph ph-sign-out"></i> Salir del Editor</button>
         </div>
     </div>
 
@@ -129,10 +133,10 @@
                 </div>
                 
                 <h1 class="text-2xl font-bold font-display text-slate-900 dark:text-white mb-1 tracking-tight">
-                    Instante Trips Blog
+                    Instante Trips
                 </h1>
                 <p class="text-sm font-medium text-slate-500 dark:text-slate-400 uppercase tracking-widest">
-                    Zona de Editores
+                    Editor de Contenidos
                 </p>
             </div>
 
@@ -143,17 +147,11 @@
                 </div>
                 
                 <button type="submit" class="w-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-3.5 rounded-lg hover:opacity-90 transition-all shadow-lg shadow-slate-200 dark:shadow-none transform active:scale-[0.98]">
-                    Ingresar al Editor
+                    Ingresar
                 </button>
             </form>
             
             <p id="login-error" class="text-red-500 text-xs mt-4 font-medium hidden bg-red-50 dark:bg-red-900/20 p-2 rounded"></p>
-
-            <div class="mt-8 pt-6 border-t border-slate-100 dark:border-slate-800">
-                <a href="https://blog.instantetrips.com" class="text-xs font-semibold text-slate-400 hover:text-slate-800 dark:hover:text-white transition flex items-center justify-center gap-1">
-                    ← Volver al Sitio Web
-                </a>
-            </div>
         </div>
     </div>
 
@@ -162,20 +160,20 @@
         <header class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-md sticky top-0 z-50 border-b border-slate-200 dark:border-slate-800">
             <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-white dark:bg-slate-800 rounded-full flex items-center justify-center shadow-sm border border-slate-200 dark:border-slate-700 p-1.5">
+                    <div class="w-9 h-9 bg-white dark:bg-slate-800 rounded-full flex items-center justify-center shadow-sm border border-slate-200 dark:border-slate-700 p-1.5">
                         <img src="public/blog.svg" alt="Logo" class="w-full h-full object-contain">
                     </div>
                     <span class="font-bold font-display text-lg hidden md:block dark:text-white">Editor</span>
                 </div>
                 
                 <div class="flex items-center gap-4">
-                    <span id="welcome-msg" class="text-sm font-medium text-slate-500 dark:text-slate-400 hidden md:block"></span>
+                    <span id="welcome-msg" class="text-xs font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 hidden md:block"></span>
                     <div class="hidden md:flex gap-2">
-                        <button onclick="togglePreviewMode()" class="px-4 py-2 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition">👁️ Vista</button>
-                        <button onclick="downloadMarkdown()" class="px-4 py-2 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition">📥 Descargar</button>
-                        <button id="btn-logout" class="text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 px-3 py-2 rounded-lg text-xs font-bold transition">Salir</button>
+                        <button onclick="togglePreviewMode()" class="px-3 py-2 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition flex items-center gap-2"><i class="ph-bold ph-eye"></i> Vista</button>
+                        <button onclick="downloadMarkdown()" class="px-3 py-2 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition flex items-center gap-2"><i class="ph-bold ph-download-simple"></i> Descargar</button>
+                        <button id="btn-logout" class="text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 px-3 py-2 rounded-lg text-xs font-bold transition flex items-center gap-2"><i class="ph-bold ph-sign-out"></i> Salir</button>
                     </div>
-                    <button id="menu-btn" class="md:hidden text-2xl dark:text-white p-2">☰</button>
+                    <button id="menu-btn" class="md:hidden text-2xl dark:text-white p-2"><i class="ph ph-list"></i></button>
                 </div>
             </div>
         </header>
@@ -185,14 +183,14 @@
             <div class="flex flex-col gap-6 lg:col-span-7 fade-in">
                 
                 <div class="clean-card p-6">
-                    <h2 class="text-xs font-bold font-display uppercase tracking-widest text-brand-600 dark:text-brand-500 mb-5">DATA DEL POST</h2>
+                    <h2 class="text-xs font-bold font-display uppercase tracking-widest text-brand-600 dark:text-brand-500 mb-5 flex items-center gap-2"><i class="ph-fill ph-article"></i> Data del Post</h2>
                     <div class="space-y-5">
                         
                         <div>
                             <div class="flex justify-between items-end mb-1.5 ml-1">
                                 <label class="block text-xs font-semibold text-slate-500">TÍTULO</label>
-                                <button type="button" onclick="openAIModal()" class="text-[10px] font-bold text-purple-600 bg-purple-50 dark:bg-purple-900/30 dark:text-purple-300 px-2 py-1 rounded hover:bg-purple-100 transition flex items-center gap-1 shadow-sm border border-purple-100 dark:border-purple-800 animate-pulse">
-                                    <span>✨</span> Generar Ideas
+                                <button type="button" onclick="openAIModal()" class="text-[10px] font-bold text-purple-600 bg-purple-50 dark:bg-purple-900/30 dark:text-purple-300 px-2 py-1 rounded hover:bg-purple-100 transition flex items-center gap-1 shadow-sm border border-purple-100 dark:border-purple-800 group">
+                                    <i class="ph-bold ph-sparkle group-hover:animate-pulse"></i> Generar Ideas
                                 </button>
                             </div>
                             <input type="text" id="post-title" class="w-full p-3 rounded-lg input-blog font-display font-semibold text-lg" placeholder="Escribe un título atractivo..." oninput="updatePreview()">
@@ -223,7 +221,7 @@
                             <label class="block text-xs font-semibold text-slate-500 mb-1.5 ml-1">ETIQUETAS</label>
                             <div class="flex gap-2 mb-3">
                                 <input type="text" id="tag-input" placeholder="Añadir etiqueta..." class="flex-1 p-3 rounded-lg input-blog min-w-0">
-                                <button onclick="addTag()" class="bg-brand-600 hover:bg-brand-700 text-white px-4 rounded-lg font-bold transition shadow-sm flex-shrink-0">+</button>
+                                <button onclick="addTag()" class="bg-brand-600 hover:bg-brand-700 text-white px-3 rounded-lg font-bold transition shadow-sm flex-shrink-0 flex items-center"><i class="ph-bold ph-plus"></i></button>
                             </div>
                             <div id="tags-container" class="flex flex-wrap gap-2 min-h-[30px]"></div>
                         </div>
@@ -232,39 +230,39 @@
 
                 <div class="clean-card p-6 flex-1">
                     <div class="flex justify-between items-center mb-5">
-                        <h2 class="text-xs font-bold font-display uppercase tracking-widest text-brand-600 dark:text-brand-500">Contenido</h2>
-                        <button onclick="clearBlocks()" class="text-xs font-medium text-red-500 hover:text-red-600 flex items-center gap-1 transition">🗑️ Limpiar todo</button>
+                        <h2 class="text-xs font-bold font-display uppercase tracking-widest text-brand-600 dark:text-brand-500 flex items-center gap-2"><i class="ph-fill ph-text-align-left"></i> Contenido</h2>
+                        <button onclick="clearBlocks()" class="text-xs font-medium text-red-500 hover:text-red-600 flex items-center gap-1 transition"><i class="ph ph-trash"></i> Limpiar todo</button>
                     </div>
 
-                    <div class="flex flex-wrap gap-2 mb-6 p-1.5 bg-slate-100 dark:bg-slate-800 rounded-lg">
-                        <button onclick="addBlock('h2')" class="px-3 py-1.5 rounded bg-white dark:bg-slate-700 shadow-sm text-xs font-bold hover:text-brand-600 transition">Título</button>
-                        <button onclick="addBlock('h3')" class="px-3 py-1.5 rounded bg-white dark:bg-slate-700 shadow-sm text-xs font-bold hover:text-brand-600 transition">Subtitulo</button>
-                        <button onclick="addBlock('p')" class="px-3 py-1.5 rounded bg-white dark:bg-slate-700 shadow-sm text-xs font-medium hover:text-brand-600 transition flex items-center gap-1">¶ Texto</button>
-                        <button onclick="addBlock('img')" class="px-3 py-1.5 rounded bg-white dark:bg-slate-700 shadow-sm text-xs font-medium hover:text-brand-600 transition">🖼️ Foto</button>
-                        <button onclick="addBlock('yt')" class="px-3 py-1.5 rounded bg-white dark:bg-slate-700 shadow-sm text-xs font-medium hover:text-brand-600 transition">📺 Youtube</button>
-                        <button onclick="addBlock('list')" class="px-3 py-1.5 rounded bg-white dark:bg-slate-700 shadow-sm text-xs font-medium hover:text-brand-600 transition">≔ Lista</button>
-                        <button onclick="addBlock('ref')" class="px-3 py-1.5 rounded bg-white dark:bg-slate-700 shadow-sm text-xs font-medium hover:text-brand-600 transition">🔗 Referido</button>
+                    <div class="flex flex-wrap gap-2 mb-6 p-2 bg-slate-100 dark:bg-slate-800 rounded-xl">
+                        <button onclick="addBlock('h2')" class="px-3 py-1.5 rounded-lg bg-white dark:bg-slate-700 shadow-sm text-xs font-bold hover:text-brand-600 transition flex items-center gap-1"><i class="ph-bold ph-text-h-two"></i> Título</button>
+                        <button onclick="addBlock('h3')" class="px-3 py-1.5 rounded-lg bg-white dark:bg-slate-700 shadow-sm text-xs font-bold hover:text-brand-600 transition flex items-center gap-1"><i class="ph-bold ph-text-h-three"></i> Sub</button>
+                        <button onclick="addBlock('p')" class="px-3 py-1.5 rounded-lg bg-white dark:bg-slate-700 shadow-sm text-xs font-medium hover:text-brand-600 transition flex items-center gap-1"><i class="ph-bold ph-text-aa"></i> Texto</button>
+                        <button onclick="addBlock('img')" class="px-3 py-1.5 rounded-lg bg-white dark:bg-slate-700 shadow-sm text-xs font-medium hover:text-brand-600 transition flex items-center gap-1"><i class="ph-bold ph-image"></i> Foto</button>
+                        <button onclick="addBlock('yt')" class="px-3 py-1.5 rounded-lg bg-white dark:bg-slate-700 shadow-sm text-xs font-medium hover:text-brand-600 transition flex items-center gap-1"><i class="ph-bold ph-youtube-logo"></i> Video</button>
+                        <button onclick="addBlock('list')" class="px-3 py-1.5 rounded-lg bg-white dark:bg-slate-700 shadow-sm text-xs font-medium hover:text-brand-600 transition flex items-center gap-1"><i class="ph-bold ph-list-bullets"></i> Lista</button>
+                        <button onclick="addBlock('ref')" class="px-3 py-1.5 rounded-lg bg-white dark:bg-slate-700 shadow-sm text-xs font-medium text-emerald-600 hover:text-emerald-700 transition flex items-center gap-1"><i class="ph-bold ph-link"></i> Referido</button>
                     </div>
 
                     <div id="blocks-container" class="space-y-4 min-h-[200px]"></div>
                 </div>
 
                 <div class="clean-card p-6">
-                    <button id="btn-publish-one" onclick="publishCurrentPost()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 rounded-xl shadow-lg shadow-emerald-200 dark:shadow-none transition transform active:scale-[0.99] flex items-center justify-center gap-2 mb-6">
-                        📤 Publicar Artículo
+                    <button id="btn-publish-one" onclick="publishCurrentPost()" class="w-full bg-slate-900 hover:bg-slate-800 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-100 text-white font-bold py-4 rounded-xl shadow-lg transition transform active:scale-[0.99] flex items-center justify-center gap-2 mb-6">
+                        <i class="ph-bold ph-paper-plane-right"></i> Publicar Artículo
                     </button>
                     
                     <div class="border-t border-slate-100 dark:border-slate-800 pt-6">
-                        <h3 class="text-sm font-bold mb-3 text-slate-700 dark:text-slate-300">Carga Masiva de Archivos (.md)</h3>
+                        <h3 class="text-xs font-bold mb-3 text-slate-400 uppercase tracking-widest">Carga Masiva (.md)</h3>
                         <div class="border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-xl p-6 text-center hover:bg-slate-50 dark:hover:bg-slate-800/50 transition cursor-pointer relative group">
                             <input type="file" id="bulk-files" multiple accept=".md" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" onchange="handleBulkFiles(this)">
-                            <div class="pointer-events-none">
-                                <span class="text-3xl block mb-2 group-hover:scale-110 transition">📂</span>
-                                <p class="text-xs text-slate-500 font-medium">Arrastra archivos aquí o haz clic</p>
+                            <div class="pointer-events-none text-slate-400 group-hover:text-brand-500 transition">
+                                <i class="ph ph-folder-open text-3xl mb-2"></i>
+                                <p class="text-xs font-medium">Arrastra archivos aquí</p>
                             </div>
                         </div>
                         <div id="bulk-preview" class="mt-4 space-y-2"></div>
-                        <button id="btn-publish-bulk" onclick="publishBulk()" class="hidden w-full mt-4 bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 rounded-lg transition">🚀 Publicar Todos</button>
+                        <button id="btn-publish-bulk" onclick="publishBulk()" class="hidden w-full mt-4 bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 rounded-lg transition flex items-center justify-center gap-2"><i class="ph-bold ph-rocket"></i> Publicar Todos</button>
                     </div>
                 </div>
             </div>
@@ -272,9 +270,9 @@
             <div class="flex flex-col gap-6 lg:col-span-5 fade-in" style="animation-delay: 0.1s;">
                 <div class="clean-card flex-1 flex flex-col h-[600px] lg:h-auto lg:sticky lg:top-24 overflow-hidden">
                     <div class="p-4 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800 flex justify-between items-center">
-                        <span class="font-bold text-xs uppercase tracking-widest text-brand-600 dark:text-brand-500">Vista Previa</span>
-                        <div class="text-xs font-mono text-slate-400">
-                            <span id="word-count">0 words</span> • <span id="read-time">0 min</span>
+                        <span class="font-bold text-xs uppercase tracking-widest text-brand-600 dark:text-brand-500 flex items-center gap-2"><i class="ph-fill ph-device-mobile"></i> Preview</span>
+                        <div class="text-xs font-mono text-slate-400 flex items-center gap-2">
+                            <span id="word-count">0 words</span> <span class="text-slate-300">|</span> <span id="read-time">0 min</span>
                         </div>
                     </div>
                     
@@ -284,37 +282,43 @@
                 </div>
 
                 <div class="clean-card p-5">
-                    <button onclick="toggleHistory()" class="flex justify-between w-full text-left text-xs font-bold uppercase tracking-widest text-slate-500 hover:text-slate-800 dark:hover:text-white transition">
-                        <span>📜 Historial Reciente</span>
-                        <span id="hist-arrow">▼</span>
+                    <button onclick="toggleHistory()" class="flex justify-between items-center w-full text-left text-xs font-bold uppercase tracking-widest text-slate-500 hover:text-slate-800 dark:hover:text-white transition">
+                        <span class="flex items-center gap-2"><i class="ph-fill ph-clock-counter-clockwise"></i> Historial Reciente</span>
+                        <i class="ph-bold ph-caret-down" id="hist-arrow"></i>
                     </button>
                     <div id="history-content" class="hidden mt-4 space-y-3 max-h-60 overflow-y-auto custom-scrollbar"></div>
                 </div>
             </div>
         </main>
+
+        <footer class="mt-auto py-8 text-center border-t border-slate-200 dark:border-slate-800">
+            <p class="text-[10px] text-slate-400 font-medium uppercase tracking-widest">
+                Herramienta desarrollada por <span class="text-slate-600 dark:text-slate-300 font-bold">Instante Trips and Tips</span>
+            </p>
+            <p class="text-[9px] text-slate-300 dark:text-slate-600 mt-1">
+                Prohibida su reproducción o modificación parcial o completa.
+            </p>
+        </footer>
     </div>
 
     <div id="ai-modal" class="fixed inset-0 z-[100] bg-black/80 hidden flex items-center justify-center backdrop-blur-sm fade-in p-4">
         <div class="bg-white dark:bg-slate-900 w-full max-w-lg rounded-2xl border border-slate-200 dark:border-slate-700 shadow-2xl flex flex-col max-h-[85vh] relative overflow-hidden">
-            
             <div class="p-5 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900 flex justify-between items-center">
                 <h3 class="font-bold font-display dark:text-white flex items-center gap-2">
-                    <span class="text-xl">🤖</span> Asistente Creativo
+                    <i class="ph-duotone ph-robot text-2xl text-purple-500"></i> Asistente Creativo
                 </h3>
-                <button onclick="document.getElementById('ai-modal').classList.add('hidden')" class="text-slate-400 hover:text-red-500 text-2xl leading-none">&times;</button>
+                <button onclick="document.getElementById('ai-modal').classList.add('hidden')" class="text-slate-400 hover:text-red-500 text-2xl leading-none"><i class="ph ph-x"></i></button>
             </div>
-
             <div class="p-5 overflow-y-auto custom-scrollbar flex-1">
                 <div class="flex gap-2 mb-6">
                     <input id="ai-topic" type="text" placeholder="Ej: Qué hacer en Buenos Aires..." class="flex-1 p-3 rounded-lg input-blog text-sm" onkeypress="if(event.key === 'Enter') generateIdeas()">
-                    <button onclick="generateIdeas()" id="btn-ai-gen" class="bg-purple-600 hover:bg-purple-700 text-white px-5 rounded-lg font-bold text-sm transition shadow-lg shadow-purple-200 dark:shadow-none">
-                        Generar
+                    <button onclick="generateIdeas()" id="btn-ai-gen" class="bg-purple-600 hover:bg-purple-700 text-white px-5 rounded-lg font-bold text-sm transition shadow-lg shadow-purple-200 dark:shadow-none flex items-center gap-2">
+                        <i class="ph-bold ph-sparkle"></i> Generar
                     </button>
                 </div>
-                
                 <div id="ai-results" class="space-y-3 min-h-[100px]">
-                    <div class="text-center mt-8 opacity-50">
-                        <p class="text-4xl mb-2">💡</p>
+                    <div class="text-center mt-12 opacity-40">
+                        <i class="ph-duotone ph-lightbulb text-4xl mb-2 text-slate-400"></i>
                         <p class="text-xs text-slate-500">Escribe un tema y deja que la IA<br>te de estructura y textos.</p>
                     </div>
                 </div>
@@ -343,7 +347,7 @@
         const db = getFirestore(app);
         
         let githubConfig = null;
-        let geminiApiKey = null; // VARIABLE AI AÑADIDA
+        let geminiApiKey = null; 
         let blocks = [];
         let tags = [];
         let bulkFilesData = [];
@@ -355,7 +359,6 @@
             const password = document.getElementById('password').value;
             const btn = loginForm.querySelector('button');
             const originalText = btn.innerText;
-            
             btn.innerText = "Verificando...";
             btn.disabled = true;
 
@@ -378,7 +381,7 @@
                 document.getElementById('login-section').classList.add('hidden');
                 document.getElementById('app-section').classList.remove('hidden');
                 const name = user.email.split('@')[0];
-                document.getElementById('welcome-msg').textContent = `Editor: ${name}`;
+                document.getElementById('welcome-msg').textContent = `EDITOR: ${name}`;
                 document.getElementById('post-author').value = name;
                 document.getElementById('post-date').valueAsDate = new Date();
                 
@@ -386,14 +389,8 @@
                 const docSnap = await getDoc(docRef);
                 if (docSnap.exists()) {
                     githubConfig = docSnap.data();
-
-                    // --- CARGAR TOKEN GEMINI ---
-                    if (githubConfig.geminiToken) {
-                        geminiApiKey = githubConfig.geminiToken;
-                    }
-                    // ---------------------------
-
-                    showToast("Conectado a GitHub ✅");
+                    if (githubConfig.geminiToken) geminiApiKey = githubConfig.geminiToken;
+                    showToast("Conexión Establecida ✅");
                     loadHistory();
                 } else {
                     showToast("Falta configuración en Firestore ❌", "error");
@@ -407,43 +404,26 @@
         const tagInput = document.getElementById('tag-input');
         const tagsContainer = document.getElementById('tags-container');
 
-        tagInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') { e.preventDefault(); addTag(); }
-        });
+        tagInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') { e.preventDefault(); addTag(); } });
 
         window.addTag = () => {
             const val = tagInput.value.trim();
-            if (val && !tags.includes(val)) {
-                tags.push(val);
-                tagInput.value = '';
-                renderTags(); updatePreview();
-            }
+            if (val && !tags.includes(val)) { tags.push(val); tagInput.value = ''; renderTags(); updatePreview(); }
         };
 
-        window.removeTag = (tag) => {
-            tags = tags.filter(t => t !== tag);
-            renderTags(); updatePreview();
-        };
+        window.removeTag = (tag) => { tags = tags.filter(t => t !== tag); renderTags(); updatePreview(); };
 
         function renderTags() {
             tagsContainer.innerHTML = tags.map(t => `
-                <div class="inline-flex items-center gap-1 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 px-3 py-1 rounded-full text-xs font-bold border border-blue-100 dark:border-blue-800 animate-[fadeIn_0.3s]">
+                <div class="inline-flex items-center gap-1 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 px-3 py-1 rounded-full text-xs font-bold border border-slate-200 dark:border-slate-700 animate-[fadeIn_0.3s]">
                     <span>#${t}</span>
-                    <button onclick="removeTag('${t}')" class="hover:text-red-500 ml-1">×</button>
+                    <button onclick="removeTag('${t}')" class="hover:text-red-500 ml-1"><i class="ph-bold ph-x"></i></button>
                 </div>
             `).join('');
         }
 
-        window.addBlock = (type) => {
-            blocks.push({ id: Date.now().toString(), type, content: '' });
-            renderBlocks(); updatePreview();
-        };
-
-        window.removeBlock = (id) => {
-            blocks = blocks.filter(b => b.id !== id);
-            renderBlocks(); updatePreview();
-        };
-
+        window.addBlock = (type) => { blocks.push({ id: Date.now().toString(), type, content: '' }); renderBlocks(); updatePreview(); };
+        window.removeBlock = (id) => { blocks = blocks.filter(b => b.id !== id); renderBlocks(); updatePreview(); };
         window.moveBlock = (id, dir) => {
             const idx = blocks.findIndex(b => b.id === id);
             if ((dir === -1 && idx > 0) || (dir === 1 && idx < blocks.length - 1)) {
@@ -453,60 +433,71 @@
             }
         };
 
-        window.updateBlockContent = (id, value) => {
-            const b = blocks.find(b => b.id === id);
-            if(b) b.content = value;
-            updatePreview();
-        };
-
-        window.clearBlocks = () => { if(confirm("¿Borrar todo el contenido?")) { blocks = []; renderBlocks(); updatePreview(); }};
+        window.updateBlockContent = (id, value) => { const b = blocks.find(b => b.id === id); if(b) b.content = value; updatePreview(); };
+        window.updateRefBlock = (id, text, link) => { const b = blocks.find(b => b.id === id); if(b) b.content = `${text}|${link}`; updatePreview(); };
+        window.clearBlocks = () => { if(confirm("¿Borrar todo?")) { blocks = []; renderBlocks(); updatePreview(); }};
 
         function renderBlocks() {
             const container = document.getElementById('blocks-container');
             container.innerHTML = '';
             blocks.forEach((b) => {
                 const el = document.createElement('div');
-                el.className = 'bg-white dark:bg-slate-800 p-4 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm flex gap-3 items-start group animate-[fadeIn_0.3s]';
+                el.className = 'bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex gap-3 items-start group animate-[fadeIn_0.3s] hover:border-brand-200 transition relative';
                 
-                let ph = 'Escribe aquí...';
-                if(b.type === 'h2') ph = 'Título de sección...';
-                if(b.type === 'img') ph = 'URL de la imagen | Descripción';
-                if(b.type === 'yt') ph = 'Enlace de YouTube';
-
-                let inputHtml = '';
-                const typeLabel = b.type === 'img' ? 'IMAGEN' : b.type.toUpperCase();
+                let innerHtml = '';
+                const typeLabel = b.type === 'img' ? 'IMG' : b.type.toUpperCase();
 
                 if (b.type === 'p' || b.type === 'list') {
-                    inputHtml = `<textarea class="w-full bg-transparent border-none outline-none text-slate-700 dark:text-slate-200 resize-none h-auto text-sm font-sans" rows="3" placeholder="${ph}" oninput="updateBlockContent('${b.id}', this.value)">${b.content}</textarea>`;
-                
+                    innerHtml = `<textarea class="w-full bg-transparent border-none outline-none text-slate-700 dark:text-slate-200 resize-none h-auto text-sm font-sans leading-relaxed" rows="3" placeholder="Escribe aquí..." oninput="updateBlockContent('${b.id}', this.value)">${b.content}</textarea>`;
+                } else if (b.type === 'h2' || b.type === 'h3') {
+                    const style = b.type === 'h2' ? 'text-lg font-bold text-slate-800 dark:text-white' : 'text-base font-semibold text-slate-700 dark:text-slate-200';
+                    innerHtml = `<input type="text" class="w-full bg-transparent border-none outline-none ${style}" placeholder="${b.type.toUpperCase()}..." value="${b.content}" oninput="updateBlockContent('${b.id}', this.value)">`;
                 } else if (b.type === 'img') {
-                    inputHtml = `
-                    <div class="flex flex-col gap-2 w-full">
+                    innerHtml = `
+                    <div class="flex flex-col gap-3 w-full">
                         <div class="flex gap-2 items-center w-full">
-                            <input type="text" id="input-${b.id}" class="flex-1 bg-transparent border-none outline-none text-slate-700 dark:text-slate-200 font-medium text-sm" placeholder="Pega URL o sube imagen ->" value="${b.content}" oninput="updateBlockContent('${b.id}', this.value)">
-                            
-                            <label class="cursor-pointer bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 hover:bg-blue-100 px-3 py-1.5 rounded-lg transition flex items-center gap-2 text-xs font-bold border border-blue-200 dark:border-blue-800" title="Subir a Repo">
-                                <span>📤 Subir</span>
+                            <input type="text" id="input-${b.id}" class="flex-1 bg-slate-50 dark:bg-slate-900/50 p-2 rounded-lg border border-slate-100 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-xs font-mono" placeholder="URL imagen..." value="${b.content}" oninput="updateBlockContent('${b.id}', this.value)">
+                            <label class="cursor-pointer bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 p-2 rounded-lg transition text-slate-500" title="Subir">
+                                <i class="ph-bold ph-upload-simple"></i>
                                 <input type="file" class="hidden" accept="image/*" onchange="uploadImageToRepo('${b.id}', this)">
                             </label>
                         </div>
-                        ${b.content ? `<div class="relative w-fit group"><img src="${b.content.split('|')[0].trim()}" class="h-24 rounded-lg object-cover border border-slate-200 shadow-sm bg-slate-50"></div>` : ''}
+                        ${b.content ? `<div class="relative w-full h-32 bg-slate-100 dark:bg-slate-900 rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700"><img src="${b.content.split('|')[0].trim()}" class="w-full h-full object-cover"></div>` : ''}
                     </div>`;
-                
+                } else if (b.type === 'ref') {
+                    const parts = b.content.split('|');
+                    innerHtml = `
+                    <div class="w-full p-3 bg-emerald-50 dark:bg-emerald-900/10 rounded-lg border border-emerald-100 dark:border-emerald-900/30">
+                        <div class="flex justify-between mb-2">
+                            <span class="text-[10px] font-bold text-emerald-600 uppercase tracking-wider flex items-center gap-1"><i class="ph-bold ph-link"></i> Afiliado</span>
+                            <span class="bg-emerald-600 text-white px-2 py-0.5 rounded text-[10px] font-bold">${parts[0] || 'Botón'}</span>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                            <input type="text" class="bg-white dark:bg-slate-900 p-2 rounded border border-emerald-200 dark:border-emerald-800 text-xs" placeholder="Texto (ej: Ver Precios)" value="${parts[0]||''}" oninput="updateRefBlock('${b.id}', this.value, '${parts[1]||''}')">
+                            <input type="text" class="bg-white dark:bg-slate-900 p-2 rounded border border-emerald-200 dark:border-emerald-800 text-xs font-mono text-slate-500" placeholder="https://..." value="${parts[1]||''}" oninput="updateRefBlock('${b.id}', '${parts[0]||''}', this.value)">
+                        </div>
+                    </div>`;
+                } else if (b.type === 'yt') {
+                    const videoId = b.content.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([^&?]+)/)?.[1];
+                    innerHtml = `
+                    <div class="w-full">
+                        <input type="text" class="w-full bg-slate-50 dark:bg-slate-900/50 p-2 rounded border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-xs font-mono mb-2" placeholder="YouTube URL..." value="${b.content}" oninput="updateBlockContent('${b.id}', this.value)">
+                        ${videoId ? `<div class="aspect-video w-full rounded-lg overflow-hidden bg-black"><iframe width="100%" height="100%" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe></div>` : ''}
+                    </div>`;
                 } else {
-                    inputHtml = `<input type="text" class="w-full bg-transparent border-none outline-none text-slate-700 dark:text-slate-200 font-medium text-sm" placeholder="${ph}" value="${b.content}" oninput="updateBlockContent('${b.id}', this.value)">`;
+                    innerHtml = `<input type="text" class="w-full bg-transparent border-none outline-none text-slate-700 dark:text-slate-200 font-medium text-sm" placeholder="..." value="${b.content}" oninput="updateBlockContent('${b.id}', this.value)">`;
                 }
 
                 el.innerHTML = `
-                <div class="flex flex-col items-center gap-1 pt-1">
-                    <span class="text-[10px] font-bold text-slate-400 select-none">${typeLabel}</span>
+                <div class="flex flex-col items-center gap-1 pt-1 min-w-[24px]">
+                    <span class="text-[9px] font-bold text-slate-300 dark:text-slate-600 select-none uppercase writing-mode-vertical">${typeLabel}</span>
                     <div class="flex flex-col opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button onclick="moveBlock('${b.id}',-1)" class="text-slate-400 hover:text-blue-500">▲</button>
-                        <button onclick="removeBlock('${b.id}')" class="text-slate-400 hover:text-red-500">✖</button>
-                        <button onclick="moveBlock('${b.id}',1)" class="text-slate-400 hover:text-blue-500">▼</button>
+                        <button onclick="moveBlock('${b.id}',-1)" class="text-slate-400 hover:text-brand-500 p-1"><i class="ph-bold ph-caret-up"></i></button>
+                        <button onclick="removeBlock('${b.id}')" class="text-slate-400 hover:text-red-500 p-1"><i class="ph-bold ph-trash"></i></button>
+                        <button onclick="moveBlock('${b.id}',1)" class="text-slate-400 hover:text-brand-500 p-1"><i class="ph-bold ph-caret-down"></i></button>
                     </div>
                 </div>
-                ${inputHtml}`;
+                <div class="flex-1 min-w-0">${innerHtml}</div>`;
                 container.appendChild(el);
             });
         }
@@ -538,9 +529,8 @@
             const md = generateMarkdown();
             document.getElementById('preview-md').textContent = md;
             document.getElementById('preview-html').innerHTML = marked.parse(md);
-            
             const words = md.split(/\s+/).filter(w => w.length).length;
-            document.getElementById('word-count').textContent = `${words} palabras`;
+            document.getElementById('word-count').textContent = `${words} words`;
             document.getElementById('read-time').textContent = `${Math.ceil(words/200)} min`;
         };
         
@@ -577,76 +567,52 @@
         window.uploadImageToRepo = async (blockId, fileInput) => {
             const file = fileInput.files[0];
             if (!file) return;
-
             const textInput = document.getElementById(`input-${blockId}`);
             const originalValue = textInput.value;
-            textInput.value = "⏳ Subiendo imagen...";
+            textInput.value = "⏳ Subiendo...";
             textInput.disabled = true;
 
             try {
-                if (!githubConfig) throw new Error("No hay configuración de GitHub cargada");
-
+                if (!githubConfig) throw new Error("GitHub no conectado");
                 const base64Raw = await toBase64(file);
                 const content = base64Raw.split(',')[1]; 
-
                 const cleanName = file.name.replace(/[^a-zA-Z0-9.]/g, '-').toLowerCase();
                 const filename = `${Date.now()}-${cleanName}`;
                 const path = `public/uploads/${filename}`; 
 
-                await ghFetch(`/contents/${path}`, 'PUT', {
-                    message: `Media: Upload ${filename}`,
-                    content: content,
-                    branch: githubConfig.branch
-                });
-
-                const astroPath = `/uploads/${filename}`;
-                const finalString = `${astroPath} | ${cleanName.split('.')[0]}`;
-
-                updateBlockContent(blockId, finalString);
+                await ghFetch(`/contents/${path}`, 'PUT', { message: `Media: ${filename}`, content: content, branch: githubConfig.branch });
+                updateBlockContent(blockId, `/uploads/${filename} | ${cleanName.split('.')[0]}`);
                 showToast("¡Imagen subida! 🖼️");
-
             } catch (error) {
                 console.error(error);
-                showToast("Error al subir: " + error.message, "error");
+                showToast("Error: " + error.message, "error");
                 textInput.value = originalValue;
             } finally {
                 textInput.disabled = false;
-                renderBlocks();
-                updatePreview();
+                renderBlocks(); updatePreview();
             }
         };
 
         window.publishCurrentPost = async () => {
             const btn = document.getElementById('btn-publish-one');
-            if(!document.getElementById('post-title').value) return showToast("Falta el Título", "error");
-            
-            btn.disabled = true; btn.innerText = "Publicando...";
+            if(!document.getElementById('post-title').value) return showToast("Falta Título", "error");
+            btn.disabled = true; btn.innerHTML = "<i class='ph-bold ph-spinner animate-spin'></i> Enviando...";
             try {
                 const md = generateMarkdown();
                 const slug = document.getElementById('post-title').value.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g, '');
                 const filename = `${document.getElementById('post-date').value}-${slug}.md`;
                 const path = `${githubConfig.postsPath}${filename}`;
-                
-                await ghFetch(`/contents/${path}`, 'PUT', { 
-                    message: `Post: ${filename} (Editor)`, 
-                    content: btoa(unescape(encodeURIComponent(md))), 
-                    branch: githubConfig.branch 
-                });
-                
-                showToast("¡Publicado con éxito! 🚀"); 
-                loadHistory();
+                await ghFetch(`/contents/${path}`, 'PUT', { message: `Post: ${filename}`, content: btoa(unescape(encodeURIComponent(md))), branch: githubConfig.branch });
+                showToast("¡Publicado! 🚀"); loadHistory();
             } catch(e) { showToast(e.message, "error"); }
-            btn.disabled = false; btn.innerText = "📤 Publicar Artículo";
+            btn.disabled = false; btn.innerHTML = "<i class='ph-bold ph-paper-plane-right'></i> Publicar Artículo";
         };
 
         window.handleBulkFiles = (input) => {
             const files = Array.from(input.files);
             const previewDiv = document.getElementById('bulk-preview');
             const btn = document.getElementById('btn-publish-bulk');
-            
-            previewDiv.innerHTML = '';
-            bulkFilesData = [];
-            
+            previewDiv.innerHTML = ''; bulkFilesData = [];
             if(files.length === 0) { btn.classList.add('hidden'); return; }
 
             files.forEach(file => {
@@ -654,14 +620,8 @@
                 reader.onload = (e) => {
                     const content = e.target.result;
                     const isValid = content.startsWith('---');
-                    
                     bulkFilesData.push({ path: `${githubConfig.postsPath}${file.name}`, content: content });
-
-                    const el = document.createElement('div');
-                    el.className = `p-2 rounded text-xs flex justify-between items-center ${isValid ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`;
-                    el.innerHTML = `<span>${file.name}</span><span>${isValid ? '✓' : '⚠'}</span>`;
-                    previewDiv.appendChild(el);
-
+                    previewDiv.innerHTML += `<div class="p-2 rounded text-xs flex justify-between items-center ${isValid ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}"><span>${file.name}</span><span>${isValid ? '✓' : '⚠'}</span></div>`;
                     btn.classList.remove('hidden');
                 };
                 reader.readAsText(file);
@@ -672,35 +632,25 @@
             if(!confirm(`¿Publicar ${bulkFilesData.length} archivos?`)) return;
             const btn = document.getElementById('btn-publish-bulk');
             btn.disabled = true; btn.innerText = "Procesando...";
-
             try {
                 const ref = await ghFetch(`/git/refs/heads/${githubConfig.branch}`);
                 const latestCommitSha = ref.object.sha;
-
                 const treeItems = [];
                 for (const file of bulkFilesData) {
                     const blob = await ghFetch(`/git/blobs`, 'POST', { content: file.content, encoding: 'utf-8' });
                     treeItems.push({ path: file.path, mode: '100644', type: 'blob', sha: blob.sha });
                 }
-
                 const tree = await ghFetch(`/git/trees`, 'POST', { base_tree: latestCommitSha, tree: treeItems });
-                const newCommit = await ghFetch(`/git/commits`, 'POST', { message: `Bulk upload (${bulkFilesData.length})`, tree: tree.sha, parents: [latestCommitSha] });
+                const newCommit = await ghFetch(`/git/commits`, 'POST', { message: `Bulk (${bulkFilesData.length})`, tree: tree.sha, parents: [latestCommitSha] });
                 await ghFetch(`/git/refs/heads/${githubConfig.branch}`, 'PATCH', { sha: newCommit.sha });
-
-                showToast("¡Subida masiva completada! 🚀");
-                bulkFilesData = [];
-                document.getElementById('bulk-preview').innerHTML = '';
-                btn.classList.add('hidden');
-                loadHistory();
-
-            } catch (error) { showToast("Error en subida masiva", "error"); } 
-            finally { btn.disabled = false; btn.innerText = "🚀 Publicar Todos"; }
+                showToast("¡Masiva completada! 🚀"); bulkFilesData = []; document.getElementById('bulk-preview').innerHTML = ''; btn.classList.add('hidden'); loadHistory();
+            } catch (error) { showToast("Error masivo", "error"); } finally { btn.disabled = false; btn.innerText = "🚀 Publicar Todos"; }
         };
 
         window.showToast = (msg, type='success') => {
             const el = document.createElement('div');
-            el.className = `${type==='success'?'bg-emerald-600':'bg-red-500'} text-white px-4 py-3 rounded-lg shadow-lg text-sm font-bold flex items-center gap-2 animate-[fadeIn_0.3s]`;
-            el.innerHTML = `<span>${type==='success'?'✓':'⚠'}</span> ${msg}`;
+            el.className = `${type==='success'?'bg-slate-900':'bg-red-500'} text-white px-4 py-3 rounded-lg shadow-lg text-sm font-bold flex items-center gap-2 animate-[fadeIn_0.3s]`;
+            el.innerHTML = `<span>${type==='success'?'<i class="ph-bold ph-check"></i>':'<i class="ph-bold ph-warning"></i>'}</span> ${msg}`;
             document.getElementById('toast-container').appendChild(el);
             setTimeout(() => el.remove(), 4000);
         };
@@ -715,62 +665,46 @@
         }
         
         window.toggleHistory = () => { const h = document.getElementById('history-content'); h.classList.toggle('hidden'); };
-        
-        // CORRECCIÓN DEL MENÚ MÓVIL
         const mm = document.getElementById('mobile-menu');
         document.getElementById('menu-btn').addEventListener('click', () => mm.classList.remove('translate-x-full'));
         document.getElementById('close-menu').addEventListener('click', () => mm.classList.add('translate-x-full'));
         window.closeMobMenu = () => mm.classList.add('translate-x-full');
 
-        // --- LÓGICA DE AI ---
+        // AI LOGIC
         window.openAIModal = () => {
-            if(!geminiApiKey) return showToast("⚠️ Error: Falta configurar 'geminiToken' en Firebase", "error");
-            document.getElementById('ai-modal').classList.remove('hidden');
-            document.getElementById('ai-topic').focus();
+            if(!geminiApiKey) return showToast("Falta configuración AI en Firebase", "error");
+            document.getElementById('ai-modal').classList.remove('hidden'); document.getElementById('ai-topic').focus();
         };
 
         window.generateIdeas = async () => {
             const topic = document.getElementById('ai-topic').value.trim();
             if(!topic) return;
-
             const btn = document.getElementById('btn-ai-gen');
             const container = document.getElementById('ai-results');
-            
-            btn.disabled = true; btn.innerText = "Pensando...";
-            container.innerHTML = '<div class="flex flex-col items-center justify-center py-10 animate-pulse"><div class="text-purple-500 text-lg font-bold">Generando...</div></div>';
+            btn.disabled = true; btn.innerHTML = "<i class='ph-bold ph-spinner animate-spin'></i>";
+            container.innerHTML = '<div class="flex flex-col items-center justify-center py-10 animate-pulse"><div class="text-purple-500 font-bold">Generando...</div></div>';
 
             try {
-                const prompt = `Actúa como experto SEO de viajes. Genera 3 ideas sobre: "${topic}". Responde SOLO JSON array válido: [{"title": "Título H1", "desc": "Meta descripción"}]. Sin markdown.`;
-
+                const prompt = `Actúa como experto SEO. 3 ideas sobre: "${topic}". JSON Array: [{"title": "H1", "desc": "Meta Description"}]. Sin markdown.`;
                 const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`, {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
                 });
-
                 const data = await response.json();
                 let rawText = data.candidates[0].content.parts[0].text.replace(/```json/g, '').replace(/```/g, '').trim();
                 const ideas = JSON.parse(rawText);
 
                 container.innerHTML = ideas.map((idea, i) => `
                     <div class="bg-slate-50 dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 mb-3 animate-[fadeIn_0.3s]">
-                        <div class="mb-3">
-                            <h4 class="font-bold text-sm text-slate-800 dark:text-white mb-1">${idea.title}</h4>
-                            <p class="text-xs text-slate-500 dark:text-slate-400 p-2 bg-white dark:bg-slate-900 rounded border border-slate-100 dark:border-slate-800">${idea.desc}</p>
-                        </div>
+                        <div class="mb-3"><h4 class="font-bold text-sm text-slate-800 dark:text-white mb-1">${idea.title}</h4><p class="text-xs text-slate-500 dark:text-slate-400 p-2 bg-white dark:bg-slate-900 rounded border border-slate-100 dark:border-slate-800">${idea.desc}</p></div>
                         <div class="grid grid-cols-2 gap-2">
-                            <button onclick="applyAITitle('${i}')" class="bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-300 hover:text-purple-600 py-2 rounded-lg text-[10px] font-bold transition">👆 Usar Título</button>
-                            <button onclick="insertAIContent('${i}')" class="bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 hover:bg-purple-200 py-2 rounded-lg text-[10px] font-bold transition">⬇️ Insertar Texto</button>
+                            <button onclick="applyAITitle('${i}')" class="bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-300 hover:text-purple-600 py-2 rounded-lg text-[10px] font-bold transition">👆 Título</button>
+                            <button onclick="insertAIContent('${i}')" class="bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 hover:bg-purple-200 py-2 rounded-lg text-[10px] font-bold transition">⬇️ Texto</button>
                         </div>
-                        <input type="hidden" id="ai-title-${i}" value="${idea.title}">
-                        <input type="hidden" id="ai-desc-${i}" value="${idea.desc}">
+                        <input type="hidden" id="ai-title-${i}" value="${idea.title}"><input type="hidden" id="ai-desc-${i}" value="${idea.desc}">
                     </div>
                 `).join('');
-
-            } catch (e) {
-                container.innerHTML = `<div class="p-4 bg-red-50 text-red-500 rounded text-xs text-center">Error: ${e.message}</div>`;
-            } finally {
-                btn.disabled = false; btn.innerText = "Generar";
-            }
+            } catch (e) { container.innerHTML = `<div class="p-4 text-red-500 text-xs text-center">Error: ${e.message}</div>`; } finally { btn.disabled = false; btn.innerHTML = "<i class='ph-bold ph-sparkle'></i> Generar"; }
         };
 
         window.applyAITitle = (i) => {
