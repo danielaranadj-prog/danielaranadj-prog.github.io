@@ -7,7 +7,7 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -16,10 +16,19 @@
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['Space Grotesk', 'sans-serif'],
-                        mono: ['JetBrains Mono', 'monospace'],
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Space Grotesk', 'sans-serif'],
+                        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'monospace'],
                     },
-                    colors: {}
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6', // Azul Instante Trips
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                        }
+                    }
                 }
             }
         }
@@ -28,263 +37,242 @@
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
     <style>
-        /* ESTILOS BASE */
+        /* ESTÉTICA GENERAL DEL BLOG */
         body {
-            background: radial-gradient(circle at 50% 0%, #f8fafc 0%, #e2e8f0 100%);
-            color: #1e293b;
+            background-color: #f8fafc; /* Fondo gris muy suave */
+            color: #334155;
             min-height: 100vh;
             transition: background 0.3s ease, color 0.3s ease;
         }
-        
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.75);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(0, 0, 0, 0.08);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-        }
 
-        .input-adaptive {
-            background: rgba(255, 255, 255, 0.6);
-            border: 1px solid rgba(0, 0, 0, 0.1);
-            color: #0f172a;
-        }
-        .input-adaptive:focus {
-            border-color: #3b82f6;
+        /* Tarjetas "Papel" Minimalistas */
+        .clean-card {
             background: white;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            border-radius: 1rem; /* Bordes redondeados modernos */
         }
 
-        /* MODO OSCURO */
+        /* Inputs Estilizados */
+        .input-blog {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            color: #1e293b;
+            transition: all 0.2s;
+            font-size: 0.95rem;
+        }
+        .input-blog:focus {
+            background: white;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+            outline: none;
+        }
+
+        /* MODO OSCURO AUTOMÁTICO */
         @media (prefers-color-scheme: dark) {
-            body {
-                background: radial-gradient(circle at 50% 0%, #1e293b 0%, #020617 100%);
+            body { background-color: #0f172a; color: #cbd5e1; }
+            .clean-card {
+                background: #1e293b;
+                border-color: #334155;
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+            }
+            .input-blog {
+                background: #0f172a;
+                border-color: #334155;
                 color: #e2e8f0;
             }
-            .glass-panel {
-                background: rgba(15, 23, 42, 0.6);
-                border: 1px solid rgba(255, 255, 255, 0.08);
-                box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
-            }
-            .input-adaptive {
-                background: rgba(15, 23, 42, 0.5);
-                border: 1px solid rgba(255, 255, 255, 0.1);
-                color: white;
-            }
-            .input-adaptive:focus {
-                background: rgba(15, 23, 42, 0.8);
-            }
-            .logo-adaptive {
-                filter: brightness(0) invert(1);
-            }
+            .input-blog:focus { background: #1e293b; border-color: #60a5fa; }
+            .logo-adaptive { filter: brightness(0) invert(1); }
         }
-        
         @media (prefers-color-scheme: light) {
-            .logo-adaptive {
-                filter: brightness(0);
-            }
+            .logo-adaptive { filter: brightness(0); }
         }
 
-        /* Tag Chips */
-        .tag-chip {
-            background: rgba(59, 130, 246, 0.1);
-            border: 1px solid rgba(59, 130, 246, 0.3);
-            padding: 4px 12px;
-            border-radius: 20px;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 13px;
-            color: #2563eb;
-        }
-        @media (prefers-color-scheme: dark) {
-            .tag-chip {
-                background: rgba(59, 130, 246, 0.2);
-                border: 1px solid rgba(59, 130, 246, 0.4);
-                color: #bfdbfe;
-            }
-        }
-        
-        /* Preview & Utils */
-        .preview-content h2 { font-size: 1.5rem; font-weight: 700; margin-top: 1.5em; }
-        .preview-content h3 { font-size: 1.25rem; font-weight: 600; margin-top: 1.2em; }
-        .preview-content p { margin-bottom: 1em; line-height: 1.6; }
-        .preview-content img { max-width: 100%; border-radius: 8px; margin: 1em 0; }
-        .preview-content ul { list-style-type: disc; padding-left: 1.5em; margin-bottom: 1em; }
-        .preview-content a { color: #3b82f6; text-decoration: underline; }
+        /* VISTA PREVIA DE MARKDOWN */
+        .preview-content h2 { font-family: 'Space Grotesk', sans-serif; font-size: 1.5rem; font-weight: 700; color: #1e293b; margin-top: 1.5em; letter-spacing: -0.02em; }
+        .preview-content h3 { font-family: 'Space Grotesk', sans-serif; font-size: 1.25rem; font-weight: 600; color: #334155; margin-top: 1.2em; }
+        .preview-content p { margin-bottom: 1em; line-height: 1.7; color: #475569; }
+        .preview-content img { border-radius: 8px; margin: 1.5em 0; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .preview-content a { color: #2563eb; text-decoration: underline; text-underline-offset: 2px; }
         
         @media (prefers-color-scheme: dark) {
             .preview-content h2 { color: #f8fafc; }
-            .preview-content h3 { color: #f1f5f9; }
-            .preview-content p { color: #cbd5e1; }
+            .preview-content h3 { color: #cbd5e1; }
+            .preview-content p { color: #94a3b8; }
+            .preview-content a { color: #60a5fa; }
         }
-        
-        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-        .toast-enter { animation: slideIn 0.3s ease forwards; }
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 4px; }
-        @media (prefers-color-scheme: dark) {
-            ::-webkit-scrollbar-track { background: #0f172a; }
-            ::-webkit-scrollbar-thumb { background: #334155; }
-        }
+
+        /* ANIMACIONES */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-in { animation: fadeIn 0.4s ease-out forwards; }
     </style>
 </head>
-<body class="text-sm md:text-base selection:bg-blue-500/30">
+<body class="antialiased selection:bg-brand-100 selection:text-brand-700">
 
     <div id="login-section" class="flex items-center justify-center min-h-screen p-4">
-        <div class="glass-panel p-8 rounded-2xl w-full max-w-md text-center">
-            <div class="mb-6 flex flex-col items-center">
-                <img src="public/logo.svg" alt="Instante Trips" class="w-20 h-20 mb-4 drop-shadow-lg logo-adaptive transition-all duration-300">
-                <h1 class="text-2xl font-bold dark:text-white text-slate-900 tracking-tight">Instante Trips</h1>
-                <p class="text-slate-500 dark:text-slate-400 text-sm">Acceso Autores</p>
+        <div class="clean-card p-10 w-full max-w-[400px] text-center fade-in relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
+
+            <div class="mb-8 flex flex-col items-center">
+                <img src="public/logo.svg" alt="Logo" class="w-16 h-16 mb-6 logo-adaptive opacity-90">
+                
+                <h1 class="text-2xl font-bold font-display text-slate-900 dark:text-white mb-1 tracking-tight">
+                    Instante Trips Blog
+                </h1>
+                <p class="text-sm font-medium text-slate-500 dark:text-slate-400 uppercase tracking-widest">
+                    Zona de Editores
+                </p>
             </div>
-            <form id="login-form" class="space-y-4">
-                <input type="email" id="email" placeholder="Email" class="w-full p-3 rounded-lg input-adaptive focus:outline-none" required>
-                <input type="password" id="password" placeholder="Contraseña" class="w-full p-3 rounded-lg input-adaptive focus:outline-none" required>
-                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-lg transition-all shadow-lg shadow-blue-500/20">
-                    Ingresar
+
+            <form id="login-form" class="space-y-5">
+                <div class="space-y-4">
+                    <input type="email" id="email" placeholder="Correo electrónico" class="w-full p-3.5 rounded-lg input-blog" required>
+                    <input type="password" id="password" placeholder="Contraseña" class="w-full p-3.5 rounded-lg input-blog" required>
+                </div>
+                
+                <button type="submit" class="w-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-3.5 rounded-lg hover:opacity-90 transition-all shadow-lg shadow-slate-200 dark:shadow-none transform active:scale-[0.98]">
+                    Ingresar al Editor
                 </button>
             </form>
-            <p id="login-error" class="text-red-500 dark:text-red-400 text-xs mt-4 hidden"></p>
+            
+            <p id="login-error" class="text-red-500 text-xs mt-4 font-medium hidden bg-red-50 dark:bg-red-900/20 p-2 rounded"></p>
         </div>
     </div>
 
     <div id="app-section" class="hidden min-h-screen flex flex-col">
-        <header class="glass-panel sticky top-0 z-50 border-b-0">
+        
+        <header class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-md sticky top-0 z-50 border-b border-slate-200 dark:border-slate-800">
             <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
                 <div class="flex items-center gap-3">
                     <img src="public/logo.svg" alt="Logo" class="w-8 h-8 logo-adaptive">
-                    <span class="font-bold hidden md:block dark:text-white text-slate-800">Editor Instante Trips</span>
+                    <span class="font-bold font-display text-lg hidden md:block dark:text-white">Editor</span>
                 </div>
+                
                 <div class="flex items-center gap-4">
-                    <span id="welcome-msg" class="text-slate-500 dark:text-slate-400 text-sm hidden md:block"></span>
+                    <span id="welcome-msg" class="text-sm font-medium text-slate-500 dark:text-slate-400 hidden md:block"></span>
                     <div class="hidden md:flex gap-2">
-                        <button onclick="togglePreviewMode()" class="px-3 py-1.5 rounded bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-xs border border-slate-300 dark:border-slate-700 transition">👁️ Vista HTML</button>
-                        <button onclick="downloadMarkdown()" class="px-3 py-1.5 rounded bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-xs border border-slate-300 dark:border-slate-700 transition">📥 .md</button>
-                        <button onclick="copyMarkdown()" class="px-3 py-1.5 rounded bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-xs border border-slate-300 dark:border-slate-700 transition">📋 Copiar</button>
-                        <button id="btn-logout" class="text-red-500 dark:text-red-400 hover:text-red-600 dark:hover:text-red-300 text-xs font-bold ml-2">Salir</button>
+                        <button onclick="togglePreviewMode()" class="px-4 py-2 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition">👁️ Vista</button>
+                        <button onclick="downloadMarkdown()" class="px-4 py-2 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition">📥 Descargar</button>
+                        <button id="btn-logout" class="text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 px-3 py-2 rounded-lg text-xs font-bold transition">Salir</button>
                     </div>
-                    <button id="menu-btn" class="md:hidden dark:text-white text-slate-800 text-xl">☰</button>
+                    <button id="menu-btn" class="md:hidden text-2xl">☰</button>
                 </div>
             </div>
         </header>
 
-        <div id="mobile-menu" class="fixed inset-0 z-[60] bg-white/95 dark:bg-black/95 transform translate-x-full transition-transform duration-300 md:hidden flex flex-col justify-center items-center gap-6">
-            <button id="close-menu" class="absolute top-4 right-4 text-3xl text-slate-500 dark:text-slate-400">×</button>
-            <a href="https://instantetrips.com" target="_blank" class="text-xl font-bold dark:text-white text-slate-900">Inicio</a>
-            <button onclick="togglePreviewMode(); closeMobMenu()" class="text-lg dark:text-slate-200 text-slate-800">👁️ Vista HTML</button>
-            <button onclick="downloadMarkdown(); closeMobMenu()" class="text-lg dark:text-slate-200 text-slate-800">📥 Descargar .md</button>
-            <button onclick="logout(); closeMobMenu()" class="text-red-500 dark:text-red-400 text-lg">Cerrar Sesión</button>
-        </div>
-
-        <main class="flex-1 max-w-7xl mx-auto w-full p-4 grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="flex flex-col gap-6">
-                <div class="glass-panel p-6 rounded-xl">
-                    <h2 class="text-blue-500 dark:text-blue-400 font-bold mb-4 text-xs uppercase tracking-widest">Metadatos del Post</h2>
-                    <div class="space-y-4">
+        <main class="flex-1 max-w-7xl mx-auto w-full p-6 grid grid-cols-1 lg:grid-cols-12 gap-8">
+            
+            <div class="flex flex-col gap-6 lg:col-span-7 fade-in">
+                
+                <div class="clean-card p-6">
+                    <h2 class="text-xs font-bold font-display uppercase tracking-widest text-brand-600 dark:text-brand-500 mb-5">Configuración del Post</h2>
+                    <div class="space-y-5">
                         <div>
-                            <label class="block text-xs text-slate-500 dark:text-slate-400 mb-1">Título</label>
-                            <input type="text" id="post-title" class="w-full p-2 rounded input-adaptive focus:outline-none" placeholder="Mi viaje a..." oninput="updatePreview()">
+                            <label class="block text-xs font-semibold text-slate-500 mb-1.5 ml-1">TÍTULO</label>
+                            <input type="text" id="post-title" class="w-full p-3 rounded-lg input-blog font-display font-semibold text-lg" placeholder="Escribe un título atractivo..." oninput="updatePreview()">
                         </div>
                         <div>
-                            <label class="block text-xs text-slate-500 dark:text-slate-400 mb-1">Descripción SEO</label>
-                            <textarea id="post-desc" rows="2" class="w-full p-2 rounded input-adaptive focus:outline-none resize-none" oninput="updatePreview()"></textarea>
+                            <label class="block text-xs font-semibold text-slate-500 mb-1.5 ml-1">DESCRIPCIÓN SEO</label>
+                            <textarea id="post-desc" rows="2" class="w-full p-3 rounded-lg input-blog resize-none" placeholder="Resumen para Google..." oninput="updatePreview()"></textarea>
                         </div>
                         <div class="grid grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-xs text-slate-500 dark:text-slate-400 mb-1">Fecha</label>
-                                <input type="date" id="post-date" class="w-full p-2 rounded input-adaptive focus:outline-none dark:scheme-dark" onchange="updatePreview()">
+                                <label class="block text-xs font-semibold text-slate-500 mb-1.5 ml-1">FECHA</label>
+                                <input type="date" id="post-date" class="w-full p-3 rounded-lg input-blog dark:scheme-dark" onchange="updatePreview()">
                             </div>
                             <div>
-                                <label class="block text-xs text-slate-500 dark:text-slate-400 mb-1">Autor</label>
-                                <input type="text" id="post-author" class="w-full p-2 rounded input-adaptive focus:outline-none" oninput="updatePreview()">
+                                <label class="block text-xs font-semibold text-slate-500 mb-1.5 ml-1">AUTOR</label>
+                                <input type="text" id="post-author" class="w-full p-3 rounded-lg input-blog" oninput="updatePreview()">
                             </div>
                         </div>
                         <div>
-                            <label class="block text-xs text-slate-500 dark:text-slate-400 mb-1">Imagen Portada (URL)</label>
-                            <input type="url" id="post-hero" class="w-full p-2 rounded input-adaptive focus:outline-none" placeholder="https://..." oninput="updatePreview()">
+                            <label class="block text-xs font-semibold text-slate-500 mb-1.5 ml-1">IMAGEN DE PORTADA</label>
+                            <input type="url" id="post-hero" class="w-full p-3 rounded-lg input-blog" placeholder="https://..." oninput="updatePreview()">
                         </div>
+                        
                         <div>
-                            <label class="block text-xs text-slate-500 dark:text-slate-400 mb-1">Tags</label>
-                            <div class="flex gap-2 mb-2">
-                                <input type="text" id="tag-input" placeholder="Escribe y presiona Enter..." class="flex-1 p-2 rounded input-adaptive focus:outline-none text-sm">
-                                <button onclick="addTag()" class="bg-blue-600 hover:bg-blue-500 px-3 rounded text-white font-bold text-sm">+</button>
+                            <label class="block text-xs font-semibold text-slate-500 mb-1.5 ml-1">ETIQUETAS</label>
+                            <div class="flex gap-2 mb-3">
+                                <input type="text" id="tag-input" placeholder="Añadir etiqueta..." class="flex-1 p-3 rounded-lg input-blog">
+                                <button onclick="addTag()" class="bg-brand-600 hover:bg-brand-700 text-white px-4 rounded-lg font-bold transition shadow-sm">+</button>
                             </div>
                             <div id="tags-container" class="flex flex-wrap gap-2 min-h-[30px]"></div>
                         </div>
                     </div>
                 </div>
 
-                <div class="glass-panel p-6 rounded-xl flex-1">
-                    <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-blue-500 dark:text-blue-400 font-bold text-xs uppercase tracking-widest">Contenido</h2>
-                        <button onclick="clearBlocks()" class="text-xs text-red-500 dark:text-red-400 hover:text-red-600 dark:hover:text-red-300">🗑️ Limpiar</button>
+                <div class="clean-card p-6 flex-1">
+                    <div class="flex justify-between items-center mb-5">
+                        <h2 class="text-xs font-bold font-display uppercase tracking-widest text-brand-600 dark:text-brand-500">Contenido</h2>
+                        <button onclick="clearBlocks()" class="text-xs font-medium text-red-500 hover:text-red-600 flex items-center gap-1 transition">🗑️ Limpiar todo</button>
                     </div>
 
-                    <div class="flex flex-wrap gap-2 mb-4 p-2 bg-slate-100 dark:bg-slate-900/50 rounded-lg border border-slate-200 dark:border-slate-700">
-                        <button onclick="addBlock('h2')" class="p-1.5 hover:bg-slate-200 dark:hover:bg-slate-700 rounded text-xs dark:text-slate-300 text-slate-600">H2</button>
-                        <button onclick="addBlock('h3')" class="p-1.5 hover:bg-slate-200 dark:hover:bg-slate-700 rounded text-xs dark:text-slate-300 text-slate-600">H3</button>
-                        <button onclick="addBlock('p')" class="p-1.5 hover:bg-slate-200 dark:hover:bg-slate-700 rounded text-xs dark:text-slate-300 text-slate-600" title="Párrafo">¶</button>
-                        <button onclick="addBlock('img')" class="p-1.5 hover:bg-slate-200 dark:hover:bg-slate-700 rounded text-xs dark:text-slate-300 text-slate-600">🖼️</button>
-                        <button onclick="addBlock('yt')" class="p-1.5 hover:bg-slate-200 dark:hover:bg-slate-700 rounded text-xs dark:text-slate-300 text-slate-600">📺</button>
-                        <button onclick="addBlock('list')" class="p-1.5 hover:bg-slate-200 dark:hover:bg-slate-700 rounded text-xs dark:text-slate-300 text-slate-600">list</button>
-                        <button onclick="addBlock('ref')" class="p-1.5 hover:bg-slate-200 dark:hover:bg-slate-700 rounded text-xs dark:text-slate-300 text-slate-600">🔗</button>
+                    <div class="flex flex-wrap gap-2 mb-6 p-1.5 bg-slate-100 dark:bg-slate-800 rounded-lg">
+                        <button onclick="addBlock('h2')" class="px-3 py-1.5 rounded bg-white dark:bg-slate-700 shadow-sm text-xs font-bold hover:text-brand-600 transition">H2</button>
+                        <button onclick="addBlock('h3')" class="px-3 py-1.5 rounded bg-white dark:bg-slate-700 shadow-sm text-xs font-bold hover:text-brand-600 transition">H3</button>
+                        <button onclick="addBlock('p')" class="px-3 py-1.5 rounded bg-white dark:bg-slate-700 shadow-sm text-xs font-medium hover:text-brand-600 transition flex items-center gap-1">¶ Texto</button>
+                        <button onclick="addBlock('img')" class="px-3 py-1.5 rounded bg-white dark:bg-slate-700 shadow-sm text-xs font-medium hover:text-brand-600 transition">🖼️ Foto</button>
+                        <button onclick="addBlock('yt')" class="px-3 py-1.5 rounded bg-white dark:bg-slate-700 shadow-sm text-xs font-medium hover:text-brand-600 transition">📺 Video</button>
+                        <button onclick="addBlock('list')" class="px-3 py-1.5 rounded bg-white dark:bg-slate-700 shadow-sm text-xs font-medium hover:text-brand-600 transition">≔ Lista</button>
+                        <button onclick="addBlock('ref')" class="px-3 py-1.5 rounded bg-white dark:bg-slate-700 shadow-sm text-xs font-medium hover:text-brand-600 transition">🔗 Link</button>
                     </div>
 
-                    <div id="blocks-container" class="space-y-3 min-h-[200px]"></div>
+                    <div id="blocks-container" class="space-y-4 min-h-[200px]"></div>
                 </div>
 
-                <div class="glass-panel p-6 rounded-xl">
-                    <h2 class="text-blue-500 dark:text-blue-400 font-bold mb-4 text-xs uppercase tracking-widest">Publicación</h2>
-                    <button id="btn-publish-one" onclick="publishCurrentPost()" class="w-full bg-green-600 hover:bg-green-500 text-white font-bold py-3 rounded-lg flex justify-center items-center gap-2 transition mb-4 shadow-lg shadow-green-900/20">
-                        <span>📤 Publicar Este Post</span>
+                <div class="clean-card p-6">
+                    <button id="btn-publish-one" onclick="publishCurrentPost()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 rounded-xl shadow-lg shadow-emerald-200 dark:shadow-none transition transform active:scale-[0.99] flex items-center justify-center gap-2 mb-6">
+                        📤 Publicar Artículo
                     </button>
                     
-                    <div class="border-t border-slate-200 dark:border-slate-700 pt-4">
-                        <h3 class="text-sm font-bold mb-2 dark:text-slate-200 text-slate-700">Subida Masiva</h3>
-                        <div class="border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-lg p-4 text-center hover:bg-slate-100 dark:hover:bg-slate-800/50 transition relative cursor-pointer">
+                    <div class="border-t border-slate-100 dark:border-slate-800 pt-6">
+                        <h3 class="text-sm font-bold mb-3 text-slate-700 dark:text-slate-300">Carga Masiva de Archivos (.md)</h3>
+                        <div class="border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-xl p-6 text-center hover:bg-slate-50 dark:hover:bg-slate-800/50 transition cursor-pointer relative group">
                             <input type="file" id="bulk-files" multiple accept=".md" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" onchange="handleBulkFiles(this)">
                             <div class="pointer-events-none">
-                                <p class="text-xs text-slate-500 dark:text-slate-400">Arrastra archivos .md aquí</p>
+                                <span class="text-3xl block mb-2 group-hover:scale-110 transition">📂</span>
+                                <p class="text-xs text-slate-500 font-medium">Arrastra archivos aquí o haz clic</p>
                             </div>
                         </div>
-                        <div id="bulk-preview" class="mt-2 space-y-1"></div>
-                        <button id="btn-publish-bulk" onclick="publishBulk()" class="hidden w-full mt-4 bg-purple-600 hover:bg-purple-500 text-white font-bold py-2 rounded-lg transition">🚀 Publicar Todos</button>
+                        <div id="bulk-preview" class="mt-4 space-y-2"></div>
+                        <button id="btn-publish-bulk" onclick="publishBulk()" class="hidden w-full mt-4 bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 rounded-lg transition">🚀 Publicar Todos</button>
                     </div>
                 </div>
             </div>
 
-            <div class="flex flex-col gap-6 h-full">
-                <div class="glass-panel rounded-xl flex-1 flex flex-col h-[500px] md:h-auto sticky top-20">
-                    <div class="p-4 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center bg-slate-100/50 dark:bg-slate-900/40 rounded-t-xl">
-                        <span class="font-bold text-xs uppercase tracking-widest text-emerald-600 dark:text-emerald-400">Vista Previa</span>
-                        <div class="text-xs text-slate-500 dark:text-slate-400 font-mono">
+            <div class="flex flex-col gap-6 lg:col-span-5 fade-in" style="animation-delay: 0.1s;">
+                <div class="clean-card flex-1 flex flex-col h-[600px] lg:h-auto lg:sticky lg:top-24 overflow-hidden">
+                    <div class="p-4 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800 flex justify-between items-center">
+                        <span class="font-bold text-xs uppercase tracking-widest text-brand-600 dark:text-brand-500">Vista Previa</span>
+                        <div class="text-xs font-mono text-slate-400">
                             <span id="word-count">0 words</span> • <span id="read-time">0 min</span>
                         </div>
                     </div>
-                    <div id="preview-md" class="flex-1 p-6 overflow-y-auto font-mono text-xs text-emerald-700 bg-emerald-50 dark:text-green-400 dark:bg-[#0d1117] whitespace-pre-wrap"></div>
-                    <div id="preview-html" class="hidden flex-1 p-6 overflow-y-auto preview-content bg-white/80 dark:bg-slate-900/90 text-slate-800 dark:text-slate-200"></div>
+                    
+                    <div id="preview-md" class="hidden flex-1 p-6 overflow-y-auto font-mono text-xs leading-relaxed text-slate-600 bg-slate-50 dark:bg-slate-900/50 whitespace-pre-wrap"></div>
+                    
+                    <div id="preview-html" class="flex-1 p-8 overflow-y-auto preview-content bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300"></div>
                 </div>
 
-                <div class="glass-panel rounded-xl p-4">
-                    <button onclick="toggleHistory()" class="flex justify-between w-full text-left text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white">
-                        <span>📜 Historial de Commits</span>
+                <div class="clean-card p-5">
+                    <button onclick="toggleHistory()" class="flex justify-between w-full text-left text-xs font-bold uppercase tracking-widest text-slate-500 hover:text-slate-800 dark:hover:text-white transition">
+                        <span>📜 Historial Reciente</span>
                         <span id="hist-arrow">▼</span>
                     </button>
-                    <div id="history-content" class="hidden mt-4 space-y-3 max-h-60 overflow-y-auto"></div>
+                    <div id="history-content" class="hidden mt-4 space-y-3 max-h-60 overflow-y-auto custom-scrollbar"></div>
                 </div>
             </div>
         </main>
     </div>
 
-    <div id="toast-container" class="fixed bottom-4 right-4 z-[70] flex flex-col gap-2"></div>
+    <div id="toast-container" class="fixed bottom-6 right-6 z-[70] flex flex-col gap-2"></div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // --- 1. CONFIGURACIÓN FIREBASE (CORREGIDA) ---
+        // --- TU CONFIGURACIÓN REAL DE FIREBASE (LISTA PARA USAR) ---
         const firebaseConfig = {
             apiKey: "AIzaSyBdsu65Voj8en9u_7eL5q0YRFuCC7fUYWA",
             authDomain: "instantetrips-editor.firebaseapp.com",
@@ -300,21 +288,29 @@
         
         let githubConfig = null;
         let blocks = [];
-        let tags = []; 
+        let tags = [];
         let bulkFilesData = [];
 
-        // --- AUTH ---
+        // --- LOGIN ---
         const loginForm = document.getElementById('login-form');
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
+            const btn = loginForm.querySelector('button');
+            const originalText = btn.innerText;
+            
+            btn.innerText = "Verificando...";
+            btn.disabled = true;
+
             try {
                 await signInWithEmailAndPassword(auth, email, password);
             } catch (error) {
                 const errDiv = document.getElementById('login-error');
-                errDiv.textContent = "Credenciales incorrectas.";
+                errDiv.textContent = "Error: Credenciales incorrectas.";
                 errDiv.classList.remove('hidden');
+                btn.innerText = originalText;
+                btn.disabled = false;
             }
         });
 
@@ -325,10 +321,12 @@
             if (user) {
                 document.getElementById('login-section').classList.add('hidden');
                 document.getElementById('app-section').classList.remove('hidden');
-                document.getElementById('welcome-msg').textContent = `Hola, ${user.email.split('@')[0]}`;
-                document.getElementById('post-author').value = user.email.split('@')[0];
+                const name = user.email.split('@')[0];
+                document.getElementById('welcome-msg').textContent = `Editor: ${name}`;
+                document.getElementById('post-author').value = name;
                 document.getElementById('post-date').valueAsDate = new Date();
                 
+                // Cargar Configuración de GitHub
                 const docRef = doc(db, "config", "main");
                 const docSnap = await getDoc(docRef);
                 if (docSnap.exists()) {
@@ -336,7 +334,7 @@
                     showToast("Conectado a GitHub ✅");
                     loadHistory();
                 } else {
-                    showToast("Falta config en Firestore ❌", "error");
+                    showToast("Falta configuración en Firestore ❌", "error");
                 }
             } else {
                 document.getElementById('login-section').classList.remove('hidden');
@@ -349,10 +347,7 @@
         const tagsContainer = document.getElementById('tags-container');
 
         tagInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                e.preventDefault(); 
-                addTag();
-            }
+            if (e.key === 'Enter') { e.preventDefault(); addTag(); }
         });
 
         window.addTag = () => {
@@ -360,22 +355,20 @@
             if (val && !tags.includes(val)) {
                 tags.push(val);
                 tagInput.value = '';
-                renderTags();
-                updatePreview();
+                renderTags(); updatePreview();
             }
         };
 
         window.removeTag = (tag) => {
             tags = tags.filter(t => t !== tag);
-            renderTags();
-            updatePreview();
+            renderTags(); updatePreview();
         };
 
         function renderTags() {
             tagsContainer.innerHTML = tags.map(t => `
-                <div class="tag-chip">
-                    <span>${t}</span>
-                    <button onclick="removeTag('${t}')" class="font-bold ml-1 opacity-60 hover:opacity-100 hover:text-red-500">×</button>
+                <div class="inline-flex items-center gap-1 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 px-3 py-1 rounded-full text-xs font-bold border border-blue-100 dark:border-blue-800 animate-[fadeIn_0.3s]">
+                    <span>#${t}</span>
+                    <button onclick="removeTag('${t}')" class="hover:text-red-500 ml-1">×</button>
                 </div>
             `).join('');
         }
@@ -406,25 +399,41 @@
             updatePreview();
         };
 
-        window.clearBlocks = () => { if(confirm("¿Borrar todo?")) { blocks = []; renderBlocks(); updatePreview(); }};
+        window.clearBlocks = () => { if(confirm("¿Borrar todo el contenido?")) { blocks = []; renderBlocks(); updatePreview(); }};
 
         function renderBlocks() {
             const container = document.getElementById('blocks-container');
             container.innerHTML = '';
             blocks.forEach((b) => {
                 const el = document.createElement('div');
-                el.className = 'glass-panel p-3 rounded border border-slate-200 dark:border-slate-700/50 flex gap-3 items-start group';
-                let inputHtml = b.type === 'p' || b.type === 'list' 
-                    ? `<textarea class="w-full bg-transparent border-none outline-none dark:text-slate-200 text-slate-800 resize-none h-auto" rows="3" placeholder="${b.type === 'list' ? 'Item 1\\nItem 2' : 'Escribe aquí...'}" oninput="updateBlockContent('${b.id}', this.value)">${b.content}</textarea>`
-                    : `<input type="text" class="w-full bg-transparent border-none outline-none dark:text-slate-200 text-slate-800" placeholder="${b.type === 'ref' ? 'Texto | URL' : 'Contenido...'}" value="${b.content}" oninput="updateBlockContent('${b.id}', this.value)">`;
+                el.className = 'bg-white dark:bg-slate-800 p-4 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm flex gap-3 items-start group animate-[fadeIn_0.3s]';
+                
+                let ph = 'Escribe aquí...';
+                if(b.type === 'h2') ph = 'Título de sección...';
+                if(b.type === 'img') ph = 'URL de la imagen | Descripción';
+                if(b.type === 'yt') ph = 'Enlace de YouTube';
 
-                el.innerHTML = `<span class="text-xs font-bold text-slate-400 dark:text-slate-500 w-8 pt-1 uppercase">${b.type}</span>${inputHtml}
-                <div class="flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition"><button onclick="moveBlock('${b.id}',-1)" class="text-[10px] dark:text-white text-slate-600">▲</button><button onclick="removeBlock('${b.id}')" class="text-[10px] text-red-500 dark:text-red-400">✖</button><button onclick="moveBlock('${b.id}',1)" class="text-[10px] dark:text-white text-slate-600">▼</button></div>`;
+                let inputHtml = b.type === 'p' || b.type === 'list' 
+                    ? `<textarea class="w-full bg-transparent border-none outline-none text-slate-700 dark:text-slate-200 resize-none h-auto text-sm font-sans" rows="3" placeholder="${ph}" oninput="updateBlockContent('${b.id}', this.value)">${b.content}</textarea>`
+                    : `<input type="text" class="w-full bg-transparent border-none outline-none text-slate-700 dark:text-slate-200 font-medium text-sm" placeholder="${ph}" value="${b.content}" oninput="updateBlockContent('${b.id}', this.value)">`;
+
+                const typeLabel = b.type === 'img' ? 'IMAGEN' : b.type.toUpperCase();
+
+                el.innerHTML = `
+                <div class="flex flex-col items-center gap-1 pt-1">
+                    <span class="text-[10px] font-bold text-slate-400 select-none">${typeLabel}</span>
+                    <div class="flex flex-col opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button onclick="moveBlock('${b.id}',-1)" class="text-slate-400 hover:text-blue-500">▲</button>
+                        <button onclick="removeBlock('${b.id}')" class="text-slate-400 hover:text-red-500">✖</button>
+                        <button onclick="moveBlock('${b.id}',1)" class="text-slate-400 hover:text-blue-500">▼</button>
+                    </div>
+                </div>
+                ${inputHtml}`;
                 container.appendChild(el);
             });
         }
 
-        // --- MARKDOWN GENERATOR ---
+        // --- MARKDOWN GENERATION ---
         function generateMarkdown() {
             const title = document.getElementById('post-title').value;
             const desc = document.getElementById('post-desc').value;
@@ -440,19 +449,20 @@
                 if(b.type === 'h2') md += `## ${c}\n\n`;
                 else if(b.type === 'h3') md += `### ${c}\n\n`;
                 else if(b.type === 'p') md += `${c}\n\n`;
-                else if(b.type === 'img') { const [u,a] = c.split('|'); md += `![${a||'Img'}](${u})\n\n`; }
-                else if(b.type === 'yt') md += `<iframe width="100%" height="315" src="${c.replace('watch?v=','embed/')}" frameborder="0" allowfullscreen></iframe>\n\n`;
+                else if(b.type === 'img') { const [u,a] = c.split('|'); md += `![${a||'Imagen'}](${u})\n\n`; }
+                else if(b.type === 'yt') md += `<iframe width="100%" height="400" src="${c.replace('watch?v=','embed/')}" frameborder="0" allowfullscreen class="rounded-lg shadow-sm"></iframe>\n\n`;
                 else if(b.type === 'list') { c.split('\n').forEach(i => md += `* ${i}\n`); md += '\n'; }
                 else if(b.type === 'ref') { const [t,l] = c.split('|'); md += `<a href="${l}" class="btn-ref">${t}</a>\n\n`; }
             });
             return md;
         }
 
-        // --- PREVIEW & UTILS ---
+        // --- PREVIEW & PUBLISH ---
         window.updatePreview = () => {
             const md = generateMarkdown();
             document.getElementById('preview-md').textContent = md;
             document.getElementById('preview-html').innerHTML = marked.parse(md);
+            
             const words = md.split(/\s+/).filter(w => w.length).length;
             document.getElementById('word-count').textContent = `${words} palabras`;
             document.getElementById('read-time').textContent = `${Math.ceil(words/200)} min`;
@@ -464,17 +474,18 @@
         };
 
         window.downloadMarkdown = () => {
+            const title = document.getElementById('post-title').value || 'post';
+            const date = document.getElementById('post-date').value || 'draft';
+            const filename = `${date}-${title.toLowerCase().replace(/[^a-z0-9]+/g,'-')}.md`;
             const link = document.createElement('a');
             link.href = URL.createObjectURL(new Blob([generateMarkdown()], {type: 'text/markdown'}));
-            link.download = `${document.getElementById('post-date').value || 'draft'}-${(document.getElementById('post-title').value || 'untitled').replace(/\s+/g,'-').toLowerCase()}.md`;
+            link.download = filename;
             link.click();
         };
-        
-        window.copyMarkdown = () => navigator.clipboard.writeText(generateMarkdown()).then(() => showToast("Copiado!"));
 
         // --- GITHUB API ---
         async function ghFetch(ep, m='GET', b=null) {
-            if(!githubConfig) throw new Error("No config");
+            if(!githubConfig) throw new Error("No conectado a GitHub");
             return fetch(`https://api.github.com/repos/${githubConfig.repoOwner}/${githubConfig.repoName}${ep}`, {
                 method: m, headers: { 'Authorization': `token ${githubConfig.githubToken}`, 'Content-Type': 'application/json' },
                 body: b ? JSON.stringify(b) : null
@@ -483,18 +494,28 @@
 
         window.publishCurrentPost = async () => {
             const btn = document.getElementById('btn-publish-one');
-            if(!document.getElementById('post-title').value) return showToast("Falta Título", "error");
-            btn.disabled = true; btn.innerText = "⏳ Publicando...";
+            if(!document.getElementById('post-title').value) return showToast("Falta el Título", "error");
+            
+            btn.disabled = true; btn.innerText = "Publicando...";
             try {
                 const md = generateMarkdown();
-                const path = `${githubConfig.postsPath}${document.getElementById('post-date').value}-${document.getElementById('post-title').value.toLowerCase().replace(/[^a-z0-9]+/g,'-')}.md`;
-                await ghFetch(`/contents/${path}`, 'PUT', { message: `New post via Editor`, content: btoa(unescape(encodeURIComponent(md))), branch: githubConfig.branch });
-                showToast("Publicado! ✅"); loadHistory();
+                const slug = document.getElementById('post-title').value.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g, '');
+                const filename = `${document.getElementById('post-date').value}-${slug}.md`;
+                const path = `${githubConfig.postsPath}${filename}`;
+                
+                await ghFetch(`/contents/${path}`, 'PUT', { 
+                    message: `Post: ${filename} (Editor)`, 
+                    content: btoa(unescape(encodeURIComponent(md))), 
+                    branch: githubConfig.branch 
+                });
+                
+                showToast("¡Publicado con éxito! 🚀"); 
+                loadHistory();
             } catch(e) { showToast(e.message, "error"); }
-            btn.disabled = false; btn.innerText = "📤 Publicar Este Post";
+            btn.disabled = false; btn.innerText = "📤 Publicar Artículo";
         };
 
-        // --- SUBIDA MASIVA RESTAURADA ---
+        // --- BULK UPLOAD ---
         window.handleBulkFiles = (input) => {
             const files = Array.from(input.files);
             const previewDiv = document.getElementById('bulk-preview');
@@ -503,32 +524,22 @@
             previewDiv.innerHTML = '';
             bulkFilesData = [];
             
-            if(files.length === 0) {
-                btn.classList.add('hidden');
-                return;
-            }
+            if(files.length === 0) { btn.classList.add('hidden'); return; }
 
             files.forEach(file => {
                 const reader = new FileReader();
                 reader.onload = (e) => {
                     const content = e.target.result;
-                    const isValid = content.startsWith('---'); // Validación básica
-                    const status = isValid ? '✅' : '❌ Formato inválido';
+                    const isValid = content.startsWith('---');
                     
-                    bulkFilesData.push({
-                        path: `${githubConfig.postsPath}${file.name}`,
-                        content: content,
-                        valid: isValid
-                    });
+                    bulkFilesData.push({ path: `${githubConfig.postsPath}${file.name}`, content: content });
 
                     const el = document.createElement('div');
-                    el.className = `p-2 rounded ${isValid ? 'bg-green-900/30' : 'bg-red-900/30'} flex justify-between text-xs dark:text-white`;
-                    el.innerHTML = `<span>${file.name}</span><span>${status}</span>`;
+                    el.className = `p-2 rounded text-xs flex justify-between items-center ${isValid ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`;
+                    el.innerHTML = `<span>${file.name}</span><span>${isValid ? '✓' : '⚠'}</span>`;
                     previewDiv.appendChild(el);
 
-                    if (bulkFilesData.length === files.length && bulkFilesData.every(f => f.valid)) {
-                        btn.classList.remove('hidden');
-                    }
+                    btn.classList.remove('hidden');
                 };
                 reader.readAsText(file);
             });
@@ -537,67 +548,37 @@
         window.publishBulk = async () => {
             if(!confirm(`¿Publicar ${bulkFilesData.length} archivos?`)) return;
             const btn = document.getElementById('btn-publish-bulk');
-            btn.disabled = true;
-            btn.innerText = "⏳ Procesando...";
+            btn.disabled = true; btn.innerText = "Procesando...";
 
             try {
-                // 1. Obtener SHA del último commit
                 const ref = await ghFetch(`/git/refs/heads/${githubConfig.branch}`);
                 const latestCommitSha = ref.object.sha;
 
-                // 2. Crear Blobs
                 const treeItems = [];
                 for (const file of bulkFilesData) {
-                    const blob = await ghFetch(`/git/blobs`, 'POST', {
-                        content: file.content,
-                        encoding: 'utf-8'
-                    });
-                    treeItems.push({
-                        path: file.path,
-                        mode: '100644',
-                        type: 'blob',
-                        sha: blob.sha
-                    });
+                    const blob = await ghFetch(`/git/blobs`, 'POST', { content: file.content, encoding: 'utf-8' });
+                    treeItems.push({ path: file.path, mode: '100644', type: 'blob', sha: blob.sha });
                 }
 
-                // 3. Crear Árbol
-                const tree = await ghFetch(`/git/trees`, 'POST', {
-                    base_tree: latestCommitSha,
-                    tree: treeItems
-                });
+                const tree = await ghFetch(`/git/trees`, 'POST', { base_tree: latestCommitSha, tree: treeItems });
+                const newCommit = await ghFetch(`/git/commits`, 'POST', { message: `Bulk upload (${bulkFilesData.length})`, tree: tree.sha, parents: [latestCommitSha] });
+                await ghFetch(`/git/refs/heads/${githubConfig.branch}`, 'PATCH', { sha: newCommit.sha });
 
-                // 4. Crear Commit
-                const newCommit = await ghFetch(`/git/commits`, 'POST', {
-                    message: `Bulk upload: ${bulkFilesData.length} posts via Editor`,
-                    tree: tree.sha,
-                    parents: [latestCommitSha]
-                });
-
-                // 5. Actualizar Referencia
-                await ghFetch(`/git/refs/heads/${githubConfig.branch}`, 'PATCH', {
-                    sha: newCommit.sha
-                });
-
-                showToast("Subida Masiva Exitosa 🚀");
+                showToast("¡Subida masiva completada! 🚀");
                 bulkFilesData = [];
                 document.getElementById('bulk-preview').innerHTML = '';
                 btn.classList.add('hidden');
                 loadHistory();
 
-            } catch (error) {
-                console.error(error);
-                showToast("Error en subida masiva", "error");
-            } finally {
-                btn.disabled = false;
-                btn.innerText = "🚀 Publicar Todos";
-            }
+            } catch (error) { showToast("Error en subida masiva", "error"); } 
+            finally { btn.disabled = false; btn.innerText = "🚀 Publicar Todos"; }
         };
 
-        // --- HELPERS ---
+        // --- UTILS ---
         window.showToast = (msg, type='success') => {
             const el = document.createElement('div');
-            el.className = `${type==='success'?'bg-green-600':'bg-red-600'} text-white px-4 py-3 rounded shadow-lg text-sm font-bold toast-enter`;
-            el.textContent = msg;
+            el.className = `${type==='success'?'bg-emerald-600':'bg-red-500'} text-white px-4 py-3 rounded-lg shadow-lg text-sm font-bold flex items-center gap-2 animate-[fadeIn_0.3s]`;
+            el.innerHTML = `<span>${type==='success'?'✓':'⚠'}</span> ${msg}`;
             document.getElementById('toast-container').appendChild(el);
             setTimeout(() => el.remove(), 4000);
         };
@@ -606,18 +587,17 @@
             try {
                 const c = await ghFetch(`/commits?per_page=5`);
                 document.getElementById('history-content').innerHTML = c.map(i => 
-                    `<div class="text-xs border-b border-slate-200 dark:border-slate-700 pb-2"><a href="${i.html_url}" target="_blank" class="text-blue-600 dark:text-blue-400 font-bold hover:underline">${new Date(i.commit.author.date).toLocaleDateString()}</a><p class="text-slate-600 dark:text-slate-300 truncate">${i.commit.message}</p></div>`
+                    `<div class="text-xs border-b border-slate-100 dark:border-slate-800 pb-2 mb-2"><a href="${i.html_url}" target="_blank" class="text-blue-600 dark:text-blue-400 font-bold hover:underline block truncate">${i.commit.message}</a><span class="text-slate-400">${new Date(i.commit.author.date).toLocaleDateString()}</span></div>`
                 ).join('');
             } catch(e) {}
         }
         
-        window.toggleHistory = () => { const h = document.getElementById('history-content'); h.classList.toggle('hidden'); document.getElementById('hist-arrow').innerText = h.classList.contains('hidden') ? '▼' : '▲'; };
+        window.toggleHistory = () => { const h = document.getElementById('history-content'); h.classList.toggle('hidden'); };
         
         const mm = document.getElementById('mobile-menu');
         document.getElementById('menu-btn').addEventListener('click', () => mm.classList.remove('translate-x-full'));
         document.getElementById('close-menu').addEventListener('click', () => mm.classList.add('translate-x-full'));
         window.closeMobMenu = () => mm.classList.add('translate-x-full');
-
     </script>
 </body>
 </html>
