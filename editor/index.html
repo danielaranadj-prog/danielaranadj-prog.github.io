@@ -30,27 +30,16 @@
         body { background-color: #f8fafc; color: #334155; min-height: 100vh; display: flex; flex-direction: column; transition: all 0.3s; }
         .clean-card { background: white; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); border-radius: 1rem; }
         .input-blog { background: #f8fafc; border: 1px solid #e2e8f0; color: #1e293b; transition: all 0.2s; font-size: 0.9rem; }
-        .input-blog:focus { background: white; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,0.1); outline: none; }
-        
-        /* Estilos de Texto y Editor */
-        .text-toolbar button { padding: 4px 8px; border-radius: 6px; border: 1px solid #e2e8f0; background: white; font-size: 12px; transition: all 0.2s; }
-        .text-toolbar button:hover { background: #f1f5f9; color: #2563eb; }
-        
-        .block-container:hover .block-actions { opacity: 1; }
-        .block-actions { opacity: 0; transition: opacity 0.2s; }
-
+        .input-blog:focus { background: white; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); outline: none; }
         @media (prefers-color-scheme: dark) {
             body { background-color: #0f172a; color: #cbd5e1; }
             .clean-card { background: #1e293b; border-color: #334155; }
             .input-blog { background: #0f172a; border-color: #334155; color: #e2e8f0; }
-            .text-toolbar button { background: #0f172a; border-color: #334155; color: #cbd5e1; }
         }
-        
         .preview-content h2 { font-family: 'Space Grotesk', sans-serif; font-size: 1.5rem; font-weight: 700; margin-top: 1.5em; }
-        .preview-content h3 { font-family: 'Space Grotesk', sans-serif; font-size: 1.25rem; font-weight: 600; margin-top: 1.2em; color: #1e293b; }
-        .preview-content p { margin-bottom: 1em; line-height: 1.7; white-space: pre-wrap; }
+        .preview-content h3 { font-family: 'Space Grotesk', sans-serif; font-size: 1.25rem; font-weight: 600; margin-top: 1.2em; }
+        .preview-content p { margin-bottom: 1em; line-height: 1.7; }
         .preview-content img { border-radius: 12px; margin: 1.5em 0; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .fade-in { animation: fadeIn 0.4s ease-out forwards; }
     </style>
@@ -83,8 +72,8 @@
                 </div>
                 <div class="flex items-center gap-3">
                     <span id="welcome-msg" class="text-[10px] font-bold text-slate-400 uppercase mr-2 hidden sm:block"></span>
-                    <button onclick="togglePreviewMode()" class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-brand-50 hover:text-brand-600 transition" title="Vista Previa"><i class="ph ph-eye text-xl"></i></button>
-                    <button onclick="downloadMarkdown()" class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-brand-50 hover:text-brand-600 transition" title="Descargar MD"><i class="ph ph-download-simple text-xl"></i></button>
+                    <button onclick="togglePreviewMode()" class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-brand-50 hover:text-brand-600 transition"><i class="ph ph-eye text-xl"></i></button>
+                    <button onclick="downloadMarkdown()" class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-brand-50 hover:text-brand-600 transition"><i class="ph ph-download-simple text-xl"></i></button>
                     <button onclick="logout()" class="ml-2 text-red-500 hover:bg-red-50 p-2 rounded-lg transition"><i class="ph ph-sign-out text-xl"></i></button>
                 </div>
             </div>
@@ -100,63 +89,66 @@
                         </button>
                     </div>
                     
-                    <input type="text" id="post-title" class="w-full p-4 rounded-xl input-blog font-display font-bold text-2xl border-none shadow-inner" placeholder="Título impactante..." oninput="updatePreview()">
-                    <textarea id="post-desc" rows="2" class="w-full p-3 rounded-xl input-blog resize-none italic text-slate-500" placeholder="Descripción corta para SEO..." oninput="updatePreview()"></textarea>
+                    <div class="space-y-3">
+                        <input type="text" id="post-title" class="w-full p-3 rounded-xl input-blog font-display font-bold text-xl" placeholder="Título del artículo..." oninput="updatePreview()">
+                        <input type="text" id="post-subtitle" class="w-full p-3 rounded-xl input-blog font-display font-semibold text-lg border-dashed" placeholder="Subtítulo o frase corta..." oninput="updatePreview()">
+                    </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
-                        <div class="space-y-1.5">
-                            <label class="text-[10px] font-bold text-slate-400 uppercase ml-1">Fecha de Publicación</label>
-                            <div class="relative">
-                                <i class="ph ph-calendar-blank absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                                <input type="date" id="post-date" class="w-full pl-10 p-3 rounded-xl input-blog" onchange="updatePreview()">
-                            </div>
+                    <textarea id="post-desc" rows="2" class="w-full p-3 rounded-xl input-blog resize-none" placeholder="Descripción SEO para Google..." oninput="updatePreview()"></textarea>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="space-y-1">
+                            <label class="text-[10px] font-bold text-slate-400 uppercase ml-1">Fecha</label>
+                            <input type="date" id="post-date" class="w-full p-2.5 rounded-xl input-blog" onchange="updatePreview()">
                         </div>
-                        <div class="space-y-1.5">
+                        <div class="space-y-1">
                             <div class="flex justify-between">
-                                <label class="text-[10px] font-bold text-slate-400 uppercase ml-1">Autor Responsable</label>
-                                <button onclick="openAuthorCreator()" class="text-[9px] font-bold text-blue-500 uppercase hover:underline">+ Crear Nuevo</button>
+                                <label class="text-[10px] font-bold text-slate-400 uppercase ml-1">Autor</label>
+                                <button onclick="openAuthorCreator()" class="text-[9px] font-bold text-blue-500 uppercase hover:underline">+ Nuevo</button>
                             </div>
-                            <div class="relative">
-                                <i class="ph ph-user-circle absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                                <select id="post-author" class="w-full pl-10 p-3 rounded-xl input-blog appearance-none cursor-pointer" onchange="updatePreview()"></select>
-                            </div>
+                            <select id="post-author" class="w-full p-2.5 rounded-xl input-blog appearance-none cursor-pointer" onchange="updatePreview()"></select>
                         </div>
                     </div>
                     
-                    <div class="space-y-1.5">
-                        <label class="text-[10px] font-bold text-slate-400 uppercase ml-1">URL Imagen de Portada</label>
-                        <input type="url" id="post-hero" class="w-full p-3 rounded-xl input-blog font-mono text-xs" placeholder="https://images.unsplash.com/..." oninput="updatePreview()">
+                    <div class="space-y-1">
+                        <label class="text-[10px] font-bold text-slate-400 uppercase ml-1">Imagen de Portada (Hero)</label>
+                        <input type="url" id="post-hero" class="w-full p-2.5 rounded-xl input-blog font-mono text-xs" placeholder="https://..." oninput="updatePreview()">
                     </div>
                 </div>
 
                 <div class="clean-card p-6">
-                    <div class="flex flex-wrap gap-2 mb-8 p-2 bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-dashed border-slate-200 dark:border-slate-700">
-                        <button onclick="addBlock('h2')" class="px-4 py-2.5 rounded-xl bg-white dark:bg-slate-800 shadow-sm text-xs font-bold hover:text-brand-600 transition flex items-center gap-2"><i class="ph-bold ph-text-h-two"></i> Título</button>
-                        <button onclick="addBlock('h3')" class="px-4 py-2.5 rounded-xl bg-white dark:bg-slate-800 shadow-sm text-xs font-bold hover:text-brand-600 transition flex items-center gap-2"><i class="ph-bold ph-text-h-three"></i> Subtítulo</button>
-                        <button onclick="addBlock('p')" class="px-4 py-2.5 rounded-xl bg-white dark:bg-slate-800 shadow-sm text-xs font-medium hover:text-brand-600 transition flex items-center gap-2"><i class="ph-bold ph-text-aa"></i> Párrafo</button>
-                        <button onclick="addBlock('img')" class="px-4 py-2.5 rounded-xl bg-white dark:bg-slate-800 shadow-sm text-xs font-medium hover:text-brand-600 transition flex items-center gap-2"><i class="ph-bold ph-image"></i> Foto</button>
-                        <button onclick="addBlock('yt')" class="px-4 py-2.5 rounded-xl bg-white dark:bg-slate-800 shadow-sm text-xs font-medium hover:text-brand-600 transition flex items-center gap-2"><i class="ph-bold ph-youtube-logo"></i> Video</button>
-                        <button onclick="addBlock('ref')" class="px-4 py-2.5 rounded-xl bg-white dark:bg-slate-800 shadow-sm text-xs font-medium text-emerald-600 transition flex items-center gap-2"><i class="ph-bold ph-link"></i> Link AF</button>
+                    <div class="flex flex-wrap gap-2 mb-6 p-2 bg-slate-50 dark:bg-slate-900/50 rounded-2xl">
+                        <button onclick="addBlock('h2')" class="px-3 py-2 rounded-xl bg-white dark:bg-slate-800 shadow-sm text-xs font-bold hover:text-brand-600 transition flex items-center gap-1"><i class="ph-bold ph-text-h-two"></i> Título</button>
+                        <button onclick="addBlock('h3')" class="px-3 py-2 rounded-xl bg-white dark:bg-slate-800 shadow-sm text-xs font-bold hover:text-brand-600 transition flex items-center gap-1"><i class="ph-bold ph-text-h-three"></i> Sub</button>
+                        <button onclick="addBlock('p')" class="px-3 py-2 rounded-xl bg-white dark:bg-slate-800 shadow-sm text-xs font-medium hover:text-brand-600 transition flex items-center gap-1"><i class="ph-bold ph-text-aa"></i> Texto</button>
+                        <button onclick="addBlock('img')" class="px-3 py-2 rounded-xl bg-white dark:bg-slate-800 shadow-sm text-xs font-medium hover:text-brand-600 transition flex items-center gap-1"><i class="ph-bold ph-image"></i> Foto</button>
+                        <button onclick="addBlock('yt')" class="px-3 py-2 rounded-xl bg-white dark:bg-slate-800 shadow-sm text-xs font-medium hover:text-brand-600 transition flex items-center gap-1"><i class="ph-bold ph-youtube-logo"></i> Video</button>
+                        <button onclick="addBlock('ref')" class="px-3 py-2 rounded-xl bg-white dark:bg-slate-800 shadow-sm text-xs font-medium text-emerald-600 transition flex items-center gap-1"><i class="ph-bold ph-link"></i> Link</button>
                     </div>
-                    <div id="blocks-container" class="space-y-6 min-h-[400px]"></div>
+                    <div id="blocks-container" class="space-y-4 min-h-[300px]"></div>
                 </div>
 
-                <button id="btn-publish" onclick="publishCurrentPost()" class="w-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-5 rounded-2xl shadow-2xl flex items-center justify-center gap-3 transition hover:scale-[1.01] active:scale-[0.98]">
-                    <i class="ph-bold ph-paper-plane-right text-xl"></i> Publicar en Web Oficial
+                <button id="btn-publish" onclick="publishCurrentPost()" class="w-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-4 rounded-2xl shadow-xl flex items-center justify-center gap-2 transition hover:opacity-90 active:scale-[0.98]">
+                    <i class="ph-bold ph-paper-plane-right"></i> Publicar Artículo
                 </button>
             </div>
 
             <div class="lg:col-span-5 h-fit lg:sticky lg:top-24">
-                <div class="clean-card flex flex-col h-[750px] overflow-hidden">
-                    <div class="p-4 border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 flex justify-between items-center">
-                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2"><i class="ph ph-monitor"></i> Preview en Vivo</span>
-                        <span id="word-count" class="text-[9px] font-mono text-slate-400 bg-white dark:bg-slate-900 px-2 py-1 rounded border">0 PALABRAS</span>
+                <div class="clean-card flex flex-col h-[650px] overflow-hidden">
+                    <div class="p-4 border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 flex justify-between items-center text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                        <span><i class="ph ph-monitor"></i> Vista Previa</span>
+                        <span id="word-count" class="font-mono bg-white dark:bg-slate-900 px-2 py-1 rounded border">0 PALABRAS</span>
                     </div>
-                    <div id="preview-md" class="hidden flex-1 p-6 font-mono text-[11px] overflow-auto bg-slate-900 text-blue-300 whitespace-pre-wrap"></div>
+                    <div id="preview-md" class="hidden flex-1 p-6 font-mono text-xs overflow-auto bg-slate-50 dark:bg-slate-950 whitespace-pre-wrap"></div>
                     <div id="preview-html" class="flex-1 p-8 overflow-auto preview-content bg-white dark:bg-slate-900"></div>
                 </div>
             </div>
         </main>
+
+        <footer class="py-12 text-center">
+            <p class="text-[10px] text-slate-400 font-medium uppercase tracking-[0.2em]">Herramienta desarrollada por <span class="text-slate-600 dark:text-slate-200 font-bold">Instante Trips and Tips</span></p>
+            <p class="text-[9px] text-slate-300 dark:text-slate-600 mt-1 italic">Prohibida su reproducción o modificación parcial o completa.</p>
+        </footer>
     </div>
 
     <div id="ai-modal" class="fixed inset-0 z-[100] bg-black/80 hidden flex items-center justify-center backdrop-blur-sm p-4">
@@ -198,7 +190,6 @@
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // --- CONFIGURACIÓN ---
         const AUTHORS_REPO_OWNER = "danielaranadj-prog"; 
         const AUTHORS_REPO_NAME = "blog"; 
         const AUTHORS_FILE_PATH = "src/data/authors.ts"; 
@@ -222,157 +213,6 @@
         let blocks = [];
         let currentUserEmail = '';
 
-        // --- LÓGICA DE BLOQUES MEJORADA ---
-
-        window.addBlock = (type) => { 
-            blocks.push({ id: Date.now().toString(), type, content: '', align: 'left' }); 
-            renderBlocks(); 
-            updatePreview(); 
-        };
-
-        window.removeBlock = (id) => { 
-            blocks = blocks.filter(b => b.id !== id); 
-            renderBlocks(); 
-            updatePreview(); 
-        };
-
-        // Función para mover bloques arriba o abajo
-        window.moveBlock = (id, direction) => {
-            const index = blocks.findIndex(b => b.id === id);
-            if (direction === 'up' && index > 0) {
-                [blocks[index], blocks[index - 1]] = [blocks[index - 1], blocks[index]];
-            } else if (direction === 'down' && index < blocks.length - 1) {
-                [blocks[index], blocks[index + 1]] = [blocks[index + 1], blocks[index]];
-            }
-            renderBlocks();
-            updatePreview();
-        };
-
-        window.updateBlockContent = (id, val) => { 
-            const b = blocks.find(b => b.id === id); 
-            if(b) b.content = val; 
-            updatePreview(); 
-        };
-
-        // Herramientas de texto (Bold, Italic, Link)
-        window.formatText = (id, type) => {
-            const textarea = document.getElementById(`txt-${id}`);
-            const start = textarea.selectionStart;
-            const end = textarea.selectionEnd;
-            const text = textarea.value;
-            const selectedText = text.substring(start, end);
-            let newText = '';
-
-            if (type === 'bold') newText = `**${selectedText}**`;
-            else if (type === 'italic') newText = `*${selectedText}*`;
-            else if (type === 'link') {
-                const url = prompt("Introduce la URL:");
-                if (!url) return;
-                newText = `[${selectedText || 'enlace'}](${url})`;
-            }
-
-            textarea.value = text.substring(0, start) + newText + text.substring(end);
-            updateBlockContent(id, textarea.value);
-        };
-
-        window.renderBlocks = () => {
-            const container = document.getElementById('blocks-container'); 
-            container.innerHTML = '';
-            
-            blocks.forEach((b, index) => {
-                const el = document.createElement('div');
-                el.className = 'block-container bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 flex flex-col gap-3 group fade-in relative shadow-sm';
-                
-                let contentHtml = '';
-                
-                // Toolbar superior de bloque
-                const toolbarHtml = `
-                    <div class="flex justify-between items-center mb-1">
-                        <div class="flex items-center gap-2">
-                            <span class="text-[9px] font-black px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-700 text-slate-500 uppercase tracking-tighter">${b.type === 'h2' ? 'TÍTULO' : b.type === 'h3' ? 'SUBTÍTULO' : b.type === 'p' ? 'PÁRRAFO' : b.type}</span>
-                            ${b.type === 'p' ? `
-                                <div class="text-toolbar flex gap-1 ml-2">
-                                    <button onclick="formatText('${b.id}', 'bold')" title="Negrita"><i class="ph-bold ph-text-b"></i></button>
-                                    <button onclick="formatText('${b.id}', 'italic')" title="Cursiva"><i class="ph-bold ph-text-italic"></i></button>
-                                    <button onclick="formatText('${b.id}', 'link')" title="Insertar Link"><i class="ph-bold ph-link"></i></button>
-                                </div>
-                            ` : ''}
-                        </div>
-                        <div class="block-actions flex gap-1">
-                            <button onclick="moveBlock('${b.id}', 'up')" class="p-1.5 text-slate-400 hover:text-brand-600 transition" ${index === 0 ? 'disabled' : ''}><i class="ph-bold ph-caret-up"></i></button>
-                            <button onclick="moveBlock('${b.id}', 'down')" class="p-1.5 text-slate-400 hover:text-brand-600 transition" ${index === blocks.length-1 ? 'disabled' : ''}><i class="ph-bold ph-caret-down"></i></button>
-                            <button onclick="removeBlock('${b.id}')" class="p-1.5 text-slate-300 hover:text-red-500 transition"><i class="ph-bold ph-trash"></i></button>
-                        </div>
-                    </div>
-                `;
-
-                if(b.type === 'p') {
-                    contentHtml = `<textarea id="txt-${b.id}" class="w-full bg-transparent outline-none text-sm leading-relaxed resize-none p-1" rows="5" placeholder="Escribe tu historia aquí... usa saltos de línea para nuevos párrafos" oninput="updateBlockContent('${b.id}', this.value)">${b.content}</textarea>`;
-                } else if(b.type === 'h2' || b.type === 'h3') {
-                    contentHtml = `<input type="text" class="w-full bg-transparent outline-none ${b.type === 'h2' ? 'font-bold text-lg' : 'font-semibold text-md'} text-slate-700 dark:text-white" placeholder="Escribe el encabezado..." value="${b.content}" oninput="updateBlockContent('${b.id}', this.value)">`;
-                } else if(b.type === 'img') {
-                    contentHtml = `<div class="w-full space-y-2">
-                        <div class="flex gap-2">
-                            <input type="text" id="input-${b.id}" class="flex-1 bg-slate-50 dark:bg-slate-900 p-2 text-[11px] rounded-lg border dark:border-slate-700 font-mono" placeholder="URL de la imagen..." value="${b.content}" oninput="updateBlockContent('${b.id}', this.value)">
-                            <label class="cursor-pointer bg-brand-50 text-brand-600 p-2 rounded-lg text-xs font-bold hover:bg-brand-100 transition"><i class="ph-bold ph-upload-simple"></i><input type="file" class="hidden" onchange="uploadImageToRepo('${b.id}', this)"></label>
-                        </div>
-                        ${b.content ? `<div class="relative rounded-xl overflow-hidden border dark:border-slate-700 shadow-inner"><img src="${b.content}" class="max-h-40 w-full object-cover"></div>` : ''}
-                    </div>`;
-                } else if(b.type === 'yt') {
-                    contentHtml = `<input type="text" class="w-full bg-slate-50 dark:bg-slate-900 p-3 text-xs rounded-lg border dark:border-slate-700 font-mono" placeholder="Pega el link de Youtube..." value="${b.content}" oninput="updateBlockContent('${b.id}', this.value)">`;
-                } else if(b.type === 'ref') {
-                    const [t,l] = b.content.split('|');
-                    contentHtml = `<div class="grid grid-cols-2 gap-3 p-3 bg-emerald-50 dark:bg-emerald-900/10 rounded-xl border border-emerald-100 dark:border-emerald-800">
-                        <input type="text" placeholder="Texto del botón..." class="p-2 text-xs rounded-lg border dark:bg-slate-900" value="${t||''}" oninput="updateRef('${b.id}', this.value, '${l||''}')">
-                        <input type="text" placeholder="Link de afiliado..." class="p-2 text-xs rounded-lg border dark:bg-slate-900" value="${l||''}" oninput="updateRef('${b.id}', '${t||''}', this.value)">
-                    </div>`;
-                }
-
-                el.innerHTML = toolbarHtml + contentHtml;
-                container.appendChild(el);
-            });
-        };
-
-        window.updateRef = (id, t, l) => { const b = blocks.find(b => b.id === id); if(b) b.content = `${t}|${l}`; updatePreview(); };
-
-        // --- GENERADOR MARKDOWN MEJORADO ---
-        function generateMarkdown() {
-            const title = document.getElementById('post-title').value;
-            const desc = document.getElementById('post-desc').value;
-            const auth = document.getElementById('post-author').value;
-            const date = document.getElementById('post-date').value;
-            const hero = document.getElementById('post-hero').value;
-
-            let md = `---\ntitle: "${title}"\ndescription: "${desc}"\npublishDate: "${date}"\nauthor: "${auth}"\nheroImage: "${hero}"\nlayout: "../../layouts/BlogPost.astro"\n---\n\n`;
-            
-            blocks.forEach(b => {
-                const c = b.content.trim(); if(!c) return;
-                if(b.type === 'h2') md += `## ${c}\n\n`;
-                else if(b.type === 'h3') md += `### ${c}\n\n`;
-                else if(b.type === 'p') md += `${c}\n\n`;
-                else if(b.type === 'img') md += `![Imagen](${c})\n\n`;
-                else if(b.type === 'yt') {
-                    const vid = c.match(/(?:v=|\/)([0-9A-Za-z_-]{11})/)?.[1];
-                    if(vid) md += `<iframe width="100%" height="450" src="https://www.youtube.com/embed/${vid}" frameborder="0" allowfullscreen class="rounded-xl shadow-lg"></iframe>\n\n`;
-                }
-                else if(b.type === 'ref') {
-                    const [t,l] = c.split('|');
-                    md += `<a href="${l}" target="_blank" class="btn-ref">${t}</a>\n\n`;
-                }
-            });
-            return md;
-        }
-
-        window.updatePreview = () => {
-            const md = generateMarkdown();
-            document.getElementById('preview-md').innerText = md;
-            document.getElementById('preview-html').innerHTML = marked.parse(md);
-            document.getElementById('word-count').innerText = `${md.split(/\s+/).length} PALABRAS`;
-        };
-
-        // --- RESTO DE LÓGICA (GitHub / Auth / AI) ---
-        // Se mantiene igual para no romper la funcionalidad que ya tienes
-        
         document.getElementById('login-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = e.target.querySelector('button');
@@ -381,7 +221,7 @@
                 await signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('password').value);
             } catch (err) {
                 const errP = document.getElementById('login-error');
-                errP.innerText = "Error: Acceso Denegado.";
+                errP.innerText = "Error: Acceso Denegado. Revisa Firebase.";
                 errP.classList.remove('hidden');
                 btn.disabled = false; btn.innerText = "Ingresar";
             }
@@ -403,6 +243,7 @@
                     githubConfig = docSnap.data();
                     geminiApiKey = githubConfig.geminiToken;
                     loadAuthors();
+                    loadHistory();
                     showToast("Sincronizado ✅");
                 }
             } else {
@@ -411,12 +252,176 @@
             }
         });
 
-        // (Aquí irían todas tus funciones originales de ghFetch, loadAuthors, publishCurrentPost, etc.)
-        // Las he omitido en este bloque para que copies el estilo, pero debes dejarlas en tu archivo final.
-        
-        // --- COPIAR AQUÍ TUS FUNCIONES ghFetch, toBase64, uploadImageToRepo, publishCurrentPost, generateIdeas, etc. ---
+        function parseTSAuthors(tsContent) {
+            try {
+                const match = tsContent.match(/export const AUTHORS: Record<string, Author> = (\{[\s\S]*?\});/);
+                if (!match) return {};
+                const fn = new Function("return " + match[1]);
+                return fn();
+            } catch (e) { return {}; }
+        }
 
-        // Función necesaria para GitHub (ghFetch) - Asegúrate de que use githubConfig
+        function generateTSContent(authorsObj) {
+            return `export type Author = {
+  slug: string;
+  name: string;
+  role: string;
+  bio: string;
+  image: string;
+};
+
+export const AUTHORS: Record<string, Author> = ${JSON.stringify(authorsObj, null, 2)};
+
+export const DEFAULT_AUTHOR = AUTHORS['daniel-arana'] || Object.values(AUTHORS)[0];
+`;
+        }
+
+        window.loadAuthors = async () => {
+            const select = document.getElementById('post-author');
+            try {
+                const url = `https://api.github.com/repos/${AUTHORS_REPO_OWNER}/${AUTHORS_REPO_NAME}/contents/${AUTHORS_FILE_PATH}`;
+                const resp = await fetch(url, { headers: { 'Authorization': `token ${githubConfig.githubToken}` } });
+                const data = await resp.json();
+                const content = decodeURIComponent(escape(atob(data.content.replace(/\n/g, ""))));
+                const authors = parseTSAuthors(content);
+                const list = Object.values(authors);
+                select.innerHTML = list.map(a => `<option value="${a.slug}">${a.name}</option>`).join('');
+                if(list.find(a => a.name.toLowerCase().includes(currentUserEmail))) select.value = list.find(a => a.name.toLowerCase().includes(currentUserEmail)).slug;
+            } catch (e) { select.innerHTML = '<option value="daniel-arana">Daniel Arana</option>'; }
+        };
+
+        window.openAuthorCreator = () => document.getElementById('author-modal').classList.remove('hidden');
+        window.handleAuthorImgPreview = (i) => { if(i.files[0]) { const r = new FileReader(); r.onload=e=>{document.getElementById('new-author-preview').src=e.target.result; document.getElementById('new-author-preview').classList.remove('hidden');}; r.readAsDataURL(i.files[0]); } };
+
+        window.saveNewAuthor = async () => {
+            const name = document.getElementById('new-author-name').value.trim();
+            const role = document.getElementById('new-author-role').value.trim();
+            const bio = document.getElementById('new-author-bio').value.trim();
+            const fileInput = document.getElementById('new-author-img');
+            if(!name) return;
+            const btn = document.getElementById('btn-save-author');
+            btn.disabled = true; btn.innerText = "Guardando...";
+
+            try {
+                const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+                let imgPath = "/assets/autores/default.jpg";
+
+                if(fileInput.files[0]) {
+                    const base64 = await toBase64(fileInput.files[0]);
+                    await ghFetch(`/contents/${AUTHORS_IMG_PATH}/${slug}.jpg`, 'PUT', { message: `Avatar: ${slug}`, content: base64.split(',')[1], branch: githubConfig.branch }, true);
+                    imgPath = `/assets/autores/${slug}.jpg`;
+                }
+
+                const url = `https://api.github.com/repos/${AUTHORS_REPO_OWNER}/${AUTHORS_REPO_NAME}/contents/${AUTHORS_FILE_PATH}`;
+                const getResp = await fetch(url, { headers: { 'Authorization': `token ${githubConfig.githubToken}` } });
+                const data = await getResp.json();
+                const content = decodeURIComponent(escape(atob(data.content.replace(/\n/g, ""))));
+                let authors = parseTSAuthors(content);
+                authors[slug] = { slug, name, role, bio, image: imgPath };
+
+                const newTS = generateTSContent(authors);
+                await fetch(url, {
+                    method: 'PUT', headers: { 'Authorization': `token ${githubConfig.githubToken}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: `Add author: ${name}`, content: btoa(unescape(encodeURIComponent(newTS))), sha: data.sha })
+                });
+
+                showToast("Autor sincronizado! ✅");
+                document.getElementById('author-modal').classList.add('hidden');
+                loadAuthors();
+            } catch(e) { showToast("Error al guardar autor", "error"); } finally { btn.disabled = false; btn.innerText = "Guardar en Repositorio"; }
+        };
+
+        window.addBlock = (type) => { blocks.push({ id: Date.now().toString(), type, content: '' }); renderBlocks(); updatePreview(); };
+        window.removeBlock = (id) => { blocks = blocks.filter(b => b.id !== id); renderBlocks(); updatePreview(); };
+        window.updateBlockContent = (id, val) => { const b = blocks.find(b => b.id === id); if(b) b.content = val; updatePreview(); };
+        window.updateRef = (id, t, l) => { const b = blocks.find(b => b.id === id); if(b) b.content = `${t}|${l}`; updatePreview(); };
+
+        // --- NUEVA LÓGICA DE FORMATO ---
+        window.applyFormat = (id, type) => {
+            const area = document.getElementById(`textarea-${id}`);
+            const start = area.selectionStart;
+            const end = area.selectionEnd;
+            const text = area.value;
+            const selected = text.substring(start, end);
+            let formatted = '';
+
+            switch(type) {
+                case 'bold': formatted = `**${selected || 'texto'}**`; break;
+                case 'link': formatted = `[${selected || 'texto'}](https://url.com)`; break;
+                case 'center': formatted = `<div align="center">\n${selected || 'texto'}\n</div>`; break;
+                case 'left': formatted = `<div align="left">\n${selected || 'texto'}\n</div>`; break;
+                case 'break': formatted = `\n<br>\n${selected}`; break;
+            }
+
+            const newVal = text.substring(0, start) + formatted + text.substring(end);
+            updateBlockContent(id, newVal);
+            renderBlocks();
+        };
+
+        function renderBlocks() {
+            const container = document.getElementById('blocks-container'); container.innerHTML = '';
+            blocks.forEach(b => {
+                const el = document.createElement('div');
+                el.className = 'bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 flex gap-4 group animate-[fadeIn_0.2s] relative';
+                let html = '';
+                
+                if(b.type === 'p') {
+                    html = `
+                    <div class="w-full space-y-2">
+                        <div class="flex gap-1.5 border-b dark:border-slate-700 pb-2 mb-2 overflow-x-auto">
+                            <button onclick="applyFormat('${b.id}', 'bold')" class="p-1.5 rounded hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500" title="Negrita"><i class="ph-bold ph-text-bolder"></i></button>
+                            <button onclick="applyFormat('${b.id}', 'link')" class="p-1.5 rounded hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500" title="Link"><i class="ph-bold ph-link"></i></button>
+                            <button onclick="applyFormat('${b.id}', 'center')" class="p-1.5 rounded hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500" title="Centrar"><i class="ph-bold ph-text-align-center"></i></button>
+                            <button onclick="applyFormat('${b.id}', 'left')" class="p-1.5 rounded hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500" title="Izquierda"><i class="ph-bold ph-text-align-left"></i></button>
+                            <button onclick="applyFormat('${b.id}', 'break')" class="p-1 px-2 rounded hover:bg-orange-50 text-orange-600 text-[9px] font-bold border border-orange-100" title="Salto de página"><i class="ph-bold ph-arrows-down-up"></i> SALTO</button>
+                        </div>
+                        <textarea id="textarea-${b.id}" class="w-full bg-transparent outline-none text-sm resize-none min-h-[100px]" placeholder="Escribe aquí..." oninput="updateBlockContent('${b.id}', this.value)">${b.content}</textarea>
+                    </div>`;
+                }
+                else if(b.type === 'img') html = `<div class="w-full space-y-2"><div class="flex gap-2"><input type="text" id="input-${b.id}" class="flex-1 bg-slate-50 dark:bg-slate-900 p-2 text-[10px] rounded-lg border dark:border-slate-700" placeholder="URL Imagen..." value="${b.content}" oninput="updateBlockContent('${b.id}', this.value)"><label class="cursor-pointer bg-brand-50 dark:bg-brand-500/10 text-brand-600 dark:text-brand-400 p-2 rounded-lg text-xs font-bold transition"><i class="ph ph-upload-simple"></i><input type="file" class="hidden" onchange="uploadImageToRepo('${b.id}', this)"></label></div>${b.content ? `<img src="${b.content.split('|')[0]}" class="h-24 rounded-xl border">` : ''}</div>`;
+                else if(b.type === 'yt') {
+                    const vid = b.content.match(/(?:v=|\/)([0-9A-Za-z_-]{11})/)?.[1];
+                    html = `<div class="w-full space-y-2"><input type="text" class="w-full bg-slate-50 dark:bg-slate-900 p-2 text-[10px] rounded-lg border dark:border-slate-700" placeholder="Link de Youtube..." value="${b.content}" oninput="updateBlockContent('${b.id}', this.value)">${vid ? `<div class="aspect-video w-full rounded-xl overflow-hidden bg-black"><iframe width="100%" height="100%" src="https://www.youtube.com/embed/${vid}"></iframe></div>` : ''}</div>`;
+                } else if(b.type === 'ref') {
+                    const [t,l] = b.content.split('|');
+                    html = `<div class="w-full p-3 bg-emerald-50 dark:bg-emerald-900/10 rounded-xl border border-emerald-100 dark:border-emerald-800/50 space-y-2"><div class="flex justify-between items-center"><span class="text-[9px] font-bold text-emerald-600 uppercase">Botón Referido</span><span class="bg-emerald-600 text-white px-2 py-0.5 rounded text-[9px]">${t || 'Botón'}</span></div><div class="grid grid-cols-2 gap-2"><input type="text" placeholder="Texto..." class="p-2 text-xs rounded-lg border dark:bg-slate-900" value="${t||''}" oninput="updateRef('${b.id}', this.value, '${l||''}')"><input type="text" placeholder="Link..." class="p-2 text-xs rounded-lg border dark:bg-slate-900" value="${l||''}" oninput="updateRef('${b.id}', '${t||''}', this.value)"></div></div>`;
+                } else {
+                    const ph = b.type === 'h2' ? 'Título Principal (H2)...' : 'Subtítulo (H3)...';
+                    html = `<input type="text" class="w-full bg-transparent outline-none font-bold text-slate-700 dark:text-white" placeholder="${ph}" value="${b.content}" oninput="updateBlockContent('${b.id}', this.value)">`;
+                }
+
+                el.innerHTML = `<div class="text-[9px] font-bold text-slate-300 dark:text-slate-600 uppercase pt-1">${b.type}</div><div class="flex-1">${html}</div><button onclick="removeBlock('${b.id}')" class="text-slate-300 hover:text-red-500 transition opacity-0 group-hover:opacity-100"><i class="ph ph-trash text-lg"></i></button>`;
+                container.appendChild(el);
+            });
+        }
+
+        function generateMarkdown() {
+            const title = document.getElementById('post-title').value;
+            const subtitle = document.getElementById('post-subtitle').value;
+            const desc = document.getElementById('post-desc').value;
+            const auth = document.getElementById('post-author').value;
+            let md = `---\ntitle: "${title}"\nsubtitle: "${subtitle}"\ndescription: "${desc}"\npublishDate: "${document.getElementById('post-date').value}"\nauthor: "${auth}"\nheroImage: "${document.getElementById('post-hero').value}"\nlayout: "../../layouts/BlogPost.astro"\n---\n\n`;
+            blocks.forEach(b => {
+                const c = b.content.trim(); if(!c) return;
+                if(b.type === 'h2') md += `## ${c}\n\n`;
+                else if(b.type === 'h3') md += `### ${c}\n\n`;
+                else if(b.type === 'p') md += `${c}\n\n`;
+                else if(b.type === 'img') { const [u,a] = c.split('|'); md += `![${a||'Imagen'}](${u.trim()})\n\n`; }
+                else if(b.type === 'yt') md += `<iframe width="100%" height="450" src="https://www.youtube.com/embed/${c.match(/(?:v=|\/)([0-9A-Za-z_-]{11})/)?.[1]}" frameborder="0" allowfullscreen class="rounded-xl shadow-lg"></iframe>\n\n`;
+                else if(b.type === 'ref') { const [t,l] = c.split('|'); md += `<a href="${l}" target="_blank" class="btn-ref">${t}</a>\n\n`; }
+            });
+            return md;
+        }
+
+        window.updatePreview = () => {
+            const md = generateMarkdown();
+            document.getElementById('preview-md').innerText = md;
+            document.getElementById('preview-html').innerHTML = marked.parse(md);
+            document.getElementById('word-count').innerText = `${md.split(/\s+/).length} PALABRAS`;
+        };
+
+        window.togglePreviewMode = () => { document.getElementById('preview-md').classList.toggle('hidden'); document.getElementById('preview-html').classList.toggle('hidden'); };
+
         async function ghFetch(ep, m='GET', b=null, useAuthorsRepo=false) {
             const owner = useAuthorsRepo ? AUTHORS_REPO_OWNER : githubConfig.repoOwner;
             const repo = useAuthorsRepo ? AUTHORS_REPO_NAME : githubConfig.repoName;
@@ -426,19 +431,19 @@
             }).then(r => r.json());
         }
 
+        const toBase64 = file => new Promise((resolve, reject) => { const r = new FileReader(); r.readAsDataURL(file); r.onload = () => resolve(r.result); r.onerror = e => reject(e); });
+
         window.uploadImageToRepo = async (id, input) => {
             if(!input.files[0]) return;
             const btn = input.parentElement; btn.innerHTML = "<i class='ph ph-spinner animate-spin'></i>";
             try {
                 const base64 = await toBase64(input.files[0]);
-                const name = `blog-${Date.now()}.jpg`;
+                const name = `${Date.now()}.jpg`;
                 await ghFetch(`/contents/public/uploads/${name}`, 'PUT', { message: `Img: ${name}`, content: base64.split(',')[1], branch: githubConfig.branch });
                 updateBlockContent(id, `/uploads/${name}`);
                 showToast("Foto subida! 📷");
             } catch(e) { showToast("Error al subir", "error"); } finally { renderBlocks(); }
         };
-
-        const toBase64 = file => new Promise((resolve, reject) => { const r = new FileReader(); r.readAsDataURL(file); r.onload = () => resolve(r.result); r.onerror = e => reject(e); });
 
         window.publishCurrentPost = async () => {
             if(!document.getElementById('post-title').value) return showToast("Falta Título", "error");
@@ -453,6 +458,29 @@
             } catch(e) { showToast("Error al publicar", "error"); } finally { btn.disabled = false; btn.innerHTML = "<i class='ph-bold ph-paper-plane-right'></i> Publicar Artículo"; }
         };
 
+        window.openAIModal = () => { document.getElementById('ai-modal').classList.remove('hidden'); document.getElementById('ai-topic').focus(); };
+        window.generateIdeas = async () => {
+            const topic = document.getElementById('ai-topic').value; if(!topic) return;
+            const container = document.getElementById('ai-results');
+            container.innerHTML = '<div class="p-8 text-center animate-pulse"><i class="ph ph-brain text-4xl text-purple-400"></i><p class="text-xs font-bold mt-2">Pensando...</p></div>';
+            try {
+                const prompt = `Travel expert. 3 post ideas for: "${topic}". JSON Array: [{"title": "H1", "desc": "Meta Description (max 30 words)"}]. No markdown.`;
+                const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`, {
+                    method: 'POST', body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                });
+                const d = await r.json();
+                const ideas = JSON.parse(d.candidates[0].content.parts[0].text.replace(/```json|```/g, ''));
+                container.innerHTML = ideas.map((idea, i) => `<div onclick="applyIdea('${idea.title}','${idea.desc}')" class="p-4 border rounded-2xl cursor-pointer hover:border-purple-500 hover:bg-purple-50 dark:hover:bg-purple-900/20 group transition"><h4 class="font-bold text-sm group-hover:text-purple-600">${idea.title}</h4><p class="text-[10px] text-slate-500 mt-1">${idea.desc}</p></div>`).join('');
+            } catch (e) { container.innerHTML = '<p class="text-red-500 text-center text-xs">Error AI</p>'; }
+        };
+
+        window.applyIdea = (t, d) => {
+            document.getElementById('post-title').value = t;
+            document.getElementById('post-desc').value = d;
+            document.getElementById('ai-modal').classList.add('hidden');
+            updatePreview(); showToast("Idea aplicada ✨");
+        };
+
         window.showToast = (msg, type='success') => {
             const el = document.createElement('div');
             el.className = `${type==='success'?'bg-slate-900':'bg-red-500'} text-white px-5 py-3 rounded-2xl shadow-2xl text-[11px] font-bold flex items-center gap-2 animate-[fadeIn_0.3s]`;
@@ -461,24 +489,21 @@
             setTimeout(() => el.remove(), 4000);
         };
 
-        window.togglePreviewMode = () => { 
-            document.getElementById('preview-md').classList.toggle('hidden'); 
-            document.getElementById('preview-html').classList.toggle('hidden'); 
+        async function loadHistory() {
+            try {
+                const c = await ghFetch(`/commits?per_page=5`);
+                document.getElementById('history-content').innerHTML = c.map(i => `<div class="text-[10px] border-b border-slate-100 dark:border-slate-800 pb-2 mb-2"><a href="${i.html_url}" target="_blank" class="text-blue-500 font-bold block truncate">${i.commit.message}</a><span class="text-slate-400 font-mono">${new Date(i.commit.author.date).toLocaleDateString()}</span></div>`).join('');
+            } catch(e) {}
+        }
+
+        window.downloadMarkdown = () => {
+            const md = generateMarkdown();
+            const blob = new Blob([md], { type: 'text/markdown' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a'); a.href = url; a.download = 'post.md'; a.click();
         };
 
-        // --- Cargar Autores desde GitHub (Tu lógica original) ---
-        window.loadAuthors = async () => {
-            const select = document.getElementById('post-author');
-            try {
-                const url = `https://api.github.com/repos/${AUTHORS_REPO_OWNER}/${AUTHORS_REPO_NAME}/contents/${AUTHORS_FILE_PATH}`;
-                const resp = await fetch(url, { headers: { 'Authorization': `token ${githubConfig.githubToken}` } });
-                const data = await resp.json();
-                const content = decodeURIComponent(escape(atob(data.content.replace(/\n/g, ""))));
-                // Aquí deberías tener tu función parseTSAuthors definida
-                const authors = {}; // Sustituir por resultado de parseTSAuthors(content)
-                select.innerHTML = Object.values(authors).map(a => `<option value="${a.slug}">${a.name}</option>`).join('');
-            } catch (e) { select.innerHTML = '<option value="daniel-arana">Daniel Arana</option>'; }
-        };
+        window.toggleHistory = () => document.getElementById('history-content').classList.toggle('hidden');
 
     </script>
 </body>
