@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contacto | Instante Trips</title>
+    <style>
+        /* --- MISMAS VARIABLES QUE EL INDEX PARA COHERENCIA --- */
+        :root {
+            --bg-color: #f5f5f7;
+            --text-color: #1d1d1f;
+            --secondary-text: #86868b;
+            --accent-color: #0071e3;
+            --input-bg: #ffffff;
+            --input-border: #d2d2d7;
+            --card-bg: #ffffff;
+            --shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #000000;
+                --text-color: #f5f5f7;
+                --secondary-text: #a1a1a6;
+                --accent-color: #2997ff;
+                --input-bg: #1c1c1e;
+                --input-border: #424245;
+                --card-bg: #1c1c1e;
+                --shadow: 0 10px 30px rgba(0,0,0,0.5);
+            }
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            margin: 0;
+            transition: background 0.3s;
+        }
+
+        /* --- CAJA DE CONTACTO --- */
+        .contact-card {
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: var(--shadow);
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+            animation: slideUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        .contact-header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+
+        .contact-header p {
+            color: var(--secondary-text);
+            font-size: 0.95rem;
+            margin-bottom: 30px;
+        }
+
+        /* --- FORMULARIO --- */
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--secondary-text);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 14px;
+            border-radius: 12px;
+            border: 1px solid var(--input-border);
+            background: var(--input-bg);
+            color: var(--text-color);
+            font-size: 1rem;
+            font-family: inherit;
+            transition: all 0.2s;
+            box-sizing: border-box; /* Crucial para que no se salga del borde */
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.2);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        button {
+            background-color: var(--text-color); /* Botón negro en día, blanco en noche */
+            color: var(--bg-color);
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            transform: scale(1.02);
+            opacity: 0.9;
+        }
+
+        .back-link {
+            display: block;
+            margin-top: 25px;
+            color: var(--secondary-text);
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+        .back-link:hover { color: var(--accent-color); }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="contact-card">
+        <div class="contact-header">
+            <h1>Hablemos</h1>
+            <p>¿Tienes una duda o quieres colaborar? Envíame un mensaje directo.</p>
+        </div>
+
+        <form action="https://formspree.io/f/mvzzgprr method="POST">
+            
+            <div class="form-group">
+                <label for="name">Nombre</label>
+                <input type="text" id="name" name="name" required placeholder="Tu nombre">
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required placeholder="tu@email.com">
+            </div>
+
+            <div class="form-group">
+                <label for="message">Mensaje</label>
+                <textarea id="message" name="message" required placeholder="¿En qué te puedo ayudar?"></textarea>
+            </div>
+
+            <button type="submit">Enviar Mensaje</button>
+        </form>
+
+        <a href="/" class="back-link">← Volver al inicio</a>
+    </div>
+
+</body>
+</html>
