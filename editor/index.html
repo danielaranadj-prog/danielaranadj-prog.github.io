@@ -2,8 +2,14 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Editor Instante Trips</title>
+    
+    <meta name="apple-mobile-web-app-title" content="Editor IT">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="public/logo-ios.png">
+    <link rel="icon" type="image/png" href="public/logo-ios.png">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -24,7 +30,7 @@
                         brand: {
                             50: '#eff6ff',
                             100: '#dbeafe',
-                            500: '#3b82f6', // Azul Instante Trips
+                            500: '#3b82f6', 
                             600: '#2563eb',
                             700: '#1d4ed8',
                         }
@@ -39,21 +45,19 @@
     <style>
         /* ESTÉTICA GENERAL DEL BLOG */
         body {
-            background-color: #f8fafc; /* Fondo gris muy suave */
+            background-color: #f8fafc; 
             color: #334155;
             min-height: 100vh;
             transition: background 0.3s ease, color 0.3s ease;
         }
 
-        /* Tarjetas "Papel" Minimalistas */
         .clean-card {
             background: white;
             border: 1px solid #e2e8f0;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-            border-radius: 1rem; /* Bordes redondeados modernos */
+            border-radius: 1rem; 
         }
 
-        /* Inputs Estilizados */
         .input-blog {
             background: #f8fafc;
             border: 1px solid #e2e8f0;
@@ -82,10 +86,8 @@
                 color: #e2e8f0;
             }
             .input-blog:focus { background: #1e293b; border-color: #60a5fa; }
-            .logo-adaptive { filter: brightness(0) invert(1); }
-        }
-        @media (prefers-color-scheme: light) {
-            .logo-adaptive { filter: brightness(0); }
+            /* Nota: Si blog.svg ya tiene color, quizás no quieras invertirlo. Ajusta esto según necesites. */
+            /* .logo-adaptive { filter: brightness(0) invert(1); } */
         }
 
         /* VISTA PREVIA DE MARKDOWN */
@@ -102,7 +104,6 @@
             .preview-content a { color: #60a5fa; }
         }
 
-        /* ANIMACIONES */
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .fade-in { animation: fadeIn 0.4s ease-out forwards; }
     </style>
@@ -114,7 +115,9 @@
             <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
 
             <div class="mb-8 flex flex-col items-center">
-                <img src="public/logo.svg" alt="Logo" class="w-16 h-16 mb-6 logo-adaptive opacity-90">
+                <div class="w-24 h-24 bg-white dark:bg-slate-800 rounded-full flex items-center justify-center shadow-lg border border-slate-100 dark:border-slate-700 mb-6 p-4">
+                    <img src="public/blog.svg" alt="Logo" class="w-full h-full object-contain">
+                </div>
                 
                 <h1 class="text-2xl font-bold font-display text-slate-900 dark:text-white mb-1 tracking-tight">
                     Instante Trips Blog
@@ -144,7 +147,9 @@
         <header class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-md sticky top-0 z-50 border-b border-slate-200 dark:border-slate-800">
             <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
                 <div class="flex items-center gap-3">
-                    <img src="public/logo.svg" alt="Logo" class="w-8 h-8 logo-adaptive">
+                    <div class="w-10 h-10 bg-white dark:bg-slate-800 rounded-full flex items-center justify-center shadow-sm border border-slate-200 dark:border-slate-700 p-1.5">
+                        <img src="public/blog.svg" alt="Logo" class="w-full h-full object-contain">
+                    </div>
                     <span class="font-bold font-display text-lg hidden md:block dark:text-white">Editor</span>
                 </div>
                 
@@ -272,7 +277,6 @@
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // --- TU CONFIGURACIÓN REAL DE FIREBASE (LISTA PARA USAR) ---
         const firebaseConfig = {
             apiKey: "AIzaSyBdsu65Voj8en9u_7eL5q0YRFuCC7fUYWA",
             authDomain: "instantetrips-editor.firebaseapp.com",
@@ -291,7 +295,6 @@
         let tags = [];
         let bulkFilesData = [];
 
-        // --- LOGIN ---
         const loginForm = document.getElementById('login-form');
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -326,7 +329,6 @@
                 document.getElementById('post-author').value = name;
                 document.getElementById('post-date').valueAsDate = new Date();
                 
-                // Cargar Configuración de GitHub
                 const docRef = doc(db, "config", "main");
                 const docSnap = await getDoc(docRef);
                 if (docSnap.exists()) {
@@ -342,7 +344,6 @@
             }
         });
 
-        // --- TAGS SYSTEM ---
         const tagInput = document.getElementById('tag-input');
         const tagsContainer = document.getElementById('tags-container');
 
@@ -373,7 +374,6 @@
             `).join('');
         }
 
-        // --- BLOCKS LOGIC ---
         window.addBlock = (type) => {
             blocks.push({ id: Date.now().toString(), type, content: '' });
             renderBlocks(); updatePreview();
@@ -433,7 +433,6 @@
             });
         }
 
-        // --- MARKDOWN GENERATION ---
         function generateMarkdown() {
             const title = document.getElementById('post-title').value;
             const desc = document.getElementById('post-desc').value;
@@ -457,7 +456,6 @@
             return md;
         }
 
-        // --- PREVIEW & PUBLISH ---
         window.updatePreview = () => {
             const md = generateMarkdown();
             document.getElementById('preview-md').textContent = md;
@@ -483,7 +481,6 @@
             link.click();
         };
 
-        // --- GITHUB API ---
         async function ghFetch(ep, m='GET', b=null) {
             if(!githubConfig) throw new Error("No conectado a GitHub");
             return fetch(`https://api.github.com/repos/${githubConfig.repoOwner}/${githubConfig.repoName}${ep}`, {
@@ -515,7 +512,6 @@
             btn.disabled = false; btn.innerText = "📤 Publicar Artículo";
         };
 
-        // --- BULK UPLOAD ---
         window.handleBulkFiles = (input) => {
             const files = Array.from(input.files);
             const previewDiv = document.getElementById('bulk-preview');
@@ -574,7 +570,6 @@
             finally { btn.disabled = false; btn.innerText = "🚀 Publicar Todos"; }
         };
 
-        // --- UTILS ---
         window.showToast = (msg, type='success') => {
             const el = document.createElement('div');
             el.className = `${type==='success'?'bg-emerald-600':'bg-red-500'} text-white px-4 py-3 rounded-lg shadow-lg text-sm font-bold flex items-center gap-2 animate-[fadeIn_0.3s]`;
@@ -595,9 +590,6 @@
         window.toggleHistory = () => { const h = document.getElementById('history-content'); h.classList.toggle('hidden'); };
         
         const mm = document.getElementById('mobile-menu');
-        document.getElementById('menu-btn').addEventListener('click', () => mm.classList.remove('translate-x-full'));
-        document.getElementById('close-menu').addEventListener('click', () => mm.classList.add('translate-x-full'));
-        window.closeMobMenu = () => mm.classList.add('translate-x-full');
     </script>
 </body>
 </html>
