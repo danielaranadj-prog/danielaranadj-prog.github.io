@@ -9,9 +9,16 @@
             /* Variables Modo Claro */
             --bg-color: #f5f5f7;
             --text-color: #1d1d1f;
-            --inactive-color: #86868b; 
+            --secondary-text: #86868b; 
+            --accent-color: #0071e3; /* Azul sutil tipo Apple */
             --separator-color: #d2d2d7; 
             --logo-filter: none;
+            
+            /* Botones y UI */
+            --btn-bg: #ffffff;
+            --btn-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            --btn-hover: 0 6px 16px rgba(0,0,0,0.12);
+            
             /* Colores Menú Lateral */
             --menu-bg: #ffffff;
             --menu-item-hover: rgba(0, 0, 0, 0.03);
@@ -22,199 +29,233 @@
                 /* Variables Modo Oscuro */
                 --bg-color: #000000;
                 --text-color: #f5f5f7;
-                --inactive-color: #6e6e73;
+                --secondary-text: #6e6e73;
+                --accent-color: #2997ff;
                 --separator-color: #424245;
                 --logo-filter: invert(1);
+                
+                --btn-bg: #1c1c1e;
+                --btn-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                --btn-hover: 0 6px 16px rgba(0,0,0,0.5);
+
                 --menu-bg: #1c1c1e;
                 --menu-item-hover: rgba(255, 255, 255, 0.05);
             }
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
-            height: 100vh;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column; /* Para empujar el footer al fondo */
+            transition: background-color 0.3s ease, color 0.3s ease;
+            overflow-x: hidden;
+        }
+
+        /* --- WRAPPER PRINCIPAL (Centrado) --- */
+        .main-wrapper {
+            flex: 1; /* Ocupa todo el espacio disponible */
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            text-align: center;
-            transition: background-color 0.3s ease, color 0.3s ease;
             padding: 20px;
-            overflow: hidden;
-        }
-
-        /* --- MENÚ HAMBURGUESA --- */
-        .hamburger-menu {
-            position: fixed;
-            top: 25px;
-            right: 25px;
-            z-index: 1000;
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 10px;
-        }
-
-        .hamburger-icon {
-            width: 24px;
-            height: 14px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-
-        .hamburger-icon span {
             width: 100%;
-            height: 2px;
-            background: var(--text-color);
-            border-radius: 2px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .hamburger-menu.active .hamburger-icon span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
-        .hamburger-menu.active .hamburger-icon span:nth-child(2) { opacity: 0; }
-        .hamburger-menu.active .hamburger-icon span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
-
-        /* Overlay y Backdrop */
-        .menu-overlay {
-            position: fixed;
-            top: 0;
-            right: -100%;
-            width: 280px;
-            height: 100%;
-            background: var(--menu-bg);
-            z-index: 999;
-            transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            padding: 100px 30px;
-            text-align: left;
-            box-shadow: -5px 0 25px rgba(0,0,0,0.1);
-        }
-
-        .menu-overlay.active { right: 0; }
-
-        .menu-backdrop {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.3);
-            backdrop-filter: blur(4px);
-            z-index: 998;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.4s ease;
-        }
-
-        .menu-backdrop.active { opacity: 1; visibility: visible; }
-
-        /* --- ITEMS DEL MENÚ CON TU ANIMACIÓN --- */
-        .menu-items { list-style: none; }
-
-        .menu-items li { margin-bottom: 8px; }
-
-        .menu-items a {
-            display: flex;
-            align-items: center;
-            padding: 12px 20px;
-            text-decoration: none;
-            color: var(--text-color);
-            font-size: 1.1rem;
-            font-weight: 300;
-            border-radius: 12px;
-            /* Aplicando tu animación original */
-            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.2s ease;
-        }
-
-        .menu-items a:hover {
-            transform: scale(1.08); /* Zoom sutil al hacer hover */
-            background: var(--menu-item-hover);
-        }
-
-        .dot-icon {
-            width: 5px;
-            height: 5px;
-            background: var(--text-color);
-            border-radius: 50%;
-            margin-right: 15px;
-            opacity: 0.4;
-        }
-
-        /* --- TU CONTENIDO ORIGINAL --- */
-        .container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            gap: 2.5rem;
             animation: fadeIn 1.5s ease-out;
-            max-width: 100%;
         }
 
         .logo {
             width: 375px; 
-            max-width: 85vw;
+            max-width: 80vw;
             height: auto;
             filter: var(--logo-filter);
             transition: filter 0.3s ease;
+            margin-bottom: 1rem;
         }
 
-        h1 {
-            font-size: 0.85rem;
-            font-weight: 600;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            margin-bottom: 5px;
-        }
-
-        .nav-links {
+        /* --- SECCIÓN DE ACCIÓN (Split Buttons) --- */
+        .actions-container {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
+            gap: 20px;
+            width: 100%;
+        }
+
+        .action-group {
+            display: flex;
+            flex-direction: column;
             align-items: center;
-            gap: 12px;
-            font-size: 1rem;
-            font-weight: 300;
+            position: relative;
         }
 
-        .nav-item {
-            display: inline-block; 
-            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.2s ease, opacity 0.2s ease;
-        }
-
-        .nav-item:hover {
-            transform: scale(1.15); 
-            opacity: 1; 
-        }
-
-        a.nav-item.active {
+        /* Estilo base de los botones principales */
+        .main-btn {
+            background-color: var(--btn-bg);
             color: var(--text-color);
+            padding: 15px 30px;
+            border-radius: 50px;
             text-decoration: none;
+            font-size: 1rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: var(--btn-shadow);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            border: 1px solid var(--separator-color);
             cursor: pointer;
+            min-width: 200px;
+            justify-content: center;
         }
 
-        span.nav-item.inactive {
-            color: var(--inactive-color);
-            cursor: default; 
+        .main-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--btn-hover);
+            border-color: var(--accent-color);
         }
 
-        .separator {
-            color: var(--separator-color);
-            font-weight: 200;
-            user-select: none;
+        .main-btn svg { width: 20px; height: 20px; stroke: var(--text-color); }
+        .main-btn:hover svg { stroke: var(--accent-color); }
+
+        /* --- DESPLEGABLE DE BANDERAS --- */
+        .flags-dropdown {
+            margin-top: 15px;
+            display: flex;
+            gap: 15px;
+            opacity: 0;
+            transform: translateY(-10px);
+            visibility: hidden;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: absolute; /* Para que no empuje el contenido bruscamente */
+            top: 100%;
+            background: var(--btn-bg);
+            padding: 10px 15px;
+            border-radius: 20px;
+            box-shadow: var(--btn-shadow);
+            border: 1px solid var(--separator-color);
+            z-index: 10;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        .flags-dropdown.active {
+            opacity: 1;
+            transform: translateY(0);
+            visibility: visible;
         }
+
+        .flag-item {
+            font-size: 1.8rem;
+            text-decoration: none;
+            transition: transform 0.2s ease, filter 0.2s ease;
+            position: relative;
+        }
+
+        .flag-item:hover { transform: scale(1.2); }
+
+        /* Estados de las banderas */
+        .flag-item.active { cursor: pointer; filter: grayscale(0); }
+        .flag-item.inactive { 
+            cursor: not-allowed; 
+            filter: grayscale(1) opacity(0.4); 
+        }
+        
+        /* Tooltip simple para países inactivos */
+        .flag-item.inactive::after {
+            content: 'Pronto';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.5rem;
+            color: var(--secondary-text);
+            text-transform: uppercase;
+        }
+
+        /* --- FOOTER SLIM (Discreto) --- */
+        .slim-footer {
+            width: 100%;
+            padding: 15px 30px;
+            border-top: 1px solid var(--separator-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.75rem;
+            color: var(--secondary-text);
+            background-color: var(--bg-color);
+        }
+
+        .footer-links a {
+            color: var(--secondary-text);
+            text-decoration: none;
+            margin-left: 15px;
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover { color: var(--text-color); }
+        
+        .editor-link {
+            opacity: 0.5;
+            font-weight: 600;
+        }
+        .editor-link:hover { opacity: 1; color: var(--accent-color) !important; }
+
+        @media (max-width: 600px) {
+            .slim-footer {
+                flex-direction: column;
+                gap: 10px;
+                padding-bottom: 25px; /* Espacio para gestos en móvil */
+            }
+            .actions-container { flex-direction: column; }
+            .flags-dropdown { position: relative; top: 0; } /* En móvil que empuje hacia abajo */
+        }
+
+        /* --- MENÚ HAMBURGUESA (Estilos base mantenidos) --- */
+        .hamburger-menu {
+            position: fixed; top: 25px; right: 25px; z-index: 1000;
+            background: none; border: none; cursor: pointer; padding: 10px;
+        }
+        .hamburger-icon { width: 24px; height: 14px; display: flex; flex-direction: column; justify-content: space-between; }
+        .hamburger-icon span { width: 100%; height: 2px; background: var(--text-color); border-radius: 2px; transition: all 0.3s ease; }
+        
+        .hamburger-menu.active .hamburger-icon span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+        .hamburger-menu.active .hamburger-icon span:nth-child(2) { opacity: 0; }
+        .hamburger-menu.active .hamburger-icon span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+
+        .menu-overlay {
+            position: fixed; top: 0; right: -100%; width: 280px; height: 100%;
+            background: var(--menu-bg); z-index: 999;
+            transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 100px 30px; text-align: left;
+            box-shadow: -5px 0 25px rgba(0,0,0,0.1);
+        }
+        .menu-overlay.active { right: 0; }
+        
+        .menu-backdrop {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.3); backdrop-filter: blur(4px);
+            z-index: 998; opacity: 0; visibility: hidden; transition: all 0.4s ease;
+        }
+        .menu-backdrop.active { opacity: 1; visibility: visible; }
+
+        .menu-items { list-style: none; }
+        .menu-items li { margin-bottom: 12px; }
+        .menu-items a {
+            display: flex; align-items: center; gap: 12px;
+            padding: 12px 20px; text-decoration: none; color: var(--text-color);
+            font-size: 1.1rem; font-weight: 400; border-radius: 12px;
+            transition: transform 0.2s, background 0.2s;
+        }
+        .menu-items a:hover { transform: translateX(5px); background: var(--menu-item-hover); }
+        .menu-items svg { width: 20px; height: 20px; opacity: 0.7; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
@@ -231,41 +272,103 @@
 
     <nav class="menu-overlay" id="menuOverlay">
         <ul class="menu-items">
-            <li><a href="/"><span class="dot-icon"></span> Inicio</a></li>
-            <li><a href="/contacto"><span class="dot-icon"></span> Contacto</a></li>
-            <li><a href="https://www.instantetrips.com/editor/" target="_blank" rel="noopener noreferrer"><span class="dot-icon"></span> Editor</a></li>
+            <li>
+                <a href="/">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                    </svg>
+                    Inicio
+                </a>
+            </li>
+            <li>
+                <a href="/contacto">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                    Contacto
+                </a>
+            </li>
         </ul>
     </nav>
 
-    <div class="container">
+    <main class="main-wrapper">
         <img src="logo.svg" alt="Instantetrips" class="logo">
-        <h1>Nuestros Destinos</h1>
-        <nav class="nav-links">
-            <a href="destinos_argentina/" class="nav-item active">Argentina</a>
-            <span class="separator">|</span>
-            <span class="nav-item inactive">Colombia</span>
-            <span class="separator">|</span>
-            <span class="nav-item inactive">España</span>
-            <span class="separator">|</span>
-            <span class="nav-item inactive">México</span>
-        </nav>
-    </div>
+        
+        <div class="actions-container">
+            <div class="action-group">
+                <button class="main-btn" id="destinosBtn">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Destinos
+                </button>
+                
+                <div class="flags-dropdown" id="destinosList">
+                    <a href="destinos_argentina/" class="flag-item active" title="Argentina">🇦🇷</a>
+                    <span class="flag-item inactive" title="México">🇲🇽</span>
+                    <span class="flag-item inactive" title="España">🇪🇸</span>
+                </div>
+            </div>
+
+            <div class="action-group">
+                <a href="https://blog.instantetrips.com" class="main-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                    </svg>
+                    Blog Instante Trips
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <footer class="slim-footer">
+        <div class="copyright">
+            &copy; 2026 Instante Trips
+        </div>
+        <div class="footer-links">
+            <a href="/privacidad">Privacidad</a>
+            <a href="/terminos">Términos</a>
+            <a href="https://www.instantetrips.com/editor/" target="_blank" class="editor-link">Zona Autores</a>
+        </div>
+    </footer>
 
     <script>
+        // Lógica del Menú Hamburguesa
         const btn = document.getElementById('hamburgerBtn');
         const overlay = document.getElementById('menuOverlay');
         const backdrop = document.getElementById('menuBackdrop');
 
-        function toggle() {
+        function toggleMenu() {
             btn.classList.toggle('active');
             overlay.classList.toggle('active');
             backdrop.classList.toggle('active');
         }
 
-        btn.addEventListener('click', toggle);
-        backdrop.addEventListener('click', toggle);
+        btn.addEventListener('click', toggleMenu);
+        backdrop.addEventListener('click', toggleMenu);
+
+        // Lógica del Botón Destinos (Toggle)
+        const destinosBtn = document.getElementById('destinosBtn');
+        const destinosList = document.getElementById('destinosList');
+        
+        // Cerrar destinos si se hace clic fuera
+        document.addEventListener('click', (e) => {
+            if (!destinosBtn.contains(e.target) && !destinosList.contains(e.target)) {
+                destinosList.classList.remove('active');
+            }
+        });
+
+        destinosBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // Evita que el click cierre inmediatamente
+            destinosList.classList.toggle('active');
+        });
+
+        // Cerrar con Escape
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && overlay.classList.contains('active')) toggle();
+            if (e.key === 'Escape') {
+                if (overlay.classList.contains('active')) toggleMenu();
+                if (destinosList.classList.contains('active')) destinosList.classList.remove('active');
+            }
         });
     </script>
 </body>
