@@ -118,7 +118,6 @@
                 <div class="clean-card p-6">
                     <h2 class="text-xs font-bold font-display uppercase tracking-widest text-brand-600 dark:text-brand-500 mb-5 flex items-center gap-2"><i class="ph-fill ph-article"></i> Data del Post</h2>
                     <div class="space-y-5">
-                        
                         <div>
                             <div class="flex justify-between items-end mb-1.5 ml-1">
                                 <label class="block text-xs font-semibold text-slate-500">TÍTULO</label>
@@ -284,7 +283,7 @@
         // --- CONFIGURACIÓN DE AUTORES (EDITAR AQUÍ) ---
         const AUTHORS_REPO_OWNER = "danielaranadj-prog"; 
         const AUTHORS_REPO_NAME = "blog"; 
-        const AUTHORS_FILE_PATH = "src/data/authors.ts"; // AHORA ES .TS
+        const AUTHORS_FILE_PATH = "src/data/authors.ts"; 
         const AUTHORS_IMG_PATH = "public/assets/autores";
         // --------------------------------
 
@@ -307,20 +306,45 @@
         let tags = [];
         let bulkFilesData = [];
         let currentUserEmail = '';
-        let authorsCache = {}; // Cache para guardar la data parseada
+        let authorsCache = {}; 
 
-        // --- FUNCIÓN 1: PARSEAR EL ARCHIVO TS (EL TRUCO) ---
+        // --- FUNCIONES CORE ---
+        console.log("Iniciando Editor...");
+
+        const loginForm = document.getElementById('login-form');
+        if(loginForm) {
+            loginForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+                const btn = loginForm.querySelector('button');
+                const originalText = btn.innerText;
+                btn.innerText = "Verificando..."; btn.disabled = true;
+                try { await signInWithEmailAndPassword(auth, email, password); } 
+                catch (error) { 
+                    const errDiv = document.getElementById('login-error'); 
+                    errDiv.textContent = "Error: Credenciales incorrectas."; 
+                    errDiv.classList.remove('hidden'); 
+                    btn.innerText = originalText; 
+                    btn.disabled = false; 
+                }
+            });
+        }
+
+        // --- LÓGICA DE AUTORES ROBUSTA ---
         function parseTSAuthors(tsContent) {
             try {
-                // Regex para extraer SOLO el objeto JSON dentro de "export const AUTHORS = { ... };"
+                // Regex para extraer el contenido dentro de AUTHORS: Record<...> = { ... };
+                // Buscamos el objeto JSON-like dentro de la constante
                 const match = tsContent.match(/export const AUTHORS: Record<string, Author> = (\{[\s\S]*?\});/);
                 if (!match) return {};
                 
-                // Convertir el string JS (que usa comillas simples) a JSON válido
-                // Nota: Esto es un "soft eval" para este formato específico.
-                let jsonStr = match[1];
-                // Truco: Usamos new Function para evaluar solo esa parte como objeto JS
-                const fn = new Function(`return ${jsonStr}`);
+                let jsonLike = match[1];
+                
+                // Limpieza básica para "evaluar" el objeto de forma segura
+                // Esto permite llaves sin comillas como 'daniel-arana': { ... }
+                // Usamos una función anónima para devolver el objeto
+                const fn = new Function("return " + jsonLike);
                 return fn();
             } catch (e) {
                 console.error("Error parseando TS:", e);
@@ -328,10 +352,11 @@
             }
         }
 
-        // --- FUNCIÓN 2: GENERAR EL ARCHIVO TS (RECONSTRUCCIÓN) ---
         function generateTSFileContent(authorsObj) {
-            // Convertimos el objeto a string formateado
-            // OJO: JSON.stringify usa comillas dobles, pero es válido en TS.
+            // Generar string del objeto, pero necesitamos formato específico
+            // JSON.stringify crea llaves con comillas dobles "key": val
+            // Tu TS usa comillas simples 'key': val.
+            // Para simplicidad, usaremos JSON standard, TS lo acepta igual.
             const objStr = JSON.stringify(authorsObj, null, 2);
 
             return `export type Author = {
@@ -345,11 +370,10 @@
 export const AUTHORS: Record<string, Author> = ${objStr};
 
 // Fallback editorial (Por defecto tú)
-export const DEFAULT_AUTHOR = AUTHORS['daniel-arana'];
+export const DEFAULT_AUTHOR = AUTHORS['daniel-arana'] || Object.values(AUTHORS)[0];
 `;
         }
 
-        // --- FUNCIÓN 3: CARGAR AUTORES ---
         window.loadAuthors = async () => {
             const select = document.getElementById('post-author');
             try {
@@ -357,28 +381,27 @@ export const DEFAULT_AUTHOR = AUTHORS['daniel-arana'];
                 const url = `https://api.github.com/repos/${AUTHORS_REPO_OWNER}/${AUTHORS_REPO_NAME}/contents/${AUTHORS_FILE_PATH}`;
                 const response = await fetch(url, { headers: { 'Authorization': `token ${githubConfig.githubToken}`, 'Accept': 'application/vnd.github.v3+json' } });
                 
-                if(!response.ok) throw new Error('Repo autores no encontrado');
+                if(!response.ok) throw new Error('Repo autores no encontrado (404)');
                 
                 const data = await response.json();
                 const content = decodeURIComponent(escape(window.atob(data.content.replace(/\n/g, ""))));
                 
-                // Parseamos el TS
                 authorsCache = parseTSAuthors(content);
                 const authorsArray = Object.values(authorsCache);
 
+                if(authorsArray.length === 0) throw new Error("Lista vacía");
+
                 select.innerHTML = authorsArray.map(a => `<option value="${a.slug}">${a.name}</option>`).join('');
                 
-                // Seleccionar usuario actual por defecto
                 const match = authorsArray.find(a => a.name.toLowerCase().includes(currentUserEmail.toLowerCase()));
                 if(match) select.value = match.slug;
 
             } catch (e) {
-                console.error(e);
-                select.innerHTML = `<option value="daniel-arana">Daniel Arana (Fallback)</option>`;
+                console.warn("Autores fallback:", e);
+                select.innerHTML = `<option value="daniel-arana">Daniel Arana (Local)</option>`;
             }
         };
 
-        // --- GESTIÓN DE NUEVOS AUTORES ---
         window.openAuthorCreator = () => { document.getElementById('author-modal').classList.remove('hidden'); document.getElementById('new-author-name').focus(); };
         window.handleAuthorImgPreview = (input) => {
             if (input.files && input.files[0]) {
@@ -404,11 +427,9 @@ export const DEFAULT_AUTHOR = AUTHORS['daniel-arana'];
             try {
                 if(!githubConfig) throw new Error("No conectado");
 
-                // 1. Slug automático
                 const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-                let imagePath = "/assets/autores/default.jpg"; // Fallback
+                let imagePath = "/assets/autores/default.jpg";
 
-                // 2. Subir imagen (si hay)
                 if(fileInput.files.length > 0) {
                     const file = fileInput.files[0];
                     const ext = file.name.split('.').pop().toLowerCase();
@@ -417,40 +438,29 @@ export const DEFAULT_AUTHOR = AUTHORS['daniel-arana'];
                     const content = base64Raw.split(',')[1];
                     
                     const fullPath = `${AUTHORS_IMG_PATH}/${filename}`;
-                    
-                    // Subir al repo "blog"
                     await ghFetch(`/contents/${fullPath}`, 'PUT', {
                         message: `Author Img: ${name}`,
                         content: content,
                         branch: githubConfig.branch
                     }, true);
-
                     imagePath = `/assets/autores/${filename}`;
                 }
 
-                // 3. Descargar TS actual para obtener SHA
+                // Leer TS actual
                 const url = `https://api.github.com/repos/${AUTHORS_REPO_OWNER}/${AUTHORS_REPO_NAME}/contents/${AUTHORS_FILE_PATH}`;
                 const getResp = await fetch(url, { headers: { 'Authorization': `token ${githubConfig.githubToken}` } });
                 const data = await getResp.json();
                 const currentContent = decodeURIComponent(escape(window.atob(data.content.replace(/\n/g, ""))));
                 
-                // Parsear lo que hay
                 let currentAuthors = parseTSAuthors(currentContent);
 
-                // 4. Agregar/Actualizar Autor
-                currentAuthors[slug] = {
-                    slug: slug,
-                    name: name,
-                    role: role,
-                    bio: bio,
-                    image: imagePath
-                };
+                // Agregar
+                currentAuthors[slug] = { slug, name, role, bio, image: imagePath };
 
-                // 5. Generar nuevo contenido TS
+                // Reconstruir
                 const newTSContent = generateTSFileContent(currentAuthors);
                 const newContentEncoded = btoa(unescape(encodeURIComponent(newTSContent)));
 
-                // 6. Subir (Update)
                 await fetch(url, {
                     method: 'PUT',
                     headers: { 'Authorization': `token ${githubConfig.githubToken}`, 'Content-Type': 'application/json' },
@@ -461,16 +471,9 @@ export const DEFAULT_AUTHOR = AUTHORS['daniel-arana'];
                     })
                 });
 
-                showToast(`Autor ${name} guardado correctamente ✅`);
+                showToast(`Autor ${name} guardado ✅`);
                 document.getElementById('author-modal').classList.add('hidden');
-                
-                // Reset form
-                document.getElementById('new-author-name').value = '';
-                document.getElementById('new-author-role').value = '';
-                document.getElementById('new-author-bio').value = '';
-                document.getElementById('new-author-preview').classList.add('hidden');
-                
-                loadAuthors(); // Refrescar select
+                loadAuthors();
 
             } catch (e) {
                 console.error(e);
@@ -480,29 +483,7 @@ export const DEFAULT_AUTHOR = AUTHORS['daniel-arana'];
             }
         };
 
-        // Helper para usar el repo de autores
-        async function ghFetch(ep, m='GET', b=null, useAuthorsRepo=false) {
-            const owner = useAuthorsRepo ? AUTHORS_REPO_OWNER : githubConfig.repoOwner;
-            const repo = useAuthorsRepo ? AUTHORS_REPO_NAME : githubConfig.repoName;
-            
-            return fetch(`https://api.github.com/repos/${owner}/${repo}${ep}`, {
-                method: m, headers: { 'Authorization': `token ${githubConfig.githubToken}`, 'Content-Type': 'application/json' },
-                body: b ? JSON.stringify(b) : null
-            }).then(r => { if(!r.ok) throw new Error(r.statusText); return r.json(); });
-        }
-
-        const loginForm = document.getElementById('login-form');
-        loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const btn = loginForm.querySelector('button');
-            const originalText = btn.innerText;
-            btn.innerText = "Verificando..."; btn.disabled = true;
-            try { await signInWithEmailAndPassword(auth, email, password); } 
-            catch (error) { const errDiv = document.getElementById('login-error'); errDiv.textContent = "Error: Credenciales incorrectas."; errDiv.classList.remove('hidden'); btn.innerText = originalText; btn.disabled = false; }
-        });
-
+        // --- AUTH STATE ---
         document.getElementById('btn-logout').addEventListener('click', () => signOut(auth));
         window.logout = () => signOut(auth);
 
@@ -530,16 +511,23 @@ export const DEFAULT_AUTHOR = AUTHORS['daniel-arana'];
             }
         });
 
+        // --- UTILS ---
+        async function ghFetch(ep, m='GET', b=null, useAuthorsRepo=false) {
+            const owner = useAuthorsRepo ? AUTHORS_REPO_OWNER : githubConfig.repoOwner;
+            const repo = useAuthorsRepo ? AUTHORS_REPO_NAME : githubConfig.repoName;
+            return fetch(`https://api.github.com/repos/${owner}/${repo}${ep}`, {
+                method: m, headers: { 'Authorization': `token ${githubConfig.githubToken}`, 'Content-Type': 'application/json' },
+                body: b ? JSON.stringify(b) : null
+            }).then(r => { if(!r.ok) throw new Error(r.statusText); return r.json(); });
+        }
+
         const tagInput = document.getElementById('tag-input');
         const tagsContainer = document.getElementById('tags-container');
-        tagInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') { e.preventDefault(); addTag(); } });
+        if(tagInput) tagInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') { e.preventDefault(); addTag(); } });
+        
         window.addTag = () => { const val = tagInput.value.trim(); if (val && !tags.includes(val)) { tags.push(val); tagInput.value = ''; renderTags(); updatePreview(); } };
         window.removeTag = (tag) => { tags = tags.filter(t => t !== tag); renderTags(); updatePreview(); };
-        function renderTags() {
-            tagsContainer.innerHTML = tags.map(t => `
-                <div class="inline-flex items-center gap-1 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 px-3 py-1 rounded-full text-xs font-bold border border-slate-200 dark:border-slate-700 animate-[fadeIn_0.3s]"><span>#${t}</span><button onclick="removeTag('${t}')" class="hover:text-red-500 ml-1"><i class="ph-bold ph-x"></i></button></div>
-            `).join('');
-        }
+        function renderTags() { tagsContainer.innerHTML = tags.map(t => `<div class="inline-flex items-center gap-1 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 px-3 py-1 rounded-full text-xs font-bold border border-slate-200 dark:border-slate-700 animate-[fadeIn_0.3s]"><span>#${t}</span><button onclick="removeTag('${t}')" class="hover:text-red-500 ml-1"><i class="ph-bold ph-x"></i></button></div>`).join(''); }
 
         window.addBlock = (type) => { blocks.push({ id: Date.now().toString(), type, content: '' }); renderBlocks(); updatePreview(); };
         window.removeBlock = (id) => { blocks = blocks.filter(b => b.id !== id); renderBlocks(); updatePreview(); };
@@ -570,12 +558,10 @@ export const DEFAULT_AUTHOR = AUTHORS['daniel-arana'];
             const title = document.getElementById('post-title').value;
             const desc = document.getElementById('post-desc').value;
             const date = document.getElementById('post-date').value;
-            const authorSlug = document.getElementById('post-author').value; // Usamos el SLUG del select
+            const authorSlug = document.getElementById('post-author').value; 
             const hero = document.getElementById('post-hero').value;
             const tagsString = tags.map(t => `"${t}"`).join(', ');
-
             let md = `---\ntitle: "${title}"\ndescription: "${desc}"\npublishDate: "${date}"\nauthor: "${authorSlug}"\nheroImage: "${hero}"\nlayout: "../../layouts/BlogPost.astro"\ntags: [${tagsString}]\n---\n\n`;
-
             blocks.forEach(b => {
                 const c = b.content.trim(); if(!c) return;
                 if(b.type === 'h2') md += `## ${c}\n\n`;
@@ -605,14 +591,6 @@ export const DEFAULT_AUTHOR = AUTHORS['daniel-arana'];
             const filename = `${date}-${title.toLowerCase().replace(/[^a-z0-9]+/g,'-')}.md`;
             const link = document.createElement('a'); link.href = URL.createObjectURL(new Blob([generateMarkdown()], {type: 'text/markdown'})); link.download = filename; link.click();
         };
-
-        async function ghFetch(ep, m='GET', b=null) {
-            if(!githubConfig) throw new Error("No conectado a GitHub");
-            return fetch(`https://api.github.com/repos/${githubConfig.repoOwner}/${githubConfig.repoName}${ep}`, {
-                method: m, headers: { 'Authorization': `token ${githubConfig.githubToken}`, 'Content-Type': 'application/json' },
-                body: b ? JSON.stringify(b) : null
-            }).then(r => { if(!r.ok) throw new Error(r.statusText); return r.json(); });
-        }
 
         const toBase64 = file => new Promise((resolve, reject) => { const reader = new FileReader(); reader.readAsDataURL(file); reader.onload = () => resolve(reader.result); reader.onerror = error => reject(error); });
 
