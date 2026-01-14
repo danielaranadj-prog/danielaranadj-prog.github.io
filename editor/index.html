@@ -337,29 +337,40 @@
         document.getElementById('btn-logout').addEventListener('click', () => signOut(auth));
         window.logout = () => signOut(auth);
 
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                document.getElementById('login-section').classList.add('hidden');
-                document.getElementById('app-section').classList.remove('hidden');
-                const name = user.email.split('@')[0];
-                document.getElementById('welcome-msg').textContent = `Editor: ${name}`;
-                document.getElementById('post-author').value = name;
-                document.getElementById('post-date').valueAsDate = new Date();
-                
-                const docRef = doc(db, "config", "main");
-                const docSnap = await getDoc(docRef);
-                if (docSnap.exists()) {
-                    githubConfig = docSnap.data();
-                    showToast("Conectado a GitHub ✅");
-                    loadHistory();
-                } else {
-                    showToast("Falta configuración en Firestore ❌", "error");
-                }
-            } else {
-                document.getElementById('login-section').classList.remove('hidden');
-                document.getElementById('app-section').classList.add('hidden');
+        // --- COPIA DESDE AQUÍ ---
+onAuthStateChanged(auth, async (user) => {
+    if (user) {
+        document.getElementById('login-section').classList.add('hidden');
+        document.getElementById('app-section').classList.remove('hidden');
+        const name = user.email.split('@')[0];
+        document.getElementById('welcome-msg').textContent = `Editor: ${name}`;
+        document.getElementById('post-author').value = name;
+        document.getElementById('post-date').valueAsDate = new Date();
+        
+        const docRef = doc(db, "config", "main");
+        const docSnap = await getDoc(docRef);
+        
+        if (docSnap.exists()) {
+            githubConfig = docSnap.data();
+            // ESTO ES LO NUEVO PARA DIAGNOSTICAR:
+            console.log("🚀 Configuración detectada en Firebase:", githubConfig);
+            
+            if (!githubConfig.githubToken) {
+                console.error("❌ ERROR: El campo 'githubToken' está vacío en Firebase.");
             }
-        });
+            
+            showToast("Conectado a GitHub ✅");
+            loadHistory();
+        } else {
+            console.error("❌ ERROR: No existe el documento 'config/main' en Firestore.");
+            showToast("Falta configuración en Firestore ❌", "error");
+        }
+    } else {
+        document.getElementById('login-section').classList.remove('hidden');
+        document.getElementById('app-section').classList.add('hidden');
+    }
+});
+// --- HASTA AQUÍ ---
 
         const tagInput = document.getElementById('tag-input');
         const tagsContainer = document.getElementById('tags-container');
