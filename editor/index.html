@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es" class="dark">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,7 +12,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
-            darkMode: 'class',
+            darkMode: 'media', /* AUTOMÁTICO SEGÚN SISTEMA */
             theme: {
                 extend: {
                     fontFamily: {
@@ -20,7 +20,7 @@
                         mono: ['JetBrains Mono', 'monospace'],
                     },
                     colors: {
-                        glass: "rgba(15, 23, 42, 0.7)",
+                        // Colores personalizados si hicieran falta
                     }
                 }
             }
@@ -30,49 +30,110 @@
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
     <style>
+        /* ESTILOS BASE (MODO CLARO) */
         body {
-            background: radial-gradient(circle at 50% 0%, #1e293b 0%, #020617 100%);
-            color: #e2e8f0;
+            background: radial-gradient(circle at 50% 0%, #f8fafc 0%, #e2e8f0 100%);
+            color: #1e293b;
             min-height: 100vh;
+            transition: background 0.3s ease, color 0.3s ease;
         }
+        
         .glass-panel {
-            background: rgba(15, 23, 42, 0.6);
+            background: rgba(255, 255, 255, 0.75);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
         }
-        /* Estilos específicos para los Tags */
+
+        /* Input Base (Claro) */
+        .input-adaptive {
+            background: rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            color: #0f172a;
+        }
+        .input-adaptive:focus {
+            border-color: #3b82f6;
+            background: white;
+        }
+
+        /* --- MODO OSCURO (Overrides) --- */
+        @media (prefers-color-scheme: dark) {
+            body {
+                background: radial-gradient(circle at 50% 0%, #1e293b 0%, #020617 100%);
+                color: #e2e8f0;
+            }
+            .glass-panel {
+                background: rgba(15, 23, 42, 0.6);
+                border: 1px solid rgba(255, 255, 255, 0.08);
+                box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+            }
+            .input-adaptive {
+                background: rgba(15, 23, 42, 0.5);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                color: white;
+            }
+            .input-adaptive:focus {
+                background: rgba(15, 23, 42, 0.8);
+            }
+            /* Invertir el logo si es negro en el SVG original, quitar filtro si es blanco */
+            /* Ajusta esto según el color real de tu SVG */
+            .logo-adaptive {
+                filter: brightness(0) invert(1); /* Lo vuelve blanco */
+            }
+        }
+        
+        /* Ajuste logo para modo claro: Lo vuelve negro */
+        @media (prefers-color-scheme: light) {
+            .logo-adaptive {
+                filter: brightness(0); /* Lo vuelve negro */
+            }
+        }
+
+        /* Tag Chips */
         .tag-chip {
-            background: rgba(59, 130, 246, 0.2);
-            border: 1px solid rgba(59, 130, 246, 0.4);
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
             padding: 4px 12px;
             border-radius: 20px;
             display: inline-flex;
             align-items: center;
             gap: 8px;
             font-size: 13px;
-            color: #bfdbfe;
-            animation: fadeIn 0.3s ease;
+            color: #2563eb; /* Azul oscuro para claro */
         }
-        .tag-chip button:hover { color: #f87171; }
-        
-        @keyframes fadeIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+        @media (prefers-color-scheme: dark) {
+            .tag-chip {
+                background: rgba(59, 130, 246, 0.2);
+                border: 1px solid rgba(59, 130, 246, 0.4);
+                color: #bfdbfe; /* Azul claro para oscuro */
+            }
+        }
         
         /* Preview Styles */
-        .preview-content h2 { font-size: 1.5rem; font-weight: 700; margin-top: 1.5em; color: #f8fafc; }
-        .preview-content h3 { font-size: 1.25rem; font-weight: 600; margin-top: 1.2em; color: #f1f5f9; }
-        .preview-content p { margin-bottom: 1em; line-height: 1.6; color: #cbd5e1; }
+        .preview-content h2 { font-size: 1.5rem; font-weight: 700; margin-top: 1.5em; }
+        .preview-content h3 { font-size: 1.25rem; font-weight: 600; margin-top: 1.2em; }
+        .preview-content p { margin-bottom: 1em; line-height: 1.6; }
         .preview-content img { max-width: 100%; border-radius: 8px; margin: 1em 0; }
         .preview-content ul { list-style-type: disc; padding-left: 1.5em; margin-bottom: 1em; }
-        .preview-content a { color: #38bdf8; text-decoration: underline; }
+        .preview-content a { color: #3b82f6; text-decoration: underline; }
         
-        /* Toast & Scrollbar */
+        @media (prefers-color-scheme: dark) {
+            .preview-content h2 { color: #f8fafc; }
+            .preview-content h3 { color: #f1f5f9; }
+            .preview-content p { color: #cbd5e1; }
+        }
+        
+        /* Utils */
         @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
         .toast-enter { animation: slideIn 0.3s ease forwards; }
         ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #0f172a; }
-        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 4px; }
+        @media (prefers-color-scheme: dark) {
+            ::-webkit-scrollbar-track { background: #0f172a; }
+            ::-webkit-scrollbar-thumb { background: #334155; }
+        }
     </style>
 </head>
 <body class="text-sm md:text-base selection:bg-blue-500/30">
@@ -80,84 +141,84 @@
     <div id="login-section" class="flex items-center justify-center min-h-screen p-4">
         <div class="glass-panel p-8 rounded-2xl w-full max-w-md text-center">
             <div class="mb-6 flex flex-col items-center">
-                <img src="public/logo.svg" alt="Instante Trips" class="w-20 h-20 mb-4 drop-shadow-lg">
-                <h1 class="text-2xl font-bold text-white tracking-tight">Instante Trips</h1>
-                <p class="text-slate-400 text-sm">Acceso Autores</p>
+                <img src="public/logo.svg" alt="Instante Trips" class="w-20 h-20 mb-4 drop-shadow-lg logo-adaptive transition-all duration-300">
+                <h1 class="text-2xl font-bold dark:text-white text-slate-900 tracking-tight">Instante Trips</h1>
+                <p class="text-slate-500 dark:text-slate-400 text-sm">Acceso Autores</p>
             </div>
             <form id="login-form" class="space-y-4">
-                <input type="email" id="email" placeholder="Email" class="w-full p-3 rounded-lg bg-slate-900/50 border border-slate-700 text-white focus:border-blue-500 outline-none" required>
-                <input type="password" id="password" placeholder="Contraseña" class="w-full p-3 rounded-lg bg-slate-900/50 border border-slate-700 text-white focus:border-blue-500 outline-none" required>
-                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-lg transition-all shadow-lg shadow-blue-900/20">
+                <input type="email" id="email" placeholder="Email" class="w-full p-3 rounded-lg input-adaptive focus:outline-none" required>
+                <input type="password" id="password" placeholder="Contraseña" class="w-full p-3 rounded-lg input-adaptive focus:outline-none" required>
+                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-lg transition-all shadow-lg shadow-blue-500/20">
                     Ingresar
                 </button>
             </form>
-            <p id="login-error" class="text-red-400 text-xs mt-4 hidden"></p>
+            <p id="login-error" class="text-red-500 dark:text-red-400 text-xs mt-4 hidden"></p>
         </div>
     </div>
 
     <div id="app-section" class="hidden min-h-screen flex flex-col">
         
-        <header class="glass-panel sticky top-0 z-50 border-b-0 border-b-slate-700">
+        <header class="glass-panel sticky top-0 z-50 border-b-0">
             <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
                 <div class="flex items-center gap-3">
-                    <img src="public/logo.svg" alt="Logo" class="w-8 h-8">
-                    <span class="font-bold hidden md:block">Editor Instante Trips</span>
+                    <img src="public/logo.svg" alt="Logo" class="w-8 h-8 logo-adaptive">
+                    <span class="font-bold hidden md:block dark:text-white text-slate-800">Editor Instante Trips</span>
                 </div>
                 
                 <div class="flex items-center gap-4">
-                    <span id="welcome-msg" class="text-slate-400 text-sm hidden md:block"></span>
+                    <span id="welcome-msg" class="text-slate-500 dark:text-slate-400 text-sm hidden md:block"></span>
                     <div class="hidden md:flex gap-2">
-                        <button onclick="togglePreviewMode()" class="px-3 py-1.5 rounded bg-slate-800 hover:bg-slate-700 text-xs border border-slate-700 transition">👁️ Vista HTML</button>
-                        <button onclick="downloadMarkdown()" class="px-3 py-1.5 rounded bg-slate-800 hover:bg-slate-700 text-xs border border-slate-700 transition">📥 .md</button>
-                        <button onclick="copyMarkdown()" class="px-3 py-1.5 rounded bg-slate-800 hover:bg-slate-700 text-xs border border-slate-700 transition">📋 Copiar</button>
-                        <button id="btn-logout" class="text-red-400 hover:text-red-300 text-xs font-bold ml-2">Salir</button>
+                        <button onclick="togglePreviewMode()" class="px-3 py-1.5 rounded bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-xs border border-slate-300 dark:border-slate-700 transition">👁️ Vista HTML</button>
+                        <button onclick="downloadMarkdown()" class="px-3 py-1.5 rounded bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-xs border border-slate-300 dark:border-slate-700 transition">📥 .md</button>
+                        <button onclick="copyMarkdown()" class="px-3 py-1.5 rounded bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-xs border border-slate-300 dark:border-slate-700 transition">📋 Copiar</button>
+                        <button id="btn-logout" class="text-red-500 dark:text-red-400 hover:text-red-600 dark:hover:text-red-300 text-xs font-bold ml-2">Salir</button>
                     </div>
-                    <button id="menu-btn" class="md:hidden text-white text-xl">☰</button>
+                    <button id="menu-btn" class="md:hidden dark:text-white text-slate-800 text-xl">☰</button>
                 </div>
             </div>
         </header>
 
-        <div id="mobile-menu" class="fixed inset-0 z-[60] bg-black/90 transform translate-x-full transition-transform duration-300 md:hidden flex flex-col justify-center items-center gap-6">
-            <button id="close-menu" class="absolute top-4 right-4 text-3xl text-slate-400">×</button>
-            <a href="https://instantetrips.com" target="_blank" class="text-xl font-bold">Inicio</a>
-            <button onclick="togglePreviewMode(); closeMobMenu()" class="text-lg">👁️ Vista HTML</button>
-            <button onclick="downloadMarkdown(); closeMobMenu()" class="text-lg">📥 Descargar .md</button>
-            <button onclick="logout(); closeMobMenu()" class="text-red-400 text-lg">Cerrar Sesión</button>
+        <div id="mobile-menu" class="fixed inset-0 z-[60] bg-white/95 dark:bg-black/95 transform translate-x-full transition-transform duration-300 md:hidden flex flex-col justify-center items-center gap-6">
+            <button id="close-menu" class="absolute top-4 right-4 text-3xl text-slate-500 dark:text-slate-400">×</button>
+            <a href="https://instantetrips.com" target="_blank" class="text-xl font-bold dark:text-white text-slate-900">Inicio</a>
+            <button onclick="togglePreviewMode(); closeMobMenu()" class="text-lg dark:text-slate-200 text-slate-800">👁️ Vista HTML</button>
+            <button onclick="downloadMarkdown(); closeMobMenu()" class="text-lg dark:text-slate-200 text-slate-800">📥 Descargar .md</button>
+            <button onclick="logout(); closeMobMenu()" class="text-red-500 dark:text-red-400 text-lg">Cerrar Sesión</button>
         </div>
 
         <main class="flex-1 max-w-7xl mx-auto w-full p-4 grid grid-cols-1 md:grid-cols-2 gap-6">
             
             <div class="flex flex-col gap-6">
                 <div class="glass-panel p-6 rounded-xl">
-                    <h2 class="text-blue-400 font-bold mb-4 text-xs uppercase tracking-widest">Metadatos del Post</h2>
+                    <h2 class="text-blue-500 dark:text-blue-400 font-bold mb-4 text-xs uppercase tracking-widest">Metadatos del Post</h2>
                     <div class="space-y-4">
                         <div>
-                            <label class="block text-xs text-slate-400 mb-1">Título</label>
-                            <input type="text" id="post-title" class="w-full p-2 rounded bg-slate-900/50 border border-slate-700 focus:border-blue-500 outline-none" placeholder="Mi viaje a..." oninput="updatePreview()">
+                            <label class="block text-xs text-slate-500 dark:text-slate-400 mb-1">Título</label>
+                            <input type="text" id="post-title" class="w-full p-2 rounded input-adaptive focus:outline-none" placeholder="Mi viaje a..." oninput="updatePreview()">
                         </div>
                         <div>
-                            <label class="block text-xs text-slate-400 mb-1">Descripción SEO</label>
-                            <textarea id="post-desc" rows="2" class="w-full p-2 rounded bg-slate-900/50 border border-slate-700 focus:border-blue-500 outline-none resize-none" oninput="updatePreview()"></textarea>
+                            <label class="block text-xs text-slate-500 dark:text-slate-400 mb-1">Descripción SEO</label>
+                            <textarea id="post-desc" rows="2" class="w-full p-2 rounded input-adaptive focus:outline-none resize-none" oninput="updatePreview()"></textarea>
                         </div>
                         <div class="grid grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-xs text-slate-400 mb-1">Fecha</label>
-                                <input type="date" id="post-date" class="w-full p-2 rounded bg-slate-900/50 border border-slate-700 scheme-dark" onchange="updatePreview()">
+                                <label class="block text-xs text-slate-500 dark:text-slate-400 mb-1">Fecha</label>
+                                <input type="date" id="post-date" class="w-full p-2 rounded input-adaptive focus:outline-none dark:scheme-dark" onchange="updatePreview()">
                             </div>
                             <div>
-                                <label class="block text-xs text-slate-400 mb-1">Autor</label>
-                                <input type="text" id="post-author" class="w-full p-2 rounded bg-slate-900/50 border border-slate-700" oninput="updatePreview()">
+                                <label class="block text-xs text-slate-500 dark:text-slate-400 mb-1">Autor</label>
+                                <input type="text" id="post-author" class="w-full p-2 rounded input-adaptive focus:outline-none" oninput="updatePreview()">
                             </div>
                         </div>
                         <div>
-                            <label class="block text-xs text-slate-400 mb-1">Imagen Portada (URL)</label>
-                            <input type="url" id="post-hero" class="w-full p-2 rounded bg-slate-900/50 border border-slate-700" placeholder="https://..." oninput="updatePreview()">
+                            <label class="block text-xs text-slate-500 dark:text-slate-400 mb-1">Imagen Portada (URL)</label>
+                            <input type="url" id="post-hero" class="w-full p-2 rounded input-adaptive focus:outline-none" placeholder="https://..." oninput="updatePreview()">
                         </div>
                         
                         <div>
-                            <label class="block text-xs text-slate-400 mb-1">Tags</label>
+                            <label class="block text-xs text-slate-500 dark:text-slate-400 mb-1">Tags</label>
                             <div class="flex gap-2 mb-2">
-                                <input type="text" id="tag-input" placeholder="Escribe y presiona Enter..." class="flex-1 p-2 rounded bg-slate-900/50 border border-slate-700 focus:border-blue-500 outline-none text-sm">
+                                <input type="text" id="tag-input" placeholder="Escribe y presiona Enter..." class="flex-1 p-2 rounded input-adaptive focus:outline-none text-sm">
                                 <button onclick="addTag()" class="bg-blue-600 hover:bg-blue-500 px-3 rounded text-white font-bold text-sm">+</button>
                             </div>
                             <div id="tags-container" class="flex flex-wrap gap-2 min-h-[30px]"></div>
@@ -167,35 +228,35 @@
 
                 <div class="glass-panel p-6 rounded-xl flex-1">
                     <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-blue-400 font-bold text-xs uppercase tracking-widest">Contenido</h2>
-                        <button onclick="clearBlocks()" class="text-xs text-red-400 hover:text-red-300">🗑️ Limpiar</button>
+                        <h2 class="text-blue-500 dark:text-blue-400 font-bold text-xs uppercase tracking-widest">Contenido</h2>
+                        <button onclick="clearBlocks()" class="text-xs text-red-500 dark:text-red-400 hover:text-red-600 dark:hover:text-red-300">🗑️ Limpiar</button>
                     </div>
 
-                    <div class="flex flex-wrap gap-2 mb-4 p-2 bg-slate-900/50 rounded-lg border border-slate-700">
-                        <button onclick="addBlock('h2')" class="p-1.5 hover:bg-slate-700 rounded text-xs">H2</button>
-                        <button onclick="addBlock('h3')" class="p-1.5 hover:bg-slate-700 rounded text-xs">H3</button>
-                        <button onclick="addBlock('p')" class="p-1.5 hover:bg-slate-700 rounded text-xs" title="Párrafo">¶</button>
-                        <button onclick="addBlock('img')" class="p-1.5 hover:bg-slate-700 rounded text-xs">🖼️</button>
-                        <button onclick="addBlock('yt')" class="p-1.5 hover:bg-slate-700 rounded text-xs">📺</button>
-                        <button onclick="addBlock('list')" class="p-1.5 hover:bg-slate-700 rounded text-xs">list</button>
-                        <button onclick="addBlock('ref')" class="p-1.5 hover:bg-slate-700 rounded text-xs">🔗</button>
+                    <div class="flex flex-wrap gap-2 mb-4 p-2 bg-slate-100 dark:bg-slate-900/50 rounded-lg border border-slate-200 dark:border-slate-700">
+                        <button onclick="addBlock('h2')" class="p-1.5 hover:bg-slate-200 dark:hover:bg-slate-700 rounded text-xs dark:text-slate-300 text-slate-600">H2</button>
+                        <button onclick="addBlock('h3')" class="p-1.5 hover:bg-slate-200 dark:hover:bg-slate-700 rounded text-xs dark:text-slate-300 text-slate-600">H3</button>
+                        <button onclick="addBlock('p')" class="p-1.5 hover:bg-slate-200 dark:hover:bg-slate-700 rounded text-xs dark:text-slate-300 text-slate-600" title="Párrafo">¶</button>
+                        <button onclick="addBlock('img')" class="p-1.5 hover:bg-slate-200 dark:hover:bg-slate-700 rounded text-xs dark:text-slate-300 text-slate-600">🖼️</button>
+                        <button onclick="addBlock('yt')" class="p-1.5 hover:bg-slate-200 dark:hover:bg-slate-700 rounded text-xs dark:text-slate-300 text-slate-600">📺</button>
+                        <button onclick="addBlock('list')" class="p-1.5 hover:bg-slate-200 dark:hover:bg-slate-700 rounded text-xs dark:text-slate-300 text-slate-600">list</button>
+                        <button onclick="addBlock('ref')" class="p-1.5 hover:bg-slate-200 dark:hover:bg-slate-700 rounded text-xs dark:text-slate-300 text-slate-600">🔗</button>
                     </div>
 
                     <div id="blocks-container" class="space-y-3 min-h-[200px]"></div>
                 </div>
 
                 <div class="glass-panel p-6 rounded-xl">
-                    <h2 class="text-blue-400 font-bold mb-4 text-xs uppercase tracking-widest">Publicación</h2>
-                    <button id="btn-publish-one" onclick="publishCurrentPost()" class="w-full bg-green-600 hover:bg-green-500 text-white font-bold py-3 rounded-lg flex justify-center items-center gap-2 transition mb-4">
+                    <h2 class="text-blue-500 dark:text-blue-400 font-bold mb-4 text-xs uppercase tracking-widest">Publicación</h2>
+                    <button id="btn-publish-one" onclick="publishCurrentPost()" class="w-full bg-green-600 hover:bg-green-500 text-white font-bold py-3 rounded-lg flex justify-center items-center gap-2 transition mb-4 shadow-lg shadow-green-900/20">
                         <span>📤 Publicar Este Post</span>
                     </button>
                     
-                    <div class="border-t border-slate-700 pt-4">
-                        <h3 class="text-sm font-bold mb-2">Subida Masiva</h3>
-                        <div class="border-2 border-dashed border-slate-600 rounded-lg p-4 text-center hover:bg-slate-800/50 transition relative cursor-pointer">
+                    <div class="border-t border-slate-200 dark:border-slate-700 pt-4">
+                        <h3 class="text-sm font-bold mb-2 dark:text-slate-200 text-slate-700">Subida Masiva</h3>
+                        <div class="border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-lg p-4 text-center hover:bg-slate-100 dark:hover:bg-slate-800/50 transition relative cursor-pointer">
                             <input type="file" id="bulk-files" multiple accept=".md" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" onchange="handleBulkFiles(this)">
                             <div class="pointer-events-none">
-                                <p class="text-xs text-slate-400">Arrastra archivos .md aquí</p>
+                                <p class="text-xs text-slate-500 dark:text-slate-400">Arrastra archivos .md aquí</p>
                             </div>
                         </div>
                         <div id="bulk-preview" class="mt-2 space-y-1"></div>
@@ -206,18 +267,18 @@
 
             <div class="flex flex-col gap-6 h-full">
                 <div class="glass-panel rounded-xl flex-1 flex flex-col h-[500px] md:h-auto sticky top-20">
-                    <div class="p-4 border-b border-slate-700 flex justify-between items-center bg-slate-900/40 rounded-t-xl">
-                        <span class="font-bold text-xs uppercase tracking-widest text-emerald-400">Vista Previa</span>
-                        <div class="text-xs text-slate-400 font-mono">
+                    <div class="p-4 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center bg-slate-100/50 dark:bg-slate-900/40 rounded-t-xl">
+                        <span class="font-bold text-xs uppercase tracking-widest text-emerald-600 dark:text-emerald-400">Vista Previa</span>
+                        <div class="text-xs text-slate-500 dark:text-slate-400 font-mono">
                             <span id="word-count">0 words</span> • <span id="read-time">0 min</span>
                         </div>
                     </div>
-                    <div id="preview-md" class="flex-1 p-6 overflow-y-auto font-mono text-xs text-green-400 bg-[#0d1117] whitespace-pre-wrap"></div>
-                    <div id="preview-html" class="hidden flex-1 p-6 overflow-y-auto preview-content bg-slate-900/90"></div>
+                    <div id="preview-md" class="flex-1 p-6 overflow-y-auto font-mono text-xs text-emerald-700 bg-emerald-50 dark:text-green-400 dark:bg-[#0d1117] whitespace-pre-wrap"></div>
+                    <div id="preview-html" class="hidden flex-1 p-6 overflow-y-auto preview-content bg-white/80 dark:bg-slate-900/90 text-slate-800 dark:text-slate-200"></div>
                 </div>
 
                 <div class="glass-panel rounded-xl p-4">
-                    <button onclick="toggleHistory()" class="flex justify-between w-full text-left text-xs font-bold uppercase tracking-widest text-slate-400 hover:text-white">
+                    <button onclick="toggleHistory()" class="flex justify-between w-full text-left text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white">
                         <span>📜 Historial de Commits</span>
                         <span id="hist-arrow">▼</span>
                     </button>
@@ -235,13 +296,14 @@
         import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         // --- 1. CONFIGURACIÓN FIREBASE (¡TU TRABAJO!) ---
+        // Vuelve a pegar aquí tu configuración de Firebase que obtuviste de la consola
         const firebaseConfig = {
-            apiKey: "TU_API_KEY_AQUI",
+            apiKey: "TU_API_KEY",
             authDomain: "TU_PROYECTO.firebaseapp.com",
-            projectId: "TU_PROYECTO_ID",
+            projectId: "TU_PROYECTO",
             storageBucket: "TU_PROYECTO.appspot.com",
-            messagingSenderId: "TU_SENDER_ID",
-            appId: "TU_APP_ID"
+            messagingSenderId: "NUMERO",
+            appId: "APP_ID"
         };
 
         const app = initializeApp(firebaseConfig);
@@ -250,7 +312,7 @@
         
         let githubConfig = null;
         let blocks = [];
-        let tags = []; // Array para los tags
+        let tags = []; 
         let bulkFilesData = [];
 
         // --- AUTH ---
@@ -262,8 +324,9 @@
             try {
                 await signInWithEmailAndPassword(auth, email, password);
             } catch (error) {
-                document.getElementById('login-error').textContent = "Credenciales incorrectas.";
-                document.getElementById('login-error').classList.remove('hidden');
+                const errDiv = document.getElementById('login-error');
+                errDiv.textContent = "Credenciales incorrectas.";
+                errDiv.classList.remove('hidden');
             }
         });
 
@@ -299,7 +362,7 @@
 
         tagInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
-                e.preventDefault(); // Evitar submit del form
+                e.preventDefault(); 
                 addTag();
             }
         });
@@ -324,7 +387,7 @@
             tagsContainer.innerHTML = tags.map(t => `
                 <div class="tag-chip">
                     <span>${t}</span>
-                    <button onclick="removeTag('${t}')" class="font-bold text-slate-400 hover:text-red-400">×</button>
+                    <button onclick="removeTag('${t}')" class="font-bold ml-1 opacity-60 hover:opacity-100 hover:text-red-500">×</button>
                 </div>
             `).join('');
         }
@@ -362,13 +425,13 @@
             container.innerHTML = '';
             blocks.forEach((b) => {
                 const el = document.createElement('div');
-                el.className = 'glass-panel p-3 rounded border border-slate-700/50 flex gap-3 items-start group';
+                el.className = 'glass-panel p-3 rounded border border-slate-200 dark:border-slate-700/50 flex gap-3 items-start group';
                 let inputHtml = b.type === 'p' || b.type === 'list' 
-                    ? `<textarea class="w-full bg-transparent border-none outline-none text-slate-200 resize-none h-auto" rows="3" placeholder="${b.type === 'list' ? 'Item 1\\nItem 2' : 'Escribe aquí...'}" oninput="updateBlockContent('${b.id}', this.value)">${b.content}</textarea>`
-                    : `<input type="text" class="w-full bg-transparent border-none outline-none text-slate-200" placeholder="${b.type === 'ref' ? 'Texto | URL' : 'Contenido...'}" value="${b.content}" oninput="updateBlockContent('${b.id}', this.value)">`;
+                    ? `<textarea class="w-full bg-transparent border-none outline-none dark:text-slate-200 text-slate-800 resize-none h-auto" rows="3" placeholder="${b.type === 'list' ? 'Item 1\\nItem 2' : 'Escribe aquí...'}" oninput="updateBlockContent('${b.id}', this.value)">${b.content}</textarea>`
+                    : `<input type="text" class="w-full bg-transparent border-none outline-none dark:text-slate-200 text-slate-800" placeholder="${b.type === 'ref' ? 'Texto | URL' : 'Contenido...'}" value="${b.content}" oninput="updateBlockContent('${b.id}', this.value)">`;
 
-                el.innerHTML = `<span class="text-xs font-bold text-slate-500 w-8 pt-1 uppercase">${b.type}</span>${inputHtml}
-                <div class="flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition"><button onclick="moveBlock('${b.id}',-1)" class="text-[10px]">▲</button><button onclick="removeBlock('${b.id}')" class="text-[10px] text-red-400">✖</button><button onclick="moveBlock('${b.id}',1)" class="text-[10px]">▼</button></div>`;
+                el.innerHTML = `<span class="text-xs font-bold text-slate-400 dark:text-slate-500 w-8 pt-1 uppercase">${b.type}</span>${inputHtml}
+                <div class="flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition"><button onclick="moveBlock('${b.id}',-1)" class="text-[10px] dark:text-white text-slate-600">▲</button><button onclick="removeBlock('${b.id}')" class="text-[10px] text-red-500 dark:text-red-400">✖</button><button onclick="moveBlock('${b.id}',1)" class="text-[10px] dark:text-white text-slate-600">▼</button></div>`;
                 container.appendChild(el);
             });
         }
@@ -380,8 +443,6 @@
             const date = document.getElementById('post-date').value;
             const author = document.getElementById('post-author').value;
             const hero = document.getElementById('post-hero').value;
-            
-            // Format Tags Array
             const tagsString = tags.map(t => `"${t}"`).join(', ');
 
             let md = `---\ntitle: "${title}"\ndescription: "${desc}"\npublishDate: "${date}"\nauthor: "${author}"\nheroImage: "${hero}"\nlayout: "../../layouts/BlogPost.astro"\ntags: [${tagsString}]\n---\n\n`;
@@ -458,14 +519,13 @@
             try {
                 const c = await ghFetch(`/commits?per_page=5`);
                 document.getElementById('history-content').innerHTML = c.map(i => 
-                    `<div class="text-xs border-b border-slate-700 pb-2"><a href="${i.html_url}" target="_blank" class="text-blue-400 font-bold hover:underline">${new Date(i.commit.author.date).toLocaleDateString()}</a><p class="text-slate-300 truncate">${i.commit.message}</p></div>`
+                    `<div class="text-xs border-b border-slate-200 dark:border-slate-700 pb-2"><a href="${i.html_url}" target="_blank" class="text-blue-600 dark:text-blue-400 font-bold hover:underline">${new Date(i.commit.author.date).toLocaleDateString()}</a><p class="text-slate-600 dark:text-slate-300 truncate">${i.commit.message}</p></div>`
                 ).join('');
             } catch(e) {}
         }
         
         window.toggleHistory = () => { const h = document.getElementById('history-content'); h.classList.toggle('hidden'); document.getElementById('hist-arrow').innerText = h.classList.contains('hidden') ? '▼' : '▲'; };
         
-        // Mobile Menu
         const mm = document.getElementById('mobile-menu');
         document.getElementById('menu-btn').addEventListener('click', () => mm.classList.remove('translate-x-full'));
         document.getElementById('close-menu').addEventListener('click', () => mm.classList.add('translate-x-full'));
