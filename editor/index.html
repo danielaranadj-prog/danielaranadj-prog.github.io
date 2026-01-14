@@ -12,16 +12,14 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
-            darkMode: 'media', /* AUTOMÁTICO SEGÚN SISTEMA */
+            darkMode: 'media',
             theme: {
                 extend: {
                     fontFamily: {
                         sans: ['Space Grotesk', 'sans-serif'],
                         mono: ['JetBrains Mono', 'monospace'],
                     },
-                    colors: {
-                        // Colores personalizados si hicieran falta
-                    }
+                    colors: {}
                 }
             }
         }
@@ -30,7 +28,7 @@
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
     <style>
-        /* ESTILOS BASE (MODO CLARO) */
+        /* ESTILOS BASE */
         body {
             background: radial-gradient(circle at 50% 0%, #f8fafc 0%, #e2e8f0 100%);
             color: #1e293b;
@@ -46,7 +44,6 @@
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
         }
 
-        /* Input Base (Claro) */
         .input-adaptive {
             background: rgba(255, 255, 255, 0.6);
             border: 1px solid rgba(0, 0, 0, 0.1);
@@ -57,7 +54,7 @@
             background: white;
         }
 
-        /* --- MODO OSCURO (Overrides) --- */
+        /* MODO OSCURO */
         @media (prefers-color-scheme: dark) {
             body {
                 background: radial-gradient(circle at 50% 0%, #1e293b 0%, #020617 100%);
@@ -76,17 +73,14 @@
             .input-adaptive:focus {
                 background: rgba(15, 23, 42, 0.8);
             }
-            /* Invertir el logo si es negro en el SVG original, quitar filtro si es blanco */
-            /* Ajusta esto según el color real de tu SVG */
             .logo-adaptive {
-                filter: brightness(0) invert(1); /* Lo vuelve blanco */
+                filter: brightness(0) invert(1);
             }
         }
         
-        /* Ajuste logo para modo claro: Lo vuelve negro */
         @media (prefers-color-scheme: light) {
             .logo-adaptive {
-                filter: brightness(0); /* Lo vuelve negro */
+                filter: brightness(0);
             }
         }
 
@@ -100,17 +94,17 @@
             align-items: center;
             gap: 8px;
             font-size: 13px;
-            color: #2563eb; /* Azul oscuro para claro */
+            color: #2563eb;
         }
         @media (prefers-color-scheme: dark) {
             .tag-chip {
                 background: rgba(59, 130, 246, 0.2);
                 border: 1px solid rgba(59, 130, 246, 0.4);
-                color: #bfdbfe; /* Azul claro para oscuro */
+                color: #bfdbfe;
             }
         }
         
-        /* Preview Styles */
+        /* Preview & Utils */
         .preview-content h2 { font-size: 1.5rem; font-weight: 700; margin-top: 1.5em; }
         .preview-content h3 { font-size: 1.25rem; font-weight: 600; margin-top: 1.2em; }
         .preview-content p { margin-bottom: 1em; line-height: 1.6; }
@@ -124,7 +118,6 @@
             .preview-content p { color: #cbd5e1; }
         }
         
-        /* Utils */
         @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
         .toast-enter { animation: slideIn 0.3s ease forwards; }
         ::-webkit-scrollbar { width: 8px; }
@@ -157,14 +150,12 @@
     </div>
 
     <div id="app-section" class="hidden min-h-screen flex flex-col">
-        
         <header class="glass-panel sticky top-0 z-50 border-b-0">
             <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
                 <div class="flex items-center gap-3">
                     <img src="public/logo.svg" alt="Logo" class="w-8 h-8 logo-adaptive">
                     <span class="font-bold hidden md:block dark:text-white text-slate-800">Editor Instante Trips</span>
                 </div>
-                
                 <div class="flex items-center gap-4">
                     <span id="welcome-msg" class="text-slate-500 dark:text-slate-400 text-sm hidden md:block"></span>
                     <div class="hidden md:flex gap-2">
@@ -187,7 +178,6 @@
         </div>
 
         <main class="flex-1 max-w-7xl mx-auto w-full p-4 grid grid-cols-1 md:grid-cols-2 gap-6">
-            
             <div class="flex flex-col gap-6">
                 <div class="glass-panel p-6 rounded-xl">
                     <h2 class="text-blue-500 dark:text-blue-400 font-bold mb-4 text-xs uppercase tracking-widest">Metadatos del Post</h2>
@@ -214,7 +204,6 @@
                             <label class="block text-xs text-slate-500 dark:text-slate-400 mb-1">Imagen Portada (URL)</label>
                             <input type="url" id="post-hero" class="w-full p-2 rounded input-adaptive focus:outline-none" placeholder="https://..." oninput="updatePreview()">
                         </div>
-                        
                         <div>
                             <label class="block text-xs text-slate-500 dark:text-slate-400 mb-1">Tags</label>
                             <div class="flex gap-2 mb-2">
@@ -295,7 +284,7 @@
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-       // --- 1. CONFIGURACIÓN FIREBASE (TUS DATOS REALES) ---
+        // --- 1. CONFIGURACIÓN FIREBASE (CORREGIDA) ---
         const firebaseConfig = {
             apiKey: "AIzaSyBdsu65Voj8en9u_7eL5q0YRFuCC7fUYWA",
             authDomain: "instantetrips-editor.firebaseapp.com",
@@ -503,6 +492,105 @@
                 showToast("Publicado! ✅"); loadHistory();
             } catch(e) { showToast(e.message, "error"); }
             btn.disabled = false; btn.innerText = "📤 Publicar Este Post";
+        };
+
+        // --- SUBIDA MASIVA RESTAURADA ---
+        window.handleBulkFiles = (input) => {
+            const files = Array.from(input.files);
+            const previewDiv = document.getElementById('bulk-preview');
+            const btn = document.getElementById('btn-publish-bulk');
+            
+            previewDiv.innerHTML = '';
+            bulkFilesData = [];
+            
+            if(files.length === 0) {
+                btn.classList.add('hidden');
+                return;
+            }
+
+            files.forEach(file => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const content = e.target.result;
+                    const isValid = content.startsWith('---'); // Validación básica
+                    const status = isValid ? '✅' : '❌ Formato inválido';
+                    
+                    bulkFilesData.push({
+                        path: `${githubConfig.postsPath}${file.name}`,
+                        content: content,
+                        valid: isValid
+                    });
+
+                    const el = document.createElement('div');
+                    el.className = `p-2 rounded ${isValid ? 'bg-green-900/30' : 'bg-red-900/30'} flex justify-between text-xs dark:text-white`;
+                    el.innerHTML = `<span>${file.name}</span><span>${status}</span>`;
+                    previewDiv.appendChild(el);
+
+                    if (bulkFilesData.length === files.length && bulkFilesData.every(f => f.valid)) {
+                        btn.classList.remove('hidden');
+                    }
+                };
+                reader.readAsText(file);
+            });
+        };
+
+        window.publishBulk = async () => {
+            if(!confirm(`¿Publicar ${bulkFilesData.length} archivos?`)) return;
+            const btn = document.getElementById('btn-publish-bulk');
+            btn.disabled = true;
+            btn.innerText = "⏳ Procesando...";
+
+            try {
+                // 1. Obtener SHA del último commit
+                const ref = await ghFetch(`/git/refs/heads/${githubConfig.branch}`);
+                const latestCommitSha = ref.object.sha;
+
+                // 2. Crear Blobs
+                const treeItems = [];
+                for (const file of bulkFilesData) {
+                    const blob = await ghFetch(`/git/blobs`, 'POST', {
+                        content: file.content,
+                        encoding: 'utf-8'
+                    });
+                    treeItems.push({
+                        path: file.path,
+                        mode: '100644',
+                        type: 'blob',
+                        sha: blob.sha
+                    });
+                }
+
+                // 3. Crear Árbol
+                const tree = await ghFetch(`/git/trees`, 'POST', {
+                    base_tree: latestCommitSha,
+                    tree: treeItems
+                });
+
+                // 4. Crear Commit
+                const newCommit = await ghFetch(`/git/commits`, 'POST', {
+                    message: `Bulk upload: ${bulkFilesData.length} posts via Editor`,
+                    tree: tree.sha,
+                    parents: [latestCommitSha]
+                });
+
+                // 5. Actualizar Referencia
+                await ghFetch(`/git/refs/heads/${githubConfig.branch}`, 'PATCH', {
+                    sha: newCommit.sha
+                });
+
+                showToast("Subida Masiva Exitosa 🚀");
+                bulkFilesData = [];
+                document.getElementById('bulk-preview').innerHTML = '';
+                btn.classList.add('hidden');
+                loadHistory();
+
+            } catch (error) {
+                console.error(error);
+                showToast("Error en subida masiva", "error");
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "🚀 Publicar Todos";
+            }
         };
 
         // --- HELPERS ---
