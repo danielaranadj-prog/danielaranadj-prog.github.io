@@ -430,11 +430,30 @@
                 if(b.type === 'img') ph = 'URL de la imagen | Descripción';
                 if(b.type === 'yt') ph = 'Enlace de YouTube';
 
-                let inputHtml = b.type === 'p' || b.type === 'list' 
-                    ? `<textarea class="w-full bg-transparent border-none outline-none text-slate-700 dark:text-slate-200 resize-none h-auto text-sm font-sans" rows="3" placeholder="${ph}" oninput="updateBlockContent('${b.id}', this.value)">${b.content}</textarea>`
-                    : `<input type="text" class="w-full bg-transparent border-none outline-none text-slate-700 dark:text-slate-200 font-medium text-sm" placeholder="${ph}" value="${b.content}" oninput="updateBlockContent('${b.id}', this.value)">`;
-
+                let inputHtml = '';
                 const typeLabel = b.type === 'img' ? 'IMAGEN' : b.type.toUpperCase();
+
+                if (b.type === 'p' || b.type === 'list') {
+                    inputHtml = `<textarea class="w-full bg-transparent border-none outline-none text-slate-700 dark:text-slate-200 resize-none h-auto text-sm font-sans" rows="3" placeholder="${ph}" oninput="updateBlockContent('${b.id}', this.value)">${b.content}</textarea>`;
+                
+                } else if (b.type === 'img') {
+                    // SECCIÓN MODIFICADA: Ahora permite link o subida
+                    inputHtml = `
+                    <div class="flex flex-col gap-2 w-full">
+                        <div class="flex gap-2 items-center w-full">
+                            <input type="text" id="input-${b.id}" class="flex-1 bg-transparent border-none outline-none text-slate-700 dark:text-slate-200 font-medium text-sm" placeholder="Pega URL o sube imagen ->" value="${b.content}" oninput="updateBlockContent('${b.id}', this.value)">
+                            
+                            <label class="cursor-pointer bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 hover:bg-blue-100 px-3 py-1.5 rounded-lg transition flex items-center gap-2 text-xs font-bold border border-blue-200 dark:border-blue-800" title="Subir a Repo">
+                                <span>📤 Subir</span>
+                                <input type="file" class="hidden" accept="image/*" onchange="uploadImageToRepo('${b.id}', this)">
+                            </label>
+                        </div>
+                        ${b.content ? `<div class="relative w-fit group"><img src="${b.content.split('|')[0].trim()}" class="h-24 rounded-lg object-cover border border-slate-200 shadow-sm bg-slate-50"></div>` : ''}
+                    </div>`;
+                
+                } else {
+                    inputHtml = `<input type="text" class="w-full bg-transparent border-none outline-none text-slate-700 dark:text-slate-200 font-medium text-sm" placeholder="${ph}" value="${b.content}" oninput="updateBlockContent('${b.id}', this.value)">`;
+                }
 
                 el.innerHTML = `
                 <div class="flex flex-col items-center gap-1 pt-1">
@@ -505,6 +524,62 @@
                 body: b ? JSON.stringify(b) : null
             }).then(r => { if(!r.ok) throw new Error(r.statusText); return r.json(); });
         }
+
+        // --- FUNCIONES DE SUBIDA DE IMAGEN (NUEVAS) ---
+
+        const toBase64 = file => new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = error => reject(error);
+        });
+
+        window.uploadImageToRepo = async (blockId, fileInput) => {
+            const file = fileInput.files[0];
+            if (!file) return;
+
+            const textInput = document.getElementById(`input-${blockId}`);
+            const originalValue = textInput.value;
+            textInput.value = "⏳ Subiendo imagen...";
+            textInput.disabled = true;
+
+            try {
+                if (!githubConfig) throw new Error("No hay configuración de GitHub cargada");
+
+                const base64Raw = await toBase64(file);
+                const content = base64Raw.split(',')[1]; 
+
+                // Generar nombre limpio y único
+                const cleanName = file.name.replace(/[^a-zA-Z0-9.]/g, '-').toLowerCase();
+                const filename = `${Date.now()}-${cleanName}`;
+                const path = `public/uploads/${filename}`; // Ruta para Astro
+
+                // Subir a GitHub
+                await ghFetch(`/contents/${path}`, 'PUT', {
+                    message: `Media: Upload ${filename}`,
+                    content: content,
+                    branch: githubConfig.branch
+                });
+
+                // Formato final: RUTA | ALT (usamos el nombre del archivo como ALT por defecto)
+                const astroPath = `/uploads/${filename}`;
+                const finalString = `${astroPath} | ${cleanName.split('.')[0]}`;
+
+                updateBlockContent(blockId, finalString);
+                showToast("¡Imagen subida! 🖼️");
+
+            } catch (error) {
+                console.error(error);
+                showToast("Error al subir: " + error.message, "error");
+                textInput.value = originalValue;
+            } finally {
+                textInput.disabled = false;
+                renderBlocks(); // Actualizar para ver la miniatura
+                updatePreview();
+            }
+        };
+
+        // --- FIN FUNCIONES DE SUBIDA ---
 
         window.publishCurrentPost = async () => {
             const btn = document.getElementById('btn-publish-one');
