@@ -43,7 +43,6 @@
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
     <style>
-        /* ESTÉTICA GENERAL DEL BLOG */
         body {
             background-color: #f8fafc; 
             color: #334155;
@@ -72,7 +71,7 @@
             outline: none;
         }
 
-        /* MODO OSCURO AUTOMÁTICO */
+        /* MODO OSCURO */
         @media (prefers-color-scheme: dark) {
             body { background-color: #0f172a; color: #cbd5e1; }
             .clean-card {
@@ -86,11 +85,9 @@
                 color: #e2e8f0;
             }
             .input-blog:focus { background: #1e293b; border-color: #60a5fa; }
-            /* Nota: Si blog.svg ya tiene color, quizás no quieras invertirlo. Ajusta esto según necesites. */
-            /* .logo-adaptive { filter: brightness(0) invert(1); } */
         }
 
-        /* VISTA PREVIA DE MARKDOWN */
+        /* PREVIEW MARKDOWN */
         .preview-content h2 { font-family: 'Space Grotesk', sans-serif; font-size: 1.5rem; font-weight: 700; color: #1e293b; margin-top: 1.5em; letter-spacing: -0.02em; }
         .preview-content h3 { font-family: 'Space Grotesk', sans-serif; font-size: 1.25rem; font-weight: 600; color: #334155; margin-top: 1.2em; }
         .preview-content p { margin-bottom: 1em; line-height: 1.7; color: #475569; }
@@ -109,6 +106,18 @@
     </style>
 </head>
 <body class="antialiased selection:bg-brand-100 selection:text-brand-700">
+
+    <div id="mobile-menu" class="fixed inset-0 z-[100] bg-slate-900/95 backdrop-blur-sm transform translate-x-full transition-transform duration-300 md:hidden flex flex-col items-center justify-center gap-8">
+        <button id="close-menu" class="absolute top-6 right-6 text-white text-4xl opacity-80 hover:opacity-100">×</button>
+        
+        <div class="flex flex-col gap-6 text-center w-full px-10">
+            <span class="text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Acciones</span>
+            <button onclick="togglePreviewMode(); closeMobMenu()" class="text-xl font-bold text-white hover:text-brand-500 transition">👁️ Vista Previa</button>
+            <button onclick="downloadMarkdown(); closeMobMenu()" class="text-xl font-bold text-white hover:text-brand-500 transition">📥 Descargar .md</button>
+            <div class="h-px bg-slate-800 w-full my-2"></div>
+            <button onclick="logout(); closeMobMenu()" class="text-xl font-bold text-red-500 hover:text-red-400 transition">Salir del Editor</button>
+        </div>
+    </div>
 
     <div id="login-section" class="flex items-center justify-center min-h-screen p-4">
         <div class="clean-card p-10 w-full max-w-[400px] text-center fade-in relative overflow-hidden">
@@ -139,6 +148,12 @@
             </form>
             
             <p id="login-error" class="text-red-500 text-xs mt-4 font-medium hidden bg-red-50 dark:bg-red-900/20 p-2 rounded"></p>
+
+            <div class="mt-8 pt-6 border-t border-slate-100 dark:border-slate-800">
+                <a href="https://blog.instantetrips.com" class="text-xs font-semibold text-slate-400 hover:text-slate-800 dark:hover:text-white transition flex items-center justify-center gap-1">
+                    ← Volver al Sitio Web
+                </a>
+            </div>
         </div>
     </div>
 
@@ -160,7 +175,7 @@
                         <button onclick="downloadMarkdown()" class="px-4 py-2 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition">📥 Descargar</button>
                         <button id="btn-logout" class="text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 px-3 py-2 rounded-lg text-xs font-bold transition">Salir</button>
                     </div>
-                    <button id="menu-btn" class="md:hidden text-2xl">☰</button>
+                    <button id="menu-btn" class="md:hidden text-2xl dark:text-white p-2">☰</button>
                 </div>
             </div>
         </header>
@@ -180,7 +195,8 @@
                             <label class="block text-xs font-semibold text-slate-500 mb-1.5 ml-1">DESCRIPCIÓN SEO</label>
                             <textarea id="post-desc" rows="2" class="w-full p-3 rounded-lg input-blog resize-none" placeholder="Resumen para Google..." oninput="updatePreview()"></textarea>
                         </div>
-                        <div class="grid grid-cols-2 gap-4">
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-xs font-semibold text-slate-500 mb-1.5 ml-1">FECHA</label>
                                 <input type="date" id="post-date" class="w-full p-3 rounded-lg input-blog dark:scheme-dark" onchange="updatePreview()">
@@ -190,6 +206,7 @@
                                 <input type="text" id="post-author" class="w-full p-3 rounded-lg input-blog" oninput="updatePreview()">
                             </div>
                         </div>
+
                         <div>
                             <label class="block text-xs font-semibold text-slate-500 mb-1.5 ml-1">IMAGEN DE PORTADA</label>
                             <input type="url" id="post-hero" class="w-full p-3 rounded-lg input-blog" placeholder="https://..." oninput="updatePreview()">
@@ -589,7 +606,11 @@
         
         window.toggleHistory = () => { const h = document.getElementById('history-content'); h.classList.toggle('hidden'); };
         
+        // CORRECCIÓN DEL MENÚ MÓVIL
         const mm = document.getElementById('mobile-menu');
+        document.getElementById('menu-btn').addEventListener('click', () => mm.classList.remove('translate-x-full'));
+        document.getElementById('close-menu').addEventListener('click', () => mm.classList.add('translate-x-full'));
+        window.closeMobMenu = () => mm.classList.add('translate-x-full');
     </script>
 </body>
 </html>
