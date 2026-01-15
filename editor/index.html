@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Editor Instante Trips</title>
+    <title>Editor Instante Trips V2</title>
     
     <link rel="apple-touch-icon" href="public/logo-ios.png">
     <link rel="icon" type="image/png" href="public/logo-ios.png">
@@ -32,7 +32,7 @@
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
     <style>
-        /* [PROTECCIÓN] ESTILOS CORE: NO ELIMINAR CLASES .rich-editor NI .clean-card */
+        /* [PROTECCIÓN] ESTILOS CORE */
         body { background-color: #f8fafc; color: #334155; min-height: 100vh; transition: background 0.3s ease; }
         .clean-card { background: white; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); border-radius: 1rem; }
         .input-blog { background: #f8fafc; border: 1px solid #e2e8f0; color: #1e293b; transition: all 0.2s; font-size: 0.95rem; }
@@ -41,7 +41,7 @@
         .rich-editor { min-height: 100px; padding: 0.75rem; border-radius: 0.5rem; outline: none; border: 1px solid transparent; position: relative; }
         .rich-editor:focus { border-color: #e2e8f0; background: #fcfcfd; }
         .rich-editor:empty:not(:focus):before { content: attr(placeholder); color: #94a3b8; pointer-events: none; display: block; }
-        .rich-editor a { color: #2563eb !important; font-weight: 600 !important; text-decoration: underline !important; }
+        .rich-editor a { color: #2563eb !important; font-weight: 600 !important; text-decoration: underline !important; cursor: pointer; }
         .rich-editor ul { list-style-type: disc; padding-left: 1.5rem; }
         .rich-editor ol { list-style-type: decimal; padding-left: 1.5rem; }
 
@@ -50,10 +50,12 @@
             .clean-card { background: #1e293b; border-color: #334155; }
             .input-blog { background: #0f172a; border-color: #334155; color: #e2e8f0; }
             .rich-editor:focus { border-color: #334155; background: #1e293b; }
+            .modal-content { background: #1e293b; border-color: #334155; }
         }
 
         .preview-content h2 { font-family: 'Space Grotesk', sans-serif; font-size: 1.5rem; font-weight: 700; color: #1e293b; margin-top: 1.5em; }
         .preview-content p { margin-bottom: 1em; line-height: 1.7; color: #475569; }
+        .preview-content a { color: #2563eb; text-decoration: underline; font-weight: 600; }
         .credit-style { font-size: 0.75rem; font-style: italic; opacity: 0.7; margin-top: 4px; display: block; }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -62,9 +64,36 @@
         .btn-tool { display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0.8rem; background: white; border-radius: 0.6rem; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; transition: all 0.2s; border: 1px solid #f1f5f9; }
         .btn-tool:hover { border-color: #3b82f6; color: #2563eb; transform: translateY(-1px); }
         @media (prefers-color-scheme: dark) { .btn-tool { background: #334155; border-color: #475569; color: #e2e8f0; } }
+
+        /* Modal Styles */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 200; display: none; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s; }
+        .modal-overlay.open { display: flex; opacity: 1; }
+        .modal-box { background: white; padding: 2rem; border-radius: 1rem; width: 90%; max-width: 500px; transform: scale(0.95); transition: transform 0.3s; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
+        .modal-overlay.open .modal-box { transform: scale(1); }
     </style>
 </head>
 <body class="antialiased selection:bg-brand-100 selection:text-brand-700">
+
+    <div id="author-modal" class="modal-overlay">
+        <div class="modal-box modal-content border dark:border-slate-700">
+            <h3 class="text-lg font-bold font-display mb-4 dark:text-white">Nuevo Autor</h3>
+            <div class="space-y-4">
+                <input type="text" id="new-auth-name" placeholder="Nombre completo (ej: Jonathan Arana)" class="w-full p-3 rounded-lg input-blog">
+                <input type="text" id="new-auth-role" placeholder="Rol (ej: Lead Photographer)" class="w-full p-3 rounded-lg input-blog">
+                <textarea id="new-auth-bio" rows="2" placeholder="Bio corta..." class="w-full p-3 rounded-lg input-blog"></textarea>
+                
+                <div class="border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-lg p-4 text-center">
+                    <p class="text-xs text-slate-500 mb-2">Foto de perfil (Se renombrará auto)</p>
+                    <input type="file" id="new-auth-file" accept="image/*" class="text-xs w-full">
+                </div>
+
+                <div class="flex gap-3 pt-2">
+                    <button onclick="closeAuthorModal()" class="flex-1 py-2 rounded-lg text-sm font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition">Cancelar</button>
+                    <button onclick="saveNewAuthor()" id="btn-save-auth" class="flex-1 py-2 rounded-lg text-sm font-bold bg-brand-600 text-white hover:bg-brand-700 transition">Guardar Autor</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div id="mobile-menu" class="fixed inset-0 z-[100] bg-slate-900/95 backdrop-blur-sm transform translate-x-full transition-transform duration-300 md:hidden flex flex-col items-center justify-center gap-8">
         <button id="close-menu" class="absolute top-6 right-6 text-white text-4xl opacity-80 hover:opacity-100">×</button>
@@ -113,24 +142,27 @@
                 <div class="clean-card p-6">
                     <div class="flex justify-between items-center mb-5">
                         <h2 class="text-xs font-bold font-display uppercase tracking-widest text-brand-600 dark:text-brand-500">DATA DEL POST</h2>
-                        <button onclick="clearPostData()" class="flex items-center gap-1.5 text-[10px] font-bold text-red-500 hover:underline">
-                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                            Limpiar todo
-                        </button>
+                        <button onclick="clearPostData()" class="flex items-center gap-1.5 text-[10px] font-bold text-red-500 hover:underline">Limpiar todo</button>
                     </div>
                     <div class="space-y-5">
                         <input type="text" id="post-title" class="w-full p-3 rounded-lg input-blog font-display font-semibold text-lg" placeholder="Título atractivo..." oninput="updatePreview()">
                         <textarea id="post-desc" rows="2" class="w-full p-3 rounded-lg input-blog resize-none" placeholder="Resumen SEO..." oninput="updatePreview()"></textarea>
+                        
                         <div class="grid grid-cols-2 gap-4">
                             <input type="date" id="post-date" class="w-full p-3 rounded-lg input-blog" onchange="updatePreview()">
-                            <input type="text" id="post-author" class="w-full p-3 rounded-lg input-blog" placeholder="Autor" oninput="updatePreview()">
+                            <div class="flex gap-2">
+                                <select id="post-author" class="flex-1 p-3 rounded-lg input-blog" onchange="updatePreview()">
+                                    <option value="">Cargando autores...</option>
+                                </select>
+                                <button onclick="openAuthorModal()" class="bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 p-3 rounded-lg text-lg font-bold text-brand-600" title="Nuevo Autor">+</button>
+                            </div>
                         </div>
+
                         <div>
                             <label class="block text-xs font-semibold text-slate-500 mb-1.5 uppercase">Imagen de Portada (Hero)</label>
                             <div class="flex gap-2 items-center">
                                 <input type="url" id="post-hero" class="flex-1 p-3 rounded-lg input-blog" placeholder="URL o sube una imagen" oninput="updatePreview()">
                                 <label class="cursor-pointer bg-blue-50 text-blue-600 px-4 py-3 rounded-lg transition flex items-center gap-2 text-xs font-bold border border-blue-200">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                                     <span>Subir</span>
                                     <input type="file" class="hidden" accept="image/*" onchange="uploadHeroImage(this)">
                                 </label>
@@ -138,7 +170,7 @@
                         </div>
                         <div>
                             <div class="flex gap-2 mb-3">
-                                <input type="text" id="tag-input" placeholder="Etiquetas..." class="flex-1 p-3 rounded-lg input-blog">
+                                <input type="text" id="tag-input" placeholder="Etiquetas (Enter para agregar)..." class="flex-1 p-3 rounded-lg input-blog">
                                 <button onclick="addTag()" class="bg-brand-600 text-white px-4 rounded-lg font-bold">+</button>
                             </div>
                             <div id="tags-container" class="flex flex-wrap gap-2"></div>
@@ -152,12 +184,12 @@
                         <button onclick="clearBlocks()" class="text-xs font-medium text-red-500">🗑️ Vaciar bloques</button>
                     </div>
                     <div class="flex flex-wrap gap-2 mb-6 p-1.5 bg-slate-100 rounded-xl">
-                        <button onclick="addBlock('h2')" class="btn-tool"><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M3 5h18M3 12h18M3 19h18"/></svg>Título</button>
-                        <button onclick="addBlock('h3')" class="btn-tool"><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h7"/></svg>Sub</button>
-                        <button onclick="addBlock('p')" class="btn-tool !text-blue-600"><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg>Párrafo</button>
-                        <button onclick="addBlock('img')" class="btn-tool"><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>Imagen</button>
-                        <button onclick="addBlock('yt')" class="btn-tool"><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>Video</button>
-                        <button onclick="addBlock('list')" class="btn-tool !text-indigo-600"><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>Lista</button>
+                        <button onclick="addBlock('h2')" class="btn-tool">H2 Título</button>
+                        <button onclick="addBlock('h3')" class="btn-tool">H3 Sub</button>
+                        <button onclick="addBlock('p')" class="btn-tool !text-blue-600">Párrafo</button>
+                        <button onclick="addBlock('img')" class="btn-tool">Imagen</button>
+                        <button onclick="addBlock('yt')" class="btn-tool">Video</button>
+                        <button onclick="addBlock('list')" class="btn-tool !text-indigo-600">Lista</button>
                     </div>
                     <div id="blocks-container" class="space-y-4 min-h-[200px]"></div>
                 </div>
@@ -196,7 +228,7 @@
     <div id="toast-container" class="fixed bottom-6 right-6 z-[70] flex flex-col gap-2"></div>
 
     <script type="module">
-        /* [ZONA BLINDADA 1] - FIREBASE CORE: NO MODIFICAR CONFIG NI INITIALIZE */
+        /* [ZONA BLINDADA 1] - FIREBASE CORE */
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
@@ -214,11 +246,20 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
         
-        /* [ZONA BLINDADA 2] - ESTADO DE LA APP: SI SE ELIMINA 'blocks' o 'tags' SE ROMPE EL EDITOR */
+        /* [ZONA BLINDADA 2] - ESTADO */
         let githubConfig = null;
         let blocks = [];
         let tags = [];
         let bulkFilesData = [];
+
+        // CONFIGURACIÓN MARKED (CORRECCIÓN LINKS)
+        const renderer = new marked.Renderer();
+        const linkRenderer = renderer.link;
+        renderer.link = (href, title, text) => {
+            const html = linkRenderer.call(renderer, href, title, text);
+            return html.replace(/^<a /, '<a target="_blank" rel="noopener noreferrer" ');
+        };
+        marked.use({ renderer });
 
         // LOGIN
         const loginForm = document.getElementById('login-form');
@@ -238,14 +279,21 @@
                 document.getElementById('login-section').classList.add('hidden');
                 document.getElementById('app-section').classList.remove('hidden');
                 document.getElementById('welcome-msg').textContent = `Hola, ${user.email.split('@')[0]}`;
-                document.getElementById('post-author').value = user.email.split('@')[0];
                 document.getElementById('post-date').valueAsDate = new Date();
                 const docSnap = await getDoc(doc(db, "config", "main"));
-                if (docSnap.exists()) { githubConfig = docSnap.data(); showToast("GitHub Conectado ✅"); loadHistory(); }
+                if (docSnap.exists()) { 
+                    githubConfig = docSnap.data(); 
+                    showToast("GitHub Conectado ✅"); 
+                    loadHistory();
+                    loadAuthorsFromRepo(); // Cargar autores al iniciar
+                }
             } else { document.getElementById('login-section').classList.remove('hidden'); document.getElementById('app-section').classList.add('hidden'); }
         });
 
-        // ETIQUETAS
+        // ETIQUETAS Y ENTER
+        document.getElementById('tag-input').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') { e.preventDefault(); addTag(); }
+        });
         window.addTag = () => {
             const input = document.getElementById('tag-input');
             const val = input.value.trim();
@@ -256,7 +304,7 @@
             document.getElementById('tags-container').innerHTML = tags.map(t => `<div class="bg-brand-50 text-brand-600 px-3 py-1.5 rounded-lg text-[10px] font-bold border flex items-center gap-2 animate-[fadeIn_0.2s]">#${t}<button onclick="removeTag('${t}')" class="hover:text-red-500 transition">×</button></div>`).join('');
         }
 
-        // LIMPIAR TODO
+        // LIMPIAR
         window.clearPostData = () => {
             if(confirm("¿Seguro que quieres limpiar todo el borrador?")) {
                 document.getElementById('post-title').value = ''; document.getElementById('post-desc').value = '';
@@ -264,6 +312,106 @@
                 blocks = []; tags = []; renderBlocks(); renderTags(); updatePreview();
                 showToast("Editor reseteado ✨");
             }
+        };
+
+        // GESTIÓN DE AUTORES (NUEVO)
+        window.openAuthorModal = () => document.getElementById('author-modal').classList.add('open');
+        window.closeAuthorModal = () => document.getElementById('author-modal').classList.remove('open');
+
+        // Leer autores del archivo TS
+        async function loadAuthorsFromRepo() {
+            const select = document.getElementById('post-author');
+            try {
+                // Buscamos el archivo authors.ts (ajusta la ruta si es src/data/authors.ts)
+                const file = await ghFetch(`/contents/src/data/authors.ts`);
+                const content = decodeURIComponent(escape(atob(file.content))); // Decodificar UTF8
+                
+                // Regex simple para encontrar slugs y nombres dentro del objeto
+                // Busca patrones como: name: 'Jonathan Arana'
+                const regex = /slug:\s*['"]([^'"]+)['"][\s\S]*?name:\s*['"]([^'"]+)['"]/g;
+                let match;
+                select.innerHTML = '<option value="">Selecciona un autor</option>';
+                
+                while ((match = regex.exec(content)) !== null) {
+                    const slug = match[1];
+                    const name = match[2];
+                    const option = document.createElement('option');
+                    option.value = slug;
+                    option.text = name;
+                    select.appendChild(option);
+                }
+            } catch (e) { console.error(e); showToast("Error cargando autores", "error"); }
+        }
+
+        // Guardar nuevo autor
+        window.saveNewAuthor = async () => {
+            const name = document.getElementById('new-auth-name').value;
+            const role = document.getElementById('new-auth-role').value;
+            const bio = document.getElementById('new-auth-bio').value;
+            const fileInput = document.getElementById('new-auth-file');
+            const btn = document.getElementById('btn-save-auth');
+
+            if(!name || !fileInput.files[0]) { alert("Nombre y Foto requeridos"); return; }
+            
+            btn.innerText = "Guardando..."; btn.disabled = true;
+
+            try {
+                const slug = name.toLowerCase().replace(/[^a-z0-9]/g, '-');
+                const file = fileInput.files[0];
+                const cleanFileName = `${slug}.jpg`; 
+                const b64 = await toBase64(file);
+
+                // 1. Subir Foto a public/assets/autores/
+                await ghFetch(`/contents/public/assets/autores/${cleanFileName}`, 'PUT', {
+                    message: `New Author Pic: ${name}`,
+                    content: b64.split(',')[1],
+                    branch: githubConfig.branch
+                });
+
+                // 2. Leer archivo actual TS
+                const tsFile = await ghFetch(`/contents/src/data/authors.ts`);
+                let content = decodeURIComponent(escape(atob(tsFile.content)));
+
+                // 3. Crear string del nuevo autor
+                const newAuthStr = `
+  '${slug}': {
+    slug: '${slug}',
+    name: '${name}',
+    role: '${role}',
+    bio: '${bio}',
+    image: '/assets/autores/${cleanFileName}',
+  },`;
+
+                // 4. Inyectar antes del cierre del objeto (buscamos la última llave)
+                // Asumimos que el archivo termina con "};" o similar. Buscamos el último "}"
+                const insertIndex = content.lastIndexOf('}');
+                if (insertIndex === -1) throw new Error("Formato TS inválido");
+                
+                const newContent = content.slice(0, insertIndex) + newAuthStr + content.slice(insertIndex);
+
+                // 5. Guardar archivo TS actualizado
+                await ghFetch(`/contents/src/data/authors.ts`, 'PUT', {
+                    message: `Add author: ${name}`,
+                    content: btoa(unescape(encodeURIComponent(newContent))),
+                    sha: tsFile.sha,
+                    branch: githubConfig.branch
+                });
+
+                showToast("¡Autor Creado Exitosamente! 🎉");
+                closeAuthorModal();
+                loadAuthorsFromRepo(); // Recargar lista
+                
+                // Limpiar form
+                document.getElementById('new-auth-name').value = '';
+                document.getElementById('new-auth-role').value = '';
+                document.getElementById('new-auth-bio').value = '';
+                fileInput.value = '';
+
+            } catch(e) { 
+                console.error(e); 
+                showToast("Error creando autor", "error"); 
+            }
+            btn.innerText = "Guardar Autor"; btn.disabled = false;
         };
 
         // BLOQUES
@@ -299,11 +447,6 @@
                         <div class="flex gap-1.5 p-1 bg-slate-50 dark:bg-slate-700/50 rounded-lg border w-fit">
                             <button onclick="execCmd('bold')" class="px-2.5 py-1 text-[11px] font-black hover:bg-white rounded transition">B</button>
                             <div class="w-px h-4 bg-slate-200 mx-1 self-center"></div>
-                            <button onclick="execCmd('justifyLeft')" class="p-1.5 hover:bg-white rounded transition"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M4 6h16M4 12h10M4 18h16"/></svg></button>
-                            <button onclick="execCmd('justifyCenter')" class="p-1.5 hover:bg-white rounded transition"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M4 6h16M7 12h10M4 18h16"/></svg></button>
-                            <button onclick="execCmd('justifyRight')" class="p-1.5 hover:bg-white rounded transition"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M4 6h16M10 12h10M4 18h16"/></svg></button>
-                            <button onclick="execCmd('justifyFull')" class="p-1.5 hover:bg-white rounded transition"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
-                            <div class="w-px h-4 bg-slate-200 mx-1 self-center"></div>
                             <button onclick="applyLink()" class="px-2.5 py-1 text-[11px] text-blue-600 font-bold hover:bg-white rounded transition">🔗 Link</button>
                         </div>
                         <div contenteditable="true" class="rich-editor text-sm font-sans" placeholder="Escribe tu párrafo aquí..." oninput="updateBlockContent('${b.id}', this.innerHTML)">${b.content}</div>
@@ -326,7 +469,6 @@
                                 <option value="ul" ${b.listType==='ul'?'selected':''}>• Viñetas</option>
                                 <option value="ol" ${b.listType==='ol'?'selected':''}>1. Números</option>
                             </select>
-                            <button onclick="applyLink()" class="px-2 py-1 text-[11px] text-blue-600 font-bold">🔗 Link</button>
                         </div>
                         <div contenteditable="true" class="rich-editor text-sm font-sans" placeholder="Puntos de la lista..." oninput="updateBlockContent('${b.id}', this.innerHTML)">${b.content || '<li>Nuevo ítem</li>'}</div>
                     </div>`;
@@ -338,7 +480,7 @@
             });
         }
 
-        /* [ZONA BLINDADA 3] - MOTOR GITHUB API: NO ELIMINAR ghFetch NI LÓGICA DE COMMITS */
+        /* [ZONA BLINDADA 3] - MOTOR GITHUB API */
         async function ghFetch(ep, m='GET', b=null) {
             return fetch(`https://api.github.com/repos/${githubConfig.repoOwner}/${githubConfig.repoName}${ep}`, {
                 method: m, headers: { 'Authorization': `token ${githubConfig.githubToken}`, 'Content-Type': 'application/json' },
@@ -374,12 +516,12 @@
             } catch (e) { showToast("Error de subida", "error"); }
         };
 
-        /* [ZONA BLINDADA 4] - GENERADOR DE MARKDOWN: ESTO DEFINE CÓMO SE VE TU BLOG FINAL */
+        /* [ZONA BLINDADA 4] - GENERADOR DE MARKDOWN */
         function generateMarkdown() {
             const title = document.getElementById('post-title').value;
             const desc = document.getElementById('post-desc').value;
             const date = document.getElementById('post-date').value;
-            const author = document.getElementById('post-author').value;
+            const author = document.getElementById('post-author').value; // Ahora es el SLUG del select
             const hero = document.getElementById('post-hero').value;
             let md = `---\ntitle: "${title}"\ndescription: "${desc}"\npublishDate: "${date}"\nauthor: "${author}"\nheroImage: "${hero}"\nlayout: "../../layouts/BlogPost.astro"\ntags: [${tags.map(t=>`"${t}"`).join(', ')}]\n---\n\n`;
             blocks.forEach(b => {
@@ -428,7 +570,7 @@
             btn.disabled = false; btn.innerText = "📤 Publicar Artículo";
         };
 
-        /* [ZONA BLINDADA 5] - LÓGICA DE CARGA MASIVA: NO MODIFICAR EL SISTEMA DE BLOBS */
+        /* [ZONA BLINDADA 5] - LÓGICA DE CARGA MASIVA */
         window.handleBulkFiles = (input) => {
             const previewDiv = document.getElementById('bulk-preview');
             previewDiv.innerHTML = ''; bulkFilesData = [];
