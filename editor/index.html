@@ -461,7 +461,7 @@ export const DEFAULT_AUTHOR = AUTHORS['daniel-arana'] || Object.values(AUTHORS)[
 
         window.openAIModal = () => { document.getElementById('ai-modal').classList.remove('hidden'); document.getElementById('ai-topic').focus(); };
         
-        window.generateIdeas = async () => {
+window.generateIdeas = async () => {
     const topic = document.getElementById('ai-topic').value;
     if(!topic) return;
     if(!geminiApiKey) return showToast("Falta configuración AI en Firebase", "error");
@@ -470,12 +470,12 @@ export const DEFAULT_AUTHOR = AUTHORS['daniel-arana'] || Object.values(AUTHORS)[
     container.innerHTML = '<div class="p-8 text-center animate-pulse"><i class="ph ph-brain text-4xl text-purple-400"></i><p class="text-xs font-bold mt-2">Pensando...</p></div>';
 
     try {
-        // Forzamos el uso de v1beta que es más flexible con Gemini 1.5 Flash
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`;
+        // CAMBIO CLAVE: Usamos la versión /v1/ en lugar de /v1beta/
+        const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`;
 
         const r = await fetch(url, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' }, // INDISPENSABLE
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ 
                 contents: [{ parts: [{ text: `Actúa como experto SEO de viajes. Genera 3 ideas de blog para: "${topic}". Responde exclusivamente un JSON array con este formato: [{"title": "Título H1", "desc": "Meta descripción corta"}]. No incluyas markdown ni texto extra.` }] }] 
             })
@@ -483,9 +483,11 @@ export const DEFAULT_AUTHOR = AUTHORS['daniel-arana'] || Object.values(AUTHORS)[
 
         const d = await r.json();
         
+        // Si Google devuelve un error (como el de la API Key), lo capturamos aquí
         if (d.error) throw new Error(d.error.message);
 
-        // Limpieza de respuesta para evitar errores si la IA manda texto extra
+        if (!d.candidates || d.candidates.length === 0) throw new Error("No se generaron resultados");
+
         let rawText = d.candidates[0].content.parts[0].text;
         let cleanJSON = rawText.replace(/```json|```/g, '').trim();
         const ideas = JSON.parse(cleanJSON);
@@ -497,10 +499,11 @@ export const DEFAULT_AUTHOR = AUTHORS['daniel-arana'] || Object.values(AUTHORS)[
             </div>`).join('');
 
     } catch (e) { 
-        console.error("Error detallado de AI:", e);
+        console.error("Error detallado:", e);
         container.innerHTML = `<p class="text-red-500 text-center text-xs p-4">Error: ${e.message}</p>`; 
     }
 };
+
 
         window.applyIdea = (t, d) => {
             document.getElementById('post-title').value = t;
