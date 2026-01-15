@@ -560,8 +560,13 @@
         window.updatePreview = () => {
             const md = generateMarkdown();
             document.getElementById('preview-md').textContent = md;
-            document.getElementById('preview-html').innerHTML = marked.parse(md);
-            document.getElementById('word-count').textContent = `${md.split(/\s+/).length} palabras`;
+            
+            // TRUCO: Quitamos la metadata (lo que está entre los ---) para la vista previa HTML
+            // Así 'marked' solo procesa el contenido real del artículo.
+            const cleanContent = md.replace(/^---[\s\S]*?---\s*/, '');
+            
+            document.getElementById('preview-html').innerHTML = marked.parse(cleanContent);
+            document.getElementById('word-count').textContent = `${cleanContent.split(/\s+/).length} palabras`;
         };
 
         window.downloadMarkdown = () => {
