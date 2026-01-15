@@ -68,6 +68,26 @@ box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 outline: none; 
 } 
 
+/* ESTILOS PÁRRAFO ENRIQUECIDO */
+.rich-editor {
+    min-height: 100px;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    outline: none;
+    border: 1px solid transparent;
+    transition: border 0.2s;
+}
+.rich-editor:focus {
+    border-color: #e2e8f0;
+    background: #fcfcfd;
+}
+/* Links "un poquito" más bold */
+.rich-editor a {
+    color: #2563eb;
+    font-weight: 500;
+    text-decoration: underline;
+}
+
 /* MODO OSCURO */ 
 @media (prefers-color-scheme: dark) { 
 body { background-color: #0f172a; color: #cbd5e1; } 
@@ -81,7 +101,8 @@ background: #0f172a;
 border-color: #334155; 
 color: #e2e8f0; 
 } 
-.input-blog:focus { background: #1e293b; border-color: #60a5fa; } 
+.input-blog:focus { background: #1e293b; border-color: #60a5fa; }
+.rich-editor:focus { border-color: #334155; background: #1e293b; }
 } 
 
 /* PREVIEW MARKDOWN */ 
@@ -89,28 +110,7 @@ color: #e2e8f0;
 .preview-content h3 { font-family: 'Space Grotesk', sans-serif; font-size: 1.25rem; font-weight: 600; color: #334155; margin-top: 1.2em; } 
 .preview-content p { margin-bottom: 1em; line-height: 1.7; color: #475569; } 
 .preview-content img { border-radius: 8px; margin: 1.5em 0; box-shadow: 0 4px 12px rgba(0,0,0,0.05); } 
-.preview-content a { color: #2563eb; text-decoration: underline; text-underline-offset: 2px; } 
-
-/* Clase para el botón de referido en la vista previa */
-.btn-ref { 
-    display: inline-block; 
-    background-color: #2563eb; 
-    color: white !important; 
-    padding: 0.75rem 1.5rem; 
-    border-radius: 0.5rem; 
-    font-weight: 700; 
-    text-decoration: none !important; 
-    margin: 1rem 0;
-    transition: opacity 0.2s;
-}
-.btn-ref:hover { opacity: 0.9; }
-
-@media (prefers-color-scheme: dark) { 
-.preview-content h2 { color: #f8fafc; } 
-.preview-content h3 { color: #cbd5e1; } 
-.preview-content p { color: #94a3b8; } 
-.preview-content a { color: #60a5fa; } 
-} 
+.preview-content a { color: #2563eb; text-decoration: underline; text-underline-offset: 2px; font-weight: 500; } 
 
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } } 
 .fade-in { animation: fadeIn 0.4s ease-out forwards; } 
@@ -213,14 +213,13 @@ Ingresar al Editor
 <label class="block text-xs font-semibold text-slate-500 mb-1.5 ml-1">IMAGEN DE PORTADA</label> 
 <input type="url" id="post-hero" class="w-full p-3 rounded-lg input-blog" placeholder="https://..." oninput="updatePreview()"> 
 </div> 
-
 <div> 
 <label class="block text-xs font-semibold text-slate-500 mb-1.5 ml-1">ETIQUETAS</label> 
 <div class="flex gap-2 mb-3"> 
-<input type="text" id="tag-input" placeholder="Ej: argentina, trekking..." class="flex-1 p-3 rounded-lg input-blog min-w-0"> 
-<button onclick="addTag()" class="bg-brand-600 hover:bg-brand-700 text-white px-5 rounded-lg font-bold transition shadow-sm flex-shrink-0">Añadir</button> 
+<input type="text" id="tag-input" placeholder="Añadir etiqueta..." class="flex-1 p-3 rounded-lg input-blog min-w-0"> 
+<button onclick="addTag()" class="bg-brand-600 hover:bg-brand-700 text-white px-4 rounded-lg font-bold transition shadow-sm flex-shrink-0">+</button> 
 </div> 
-<div id="tags-container" class="flex flex-wrap gap-2 min-h-[32px] p-1"></div> 
+<div id="tags-container" class="flex flex-wrap gap-2 min-h-[30px]"></div> 
 </div> 
 </div> 
 </div> 
@@ -238,7 +237,6 @@ Ingresar al Editor
 <button onclick="addBlock('img')" class="px-3 py-1.5 rounded bg-white dark:bg-slate-700 shadow-sm text-xs font-medium hover:text-brand-600 transition">🖼️ Foto</button> 
 <button onclick="addBlock('yt')" class="px-3 py-1.5 rounded bg-white dark:bg-slate-700 shadow-sm text-xs font-medium hover:text-brand-600 transition">📺 Youtube</button> 
 <button onclick="addBlock('list')" class="px-3 py-1.5 rounded bg-white dark:bg-slate-700 shadow-sm text-xs font-medium hover:text-brand-600 transition">≔ Lista</button> 
-<button onclick="addBlock('ref')" class="px-3 py-1.5 rounded bg-white dark:bg-slate-700 shadow-sm text-xs font-medium hover:text-brand-600 transition">🔗 Referido</button> 
 </div> 
 
 <div id="blocks-container" class="space-y-4 min-h-[200px]"></div> 
@@ -414,6 +412,20 @@ updatePreview();
 
 window.clearBlocks = () => { if(confirm("¿Borrar todo el contenido?")) { blocks = []; renderBlocks(); updatePreview(); }}; 
 
+// FUNCIONES DE ESTILO PARA PÁRRAFO
+window.execCmd = (cmd) => {
+    document.execCommand(cmd, false, null);
+    updatePreview();
+};
+
+window.applyLink = () => {
+    const url = prompt("Pega el enlace referido:");
+    if (url) {
+        document.execCommand('createLink', false, url);
+        updatePreview();
+    }
+};
+
 function renderBlocks() { 
 const container = document.getElementById('blocks-container'); 
 container.innerHTML = ''; 
@@ -424,12 +436,25 @@ let ph = 'Escribe aquí...';
 if(b.type === 'h2') ph = 'Título de sección...'; 
 if(b.type === 'img') ph = 'URL de la imagen | Descripción'; 
 if(b.type === 'yt') ph = 'Enlace de YouTube'; 
-if(b.type === 'ref') ph = 'Texto del botón | URL'; 
 
 let inputHtml = ''; 
 const typeLabel = b.type === 'img' ? 'IMAGEN' : b.type.toUpperCase(); 
 
-if (b.type === 'p' || b.type === 'list') { 
+if (b.type === 'p') { 
+inputHtml = ` 
+<div class="flex flex-col gap-2 w-full"> 
+    <div class="flex gap-2 p-1 bg-slate-50 dark:bg-slate-700/50 rounded-md border border-slate-200 dark:border-slate-600 w-fit">
+        <button onclick="execCmd('bold')" class="px-2 py-0.5 text-[10px] font-bold hover:bg-white dark:hover:bg-slate-600 rounded shadow-sm transition">B</button>
+        <button onclick="execCmd('justifyLeft')" class="px-2 py-0.5 text-[10px] hover:bg-white dark:hover:bg-slate-600 rounded shadow-sm">L</button>
+        <button onclick="execCmd('justifyCenter')" class="px-2 py-0.5 text-[10px] hover:bg-white dark:hover:bg-slate-600 rounded shadow-sm">C</button>
+        <button onclick="execCmd('justifyRight')" class="px-2 py-0.5 text-[10px] hover:bg-white dark:hover:bg-slate-600 rounded shadow-sm">R</button>
+        <button onclick="applyLink()" class="px-2 py-0.5 text-[10px] font-bold text-blue-600 hover:bg-white dark:hover:bg-slate-600 rounded shadow-sm transition">🔗 Link</button>
+    </div>
+    <div contenteditable="true" 
+         class="rich-editor w-full text-slate-700 dark:text-slate-200 text-sm font-sans" 
+         oninput="updateBlockContent('${b.id}', this.innerHTML)">${b.content || ph}</div>
+</div>`; 
+} else if (b.type === 'list') {
 inputHtml = `<textarea class="w-full bg-transparent border-none outline-none text-slate-700 dark:text-slate-200 resize-none h-auto text-sm font-sans" rows="3" placeholder="${ph}" oninput="updateBlockContent('${b.id}', this.value)">${b.content}</textarea>`; 
 } else if (b.type === 'img') { 
 inputHtml = ` 
@@ -475,11 +500,10 @@ blocks.forEach(b => {
 const c = b.content.trim(); if(!c) return; 
 if(b.type === 'h2') md += `## ${c}\n\n`; 
 else if(b.type === 'h3') md += `### ${c}\n\n`; 
-else if(b.type === 'p') md += `${c}\n\n`; 
+else if(b.type === 'p') md += `${c}\n\n`; // Al ser HTML, Astro lo interpreta perfecto.
 else if(b.type === 'img') { const [u,a] = c.split('|'); md += `![${a||'Imagen'}](${u})\n\n`; } 
 else if(b.type === 'yt') md += `<iframe width="100%" height="400" src="${c.replace('watch?v=','embed/')}" frameborder="0" allowfullscreen class="rounded-lg shadow-sm"></iframe>\n\n`; 
 else if(b.type === 'list') { c.split('\n').forEach(i => md += `* ${i}\n`); md += '\n'; } 
-else if(b.type === 'ref') { const [t,l] = c.split('|'); md += `<a href="${l}" class="btn-ref">${t}</a>\n\n`; } 
 }); 
 return md; 
 } 
