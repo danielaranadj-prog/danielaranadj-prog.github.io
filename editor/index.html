@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Editor Instante Trips V3</title>
+    <title>Editor Instante Trips V4</title>
     
     <link rel="apple-touch-icon" href="public/logo-ios.png">
     <link rel="icon" type="image/png" href="public/logo-ios.png">
@@ -420,10 +420,7 @@
         window.applyLink = () => {
             let url = prompt("Enlace directo (ej: www.google.com):");
             if (url) {
-                // Validación automática de HTTPS
-                if (!/^https?:\/\//i.test(url)) {
-                    url = 'https://' + url;
-                }
+                if (!/^https?:\/\//i.test(url)) { url = 'https://' + url; }
                 const sel = window.getSelection();
                 if(sel.rangeCount > 0) {
                     const a = `<a href="${url}" target="_blank" rel="noopener noreferrer">${sel}</a>`;
@@ -530,12 +527,11 @@
             const hero = document.getElementById('post-hero').value;
             let md = `---\ntitle: "${title}"\ndescription: "${desc}"\npublishDate: "${date}"\nauthor: "${author}"\nheroImage: "${hero}"\nlayout: "../../layouts/BlogPost.astro"\ntags: [${tags.map(t=>`"${t}"`).join(', ')}]\n---\n\n`;
             
-            // Corrección del bucle de contenido
             blocks.forEach(b => {
-                // Permitimos contenido vacío temporalmente para que no corte el renderizado si un bloque está en proceso de edición
+                // CORRECCIÓN VISTA PREVIA: Permitimos bloques vacíos o en edición
                 if(b.type === 'h2') md += `## ${b.content}\n\n`;
                 else if(b.type === 'h3') md += `### ${b.content}\n\n`;
-                else if(b.type === 'p') md += `${b.content}\n\n`; // Pasa HTML crudo para mantener alineaciones
+                else if(b.type === 'p') md += `${b.content}\n\n`; 
                 else if(b.type === 'img') { 
                     const [u,a] = b.content.split('|'); 
                     if(u) {
@@ -560,11 +556,8 @@
         window.updatePreview = () => {
             const md = generateMarkdown();
             document.getElementById('preview-md').textContent = md;
-            
-            // TRUCO: Quitamos la metadata (lo que está entre los ---) para la vista previa HTML
-            // Así 'marked' solo procesa el contenido real del artículo.
+            // CORRECCIÓN VISTA PREVIA: Limpiamos la metadata YAML para que solo se vea el contenido
             const cleanContent = md.replace(/^---[\s\S]*?---\s*/, '');
-            
             document.getElementById('preview-html').innerHTML = marked.parse(cleanContent);
             document.getElementById('word-count').textContent = `${cleanContent.split(/\s+/).length} palabras`;
         };
