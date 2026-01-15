@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Editor Instante Trips V2</title>
+    <title>Editor Instante Trips V3</title>
     
     <link rel="apple-touch-icon" href="public/logo-ios.png">
     <link rel="icon" type="image/png" href="public/logo-ios.png">
@@ -252,7 +252,7 @@
         let tags = [];
         let bulkFilesData = [];
 
-        // CONFIGURACIÓN MARKED (CORRECCIÓN LINKS)
+        // CONFIGURACIÓN MARKED (CORRECCIÓN LINKS VISTA PREVIA)
         const renderer = new marked.Renderer();
         const linkRenderer = renderer.link;
         renderer.link = (href, title, text) => {
@@ -314,24 +314,25 @@
             }
         };
 
-        // GESTIÓN DE AUTORES (NUEVO)
+        /* ╔════════════════════════════════════════════════════════════╗
+           ║ ⛔ ZONA BLINDADA: SISTEMA DE AUTORES (NO MODIFICAR)       ║
+           ║ ESTA SECCIÓN CONTIENE LÓGICA CRÍTICA DE LECTURA/ESCRITURA  ║
+           ║ EN EL ARCHIVO 'authors.ts'. CUALQUIER CAMBIO PUEDE ROMPER  ║
+           ║ LA INTEGRIDAD DE LOS DATOS. REQUIERE AUTORIZACIÓN EXPRESA. ║
+           ╚════════════════════════════════════════════════════════════╝
+        */
+        
         window.openAuthorModal = () => document.getElementById('author-modal').classList.add('open');
         window.closeAuthorModal = () => document.getElementById('author-modal').classList.remove('open');
 
-        // Leer autores del archivo TS
         async function loadAuthorsFromRepo() {
             const select = document.getElementById('post-author');
             try {
-                // Buscamos el archivo authors.ts (ajusta la ruta si es src/data/authors.ts)
                 const file = await ghFetch(`/contents/src/data/authors.ts`);
-                const content = decodeURIComponent(escape(atob(file.content))); // Decodificar UTF8
-                
-                // Regex simple para encontrar slugs y nombres dentro del objeto
-                // Busca patrones como: name: 'Jonathan Arana'
+                const content = decodeURIComponent(escape(atob(file.content)));
                 const regex = /slug:\s*['"]([^'"]+)['"][\s\S]*?name:\s*['"]([^'"]+)['"]/g;
                 let match;
                 select.innerHTML = '<option value="">Selecciona un autor</option>';
-                
                 while ((match = regex.exec(content)) !== null) {
                     const slug = match[1];
                     const name = match[2];
@@ -343,7 +344,6 @@
             } catch (e) { console.error(e); showToast("Error cargando autores", "error"); }
         }
 
-        // Guardar nuevo autor
         window.saveNewAuthor = async () => {
             const name = document.getElementById('new-auth-name').value;
             const role = document.getElementById('new-auth-role').value;
@@ -352,7 +352,6 @@
             const btn = document.getElementById('btn-save-auth');
 
             if(!name || !fileInput.files[0]) { alert("Nombre y Foto requeridos"); return; }
-            
             btn.innerText = "Guardando..."; btn.disabled = true;
 
             try {
@@ -361,18 +360,15 @@
                 const cleanFileName = `${slug}.jpg`; 
                 const b64 = await toBase64(file);
 
-                // 1. Subir Foto a public/assets/autores/
                 await ghFetch(`/contents/public/assets/autores/${cleanFileName}`, 'PUT', {
                     message: `New Author Pic: ${name}`,
                     content: b64.split(',')[1],
                     branch: githubConfig.branch
                 });
 
-                // 2. Leer archivo actual TS
                 const tsFile = await ghFetch(`/contents/src/data/authors.ts`);
                 let content = decodeURIComponent(escape(atob(tsFile.content)));
 
-                // 3. Crear string del nuevo autor
                 const newAuthStr = `
   '${slug}': {
     slug: '${slug}',
@@ -382,14 +378,10 @@
     image: '/assets/autores/${cleanFileName}',
   },`;
 
-                // 4. Inyectar antes del cierre del objeto (buscamos la última llave)
-                // Asumimos que el archivo termina con "};" o similar. Buscamos el último "}"
                 const insertIndex = content.lastIndexOf('}');
                 if (insertIndex === -1) throw new Error("Formato TS inválido");
-                
                 const newContent = content.slice(0, insertIndex) + newAuthStr + content.slice(insertIndex);
 
-                // 5. Guardar archivo TS actualizado
                 await ghFetch(`/contents/src/data/authors.ts`, 'PUT', {
                     message: `Add author: ${name}`,
                     content: btoa(unescape(encodeURIComponent(newContent))),
@@ -399,9 +391,7 @@
 
                 showToast("¡Autor Creado Exitosamente! 🎉");
                 closeAuthorModal();
-                loadAuthorsFromRepo(); // Recargar lista
-                
-                // Limpiar form
+                loadAuthorsFromRepo(); 
                 document.getElementById('new-auth-name').value = '';
                 document.getElementById('new-auth-role').value = '';
                 document.getElementById('new-auth-bio').value = '';
@@ -413,8 +403,9 @@
             }
             btn.innerText = "Guardar Autor"; btn.disabled = false;
         };
+        /* ╚═════════ FIN ZONA BLINDADA AUTORES ═════════╝ */
 
-        // BLOQUES
+        // BLOQUES Y HERRAMIENTAS
         window.addBlock = (type) => { blocks.push({ id: Date.now().toString(), type, content: '', credits: '', listType: 'ul' }); renderBlocks(); updatePreview(); };
         window.removeBlock = (id) => { blocks = blocks.filter(b => b.id !== id); renderBlocks(); updatePreview(); };
         window.updateBlockContent = (id, val, extra = null) => { 
@@ -424,13 +415,21 @@
         };
 
         window.execCmd = (cmd) => { document.execCommand(cmd, false, null); updatePreview(); };
+        
+        // FUNCIÓN LINKS CORREGIDA
         window.applyLink = () => {
-            const url = prompt("Enlace directo:");
+            let url = prompt("Enlace directo (ej: www.google.com):");
             if (url) {
+                // Validación automática de HTTPS
+                if (!/^https?:\/\//i.test(url)) {
+                    url = 'https://' + url;
+                }
                 const sel = window.getSelection();
-                const a = `<a href="${url}" target="_blank" rel="noopener noreferrer">${sel}</a>`;
-                document.execCommand('insertHTML', false, a);
-                updatePreview();
+                if(sel.rangeCount > 0) {
+                    const a = `<a href="${url}" target="_blank" rel="noopener noreferrer">${sel}</a>`;
+                    document.execCommand('insertHTML', false, a);
+                    updatePreview();
+                }
             }
         };
 
@@ -442,10 +441,16 @@
                 el.className = 'bg-white dark:bg-slate-800 p-5 rounded-lg border border-slate-200 dark:border-slate-700 group relative shadow-sm animate-[fadeIn_0.2s]';
                 let html = '';
                 if (b.type === 'p') {
+                    // BARRA DE HERRAMIENTAS RESTAURADA
                     html = `
                     <div class="flex flex-col gap-3">
                         <div class="flex gap-1.5 p-1 bg-slate-50 dark:bg-slate-700/50 rounded-lg border w-fit">
-                            <button onclick="execCmd('bold')" class="px-2.5 py-1 text-[11px] font-black hover:bg-white rounded transition">B</button>
+                            <button onclick="execCmd('bold')" class="px-2.5 py-1 text-[11px] font-black hover:bg-white rounded transition" title="Negrita">B</button>
+                            <div class="w-px h-4 bg-slate-200 mx-1 self-center"></div>
+                            <button onclick="execCmd('justifyLeft')" class="p-1.5 hover:bg-white rounded transition"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M4 6h16M4 12h10M4 18h16"/></svg></button>
+                            <button onclick="execCmd('justifyCenter')" class="p-1.5 hover:bg-white rounded transition"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M4 6h16M7 12h10M4 18h16"/></svg></button>
+                            <button onclick="execCmd('justifyRight')" class="p-1.5 hover:bg-white rounded transition"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M4 6h16M10 12h10M4 18h16"/></svg></button>
+                            <button onclick="execCmd('justifyFull')" class="p-1.5 hover:bg-white rounded transition"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
                             <div class="w-px h-4 bg-slate-200 mx-1 self-center"></div>
                             <button onclick="applyLink()" class="px-2.5 py-1 text-[11px] text-blue-600 font-bold hover:bg-white rounded transition">🔗 Link</button>
                         </div>
@@ -521,21 +526,28 @@
             const title = document.getElementById('post-title').value;
             const desc = document.getElementById('post-desc').value;
             const date = document.getElementById('post-date').value;
-            const author = document.getElementById('post-author').value; // Ahora es el SLUG del select
+            const author = document.getElementById('post-author').value;
             const hero = document.getElementById('post-hero').value;
             let md = `---\ntitle: "${title}"\ndescription: "${desc}"\npublishDate: "${date}"\nauthor: "${author}"\nheroImage: "${hero}"\nlayout: "../../layouts/BlogPost.astro"\ntags: [${tags.map(t=>`"${t}"`).join(', ')}]\n---\n\n`;
+            
+            // Corrección del bucle de contenido
             blocks.forEach(b => {
-                if(!b.content.trim()) return;
+                // Permitimos contenido vacío temporalmente para que no corte el renderizado si un bloque está en proceso de edición
                 if(b.type === 'h2') md += `## ${b.content}\n\n`;
                 else if(b.type === 'h3') md += `### ${b.content}\n\n`;
-                else if(b.type === 'p') md += `${b.content}\n\n`;
+                else if(b.type === 'p') md += `${b.content}\n\n`; // Pasa HTML crudo para mantener alineaciones
                 else if(b.type === 'img') { 
-                    const [u,a] = b.content.split('|'); md += `![${a||'Imagen'}](${u.trim()})\n`;
-                    if(b.credits) md += `<small class="credit-style">Créditos: <i>${b.credits}</i></small>\n\n`; else md += `\n`;
+                    const [u,a] = b.content.split('|'); 
+                    if(u) {
+                        md += `![${a||'Imagen'}](${u.trim()})\n`;
+                        if(b.credits) md += `<small class="credit-style">Créditos: <i>${b.credits}</i></small>\n\n`; else md += `\n`;
+                    }
                 } 
                 else if(b.type === 'yt') {
-                    md += `<iframe width="100%" height="400" src="${b.content.replace('watch?v=','embed/')}" frameborder="0" allowfullscreen class="rounded-lg shadow-md"></iframe>\n`;
-                    if(b.credits) md += `<small class="credit-style">Fuente: <i>${b.credits}</i></small>\n\n`; else md += `\n`;
+                    if(b.content) {
+                        md += `<iframe width="100%" height="400" src="${b.content.replace('watch?v=','embed/')}" frameborder="0" allowfullscreen class="rounded-lg shadow-md"></iframe>\n`;
+                        if(b.credits) md += `<small class="credit-style">Fuente: <i>${b.credits}</i></small>\n\n`; else md += `\n`;
+                    }
                 }
                 else if(b.type === 'list') { 
                     const tag = b.listType === 'ul' ? 'ul' : 'ol';
