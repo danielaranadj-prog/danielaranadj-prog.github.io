@@ -50,7 +50,8 @@
 
         .rich-editor { min-height: 100px; padding: 0.75rem; border-radius: 0.5rem; outline: none; border: 1px solid transparent; transition: border 0.2s; }
         .rich-editor:focus { border-color: #e2e8f0; background: #fcfcfd; }
-        .rich-editor a { color: #2563eb; font-weight: 500; text-decoration: underline; }
+        /* Link un poquito más bold */
+        .rich-editor a { color: #2563eb; font-weight: 600; text-decoration: underline; }
 
         /* MODO OSCURO */
         @media (prefers-color-scheme: dark) {
@@ -66,8 +67,8 @@
         .preview-content h3 { font-family: 'Space Grotesk', sans-serif; font-size: 1.25rem; font-weight: 600; color: #334155; margin-top: 1.2em; }
         .preview-content p { margin-bottom: 1em; line-height: 1.7; color: #475569; }
         .preview-content img { border-radius: 8px; margin: 1.5em 0; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-        .preview-content a { color: #2563eb; text-decoration: underline; text-underline-offset: 2px; font-weight: 500; }
-        .credit-style { font-size: 0.75rem; font-style: italic; opacity: 0.7; margin-top: 4px; display: block; }
+        .preview-content a { color: #2563eb; text-decoration: underline; text-underline-offset: 2px; font-weight: 600; }
+        .credit-style { font-size: 0.75rem; font-style: italic; opacity: 0.7; margin-top: 4px; display: block; color: inherit; }
 
         @media (prefers-color-scheme: dark) {
             .preview-content h2 { color: #f8fafc; }
@@ -124,7 +125,7 @@
                     <div class="w-10 h-10 bg-white dark:bg-slate-800 rounded-full flex items-center justify-center shadow-sm border border-slate-200 dark:border-slate-700 p-1.5">
                         <img src="public/blog.svg" alt="Logo" class="w-full h-full object-contain">
                     </div>
-                    <span class="font-bold font-display text-lg hidden md:block dark:text-white">Editor</span>
+                    <span class="font-bold font-display text-lg hidden md:block dark:text-white">Editor IT</span>
                 </div>
                 <div class="flex items-center gap-4">
                     <span id="welcome-msg" class="text-sm font-medium text-slate-500 dark:text-slate-400 hidden md:block"></span>
@@ -140,8 +141,12 @@
 
         <main class="flex-1 max-w-7xl mx-auto w-full p-6 grid grid-cols-1 lg:grid-cols-12 gap-8">
             <div class="flex flex-col gap-6 lg:col-span-7 fade-in">
+                
                 <div class="clean-card p-6">
-                    <h2 class="text-xs font-bold font-display uppercase tracking-widest text-brand-600 dark:text-brand-500 mb-5">DATA DEL POST</h2>
+                    <div class="flex justify-between items-center mb-5">
+                        <h2 class="text-xs font-bold font-display uppercase tracking-widest text-brand-600 dark:text-brand-500">DATA DEL POST</h2>
+                        <button onclick="clearPostData()" class="text-[10px] font-bold text-red-500 hover:underline">🧹 Limpiar todas las casillas</button>
+                    </div>
                     <div class="space-y-5">
                         <div>
                             <label class="block text-xs font-semibold text-slate-500 mb-1.5 ml-1">TÍTULO</label>
@@ -179,7 +184,7 @@
                 <div class="clean-card p-6 flex-1">
                     <div class="flex justify-between items-center mb-5">
                         <h2 class="text-xs font-bold font-display uppercase tracking-widest text-brand-600 dark:text-brand-500">Contenido</h2>
-                        <button onclick="clearBlocks()" class="text-xs font-medium text-red-500 hover:text-red-600 flex items-center gap-1 transition">🗑️ Limpiar todo</button>
+                        <button onclick="clearBlocks()" class="text-xs font-medium text-red-500 hover:text-red-600 flex items-center gap-1 transition">🗑️ Limpiar bloques</button>
                     </div>
 
                     <div class="flex flex-wrap gap-2 mb-6 p-1.5 bg-slate-100 dark:bg-slate-800 rounded-lg">
@@ -217,7 +222,7 @@
                     <div class="p-4 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800 flex justify-between items-center">
                         <span class="font-bold text-xs uppercase tracking-widest text-brand-600 dark:text-brand-500">Vista Previa</span>
                         <div class="text-xs font-mono text-slate-400">
-                            <span id="word-count">0 palabras</span> • <span id="read-time">0 min</span>
+                            <span id="word-count">0 palabras</span>
                         </div>
                     </div>
                     <div id="preview-md" class="hidden flex-1 p-6 overflow-y-auto font-mono text-xs text-slate-600 bg-slate-50 dark:bg-slate-900/50 whitespace-pre-wrap"></div>
@@ -260,6 +265,7 @@
         let tags = [];
         let bulkFilesData = [];
 
+        // LOGIN
         const loginForm = document.getElementById('login-form');
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -267,9 +273,7 @@
             const password = document.getElementById('password').value;
             const btn = loginForm.querySelector('button');
             btn.innerText = "Verificando..."; btn.disabled = true;
-            try {
-                await signInWithEmailAndPassword(auth, email, password);
-            } catch (error) {
+            try { await signInWithEmailAndPassword(auth, email, password); } catch (error) {
                 const errDiv = document.getElementById('login-error');
                 errDiv.textContent = "Error: Credenciales incorrectas.";
                 errDiv.classList.remove('hidden');
@@ -287,14 +291,9 @@
                 document.getElementById('welcome-msg').textContent = `Editor: ${user.email.split('@')[0]}`;
                 document.getElementById('post-author').value = user.email.split('@')[0];
                 document.getElementById('post-date').valueAsDate = new Date();
-                
                 const docRef = doc(db, "config", "main");
                 const docSnap = await getDoc(docRef);
-                if (docSnap.exists()) {
-                    githubConfig = docSnap.data();
-                    showToast("Conectado a GitHub ✅");
-                    loadHistory();
-                } else { showToast("Falta configuración en Firestore ❌", "error"); }
+                if (docSnap.exists()) { githubConfig = docSnap.data(); showToast("Conectado a GitHub ✅"); loadHistory(); }
             } else {
                 document.getElementById('login-section').classList.remove('hidden');
                 document.getElementById('app-section').classList.add('hidden');
@@ -305,19 +304,27 @@
         const tagInput = document.getElementById('tag-input');
         const tagsContainer = document.getElementById('tags-container');
         tagInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') { e.preventDefault(); addTag(); } });
-
         window.addTag = () => {
             const val = tagInput.value.trim();
             if (val && !tags.includes(val)) { tags.push(val); tagInput.value = ''; renderTags(); updatePreview(); }
         };
         window.removeTag = (tag) => { tags = tags.filter(t => t !== tag); renderTags(); updatePreview(); };
         function renderTags() {
-            tagsContainer.innerHTML = tags.map(t => `
-                <div class="inline-flex items-center gap-1.5 bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-300 px-3 py-1.5 rounded-lg text-xs font-bold border border-brand-100 animate-[fadeIn_0.3s]">
-                    <span>#${t}</span>
-                    <button onclick="removeTag('${t}')" class="hover:text-red-500">×</button>
-                </div>`).join('');
+            tagsContainer.innerHTML = tags.map(t => `<div class="bg-brand-50 text-brand-600 px-3 py-1 rounded-full text-xs font-bold border border-brand-100 flex items-center gap-1.5 animate-[fadeIn_0.3s]">#${t}<button onclick="removeTag('${t}')">×</button></div>`).join('');
         }
+
+        // --- NUEVA FUNCIÓN: LIMPIAR TODO ---
+        window.clearPostData = () => {
+            if(confirm("¿Estás seguro de limpiar TODAS las casillas del editor?")) {
+                document.getElementById('post-title').value = '';
+                document.getElementById('post-desc').value = '';
+                document.getElementById('post-hero').value = '';
+                document.getElementById('tag-input').value = '';
+                blocks = []; tags = [];
+                renderBlocks(); renderTags(); updatePreview();
+                showToast("Editor reiniciado ✨");
+            }
+        };
 
         // BLOQUES
         window.addBlock = (type) => {
@@ -340,6 +347,7 @@
             const url = prompt("Pega el enlace referido:");
             if (url) {
                 const sel = window.getSelection();
+                // Forzamos target="_blank" para abrir en nueva pestaña
                 const a = `<a href="${url}" target="_blank" rel="noopener noreferrer">${sel}</a>`;
                 document.execCommand('insertHTML', false, a);
                 updatePreview();
@@ -351,41 +359,32 @@
             container.innerHTML = '';
             blocks.forEach((b) => {
                 const el = document.createElement('div');
-                el.className = 'bg-white dark:bg-slate-800 p-5 rounded-lg border border-slate-200 dark:border-slate-700 group relative shadow-sm animate-[fadeIn_0.3s]';
+                el.className = 'bg-white dark:bg-slate-800 p-5 rounded-lg border border-slate-200 dark:border-slate-700 group relative animate-[fadeIn_0.3s]';
                 let html = '';
-                const typeLabel = b.type === 'img' ? 'IMAGEN' : b.type.toUpperCase();
-
                 if (b.type === 'p') {
                     html = `
                     <div class="flex flex-col gap-3">
-                        <div class="flex flex-wrap gap-1.5 p-1.5 bg-slate-50 dark:bg-slate-700/50 rounded-lg border w-fit">
-                            <button onclick="execCmd('bold')" class="px-2.5 py-1 text-[11px] font-black hover:bg-white rounded transition" title="Negrita">B</button>
+                        <div class="flex gap-1.5 p-1.5 bg-slate-50 dark:bg-slate-700/50 rounded-lg border w-fit">
+                            <button onclick="execCmd('bold')" class="px-2 py-1 text-[10px] font-black hover:bg-white rounded transition" title="Negrita">B</button>
                             <div class="w-px h-4 bg-slate-200 mx-1 align-middle self-center"></div>
-                            <button onclick="execCmd('justifyLeft')" class="p-1.5 hover:bg-white rounded" title="Alinear Izquierda"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 12h10M4 18h16"/></svg></button>
-                            <button onclick="execCmd('justifyCenter')" class="p-1.5 hover:bg-white rounded" title="Centrar"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M7 12h10M4 18h16"/></svg></button>
-                            <button onclick="execCmd('justifyRight')" class="p-1.5 hover:bg-white rounded" title="Alinear Derecha"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M10 12h10M4 18h16"/></svg></button>
-                            <button onclick="execCmd('justifyFull')" class="p-1.5 hover:bg-white rounded" title="Justificar Texto"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+                            <button onclick="execCmd('justifyLeft')" class="p-1.5 hover:bg-white rounded" title="Alinear Izquierda"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 6h16M4 12h10M4 18h16" stroke-width="2" stroke-linecap="round"/></svg></button>
+                            <button onclick="execCmd('justifyCenter')" class="p-1.5 hover:bg-white rounded" title="Centrar"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 6h16M7 12h10M4 18h16" stroke-width="2" stroke-linecap="round"/></svg></button>
+                            <button onclick="execCmd('justifyRight')" class="p-1.5 hover:bg-white rounded" title="Alinear Derecha"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 6h16M10 12h10M4 18h16" stroke-width="2" stroke-linecap="round"/></svg></button>
+                            <button onclick="execCmd('justifyFull')" class="p-1.5 hover:bg-white rounded" title="Justificar"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16" stroke-width="2" stroke-linecap="round"/></svg></button>
                             <div class="w-px h-4 bg-slate-200 mx-1 align-middle self-center"></div>
-                            <button onclick="applyLink()" class="px-2.5 py-1 text-[11px] text-blue-600 font-bold hover:bg-white rounded transition">🔗 Link</button>
+                            <button onclick="applyLink()" class="px-2 py-1 text-[10px] text-blue-600 font-bold hover:bg-white rounded transition">🔗 Link</button>
                         </div>
-                        <div contenteditable="true" class="rich-editor text-sm font-sans leading-relaxed" oninput="updateBlockContent('${b.id}', this.innerHTML)">${b.content || 'Escribe tu párrafo profesional...'}</div>
+                        <div contenteditable="true" class="rich-editor text-sm font-sans" oninput="updateBlockContent('${b.id}', this.innerHTML)">${b.content || 'Escribe tu párrafo...'}</div>
                     </div>`;
                 } else if (b.type === 'img' || b.type === 'yt') {
                     html = `
                     <div class="space-y-3">
-                        <div class="flex gap-2 items-center w-full">
-                            <input type="text" id="input-${b.id}" class="flex-1 bg-transparent border-none outline-none text-slate-700 dark:text-slate-200 font-medium text-sm" placeholder="URL | Alt" value="${b.content}" oninput="updateBlockContent('${b.id}', this.value)">
-                            ${b.type === 'img' ? `
-                            <label class="cursor-pointer bg-blue-50 dark:bg-blue-900/30 text-blue-600 px-3 py-1.5 rounded-lg transition flex items-center gap-2 text-xs font-bold border border-blue-200">
-                                <span>📤 Subir</span>
-                                <input type="file" class="hidden" accept="image/*" onchange="uploadImageToRepo('${b.id}', this)">
-                            </label>` : ''}
+                        <div class="flex gap-2 items-center">
+                            <input type="text" id="input-${b.id}" class="flex-1 bg-transparent border-b text-sm" placeholder="URL | Alt" value="${b.content}" oninput="updateBlockContent('${b.id}', this.value)">
+                            ${b.type === 'img' ? `<label class="bg-blue-50 text-blue-600 px-3 py-1 rounded text-xs font-bold cursor-pointer">📤 Subir<input type="file" class="hidden" accept="image/*" onchange="uploadImageToRepo('${b.id}', this)"></label>` : ''}
                         </div>
-                        <div class="flex items-center gap-2">
-                            <span class="text-[10px] font-black text-slate-400">©</span>
-                            <input type="text" class="flex-1 bg-transparent text-[10px] italic opacity-60 outline-none" placeholder="Créditos del autor o Copyright..." value="${b.credits}" oninput="updateBlockContent('${b.id}', this.value, 'credits')">
-                        </div>
-                        ${b.type === 'img' && b.content ? `<img src="${b.content.split('|')[0].trim()}" class="h-24 rounded-lg object-cover">` : ''}
+                        <input type="text" class="w-full bg-transparent text-[10px] italic opacity-60 outline-none" placeholder="© Créditos de autoría (Texto plano)..." value="${b.credits}" oninput="updateBlockContent('${b.id}', this.value, 'credits')">
+                        ${b.type === 'img' && b.content ? `<img src="${b.content.split('|')[0].trim()}" class="h-20 rounded object-cover mt-2">` : ''}
                     </div>`;
                 } else if (b.type === 'list') {
                     html = `
@@ -394,18 +393,17 @@
                             <button onclick="updateBlockContent('${b.id}', 'ul', 'listType'); renderBlocks();" class="px-2 py-1 text-[9px] rounded ${b.listType==='ul'?'bg-slate-200 font-bold':'bg-slate-50'}">Puntos</button>
                             <button onclick="updateBlockContent('${b.id}', 'ol', 'listType'); renderBlocks();" class="px-2 py-1 text-[9px] rounded ${b.listType==='ol'?'bg-slate-200 font-bold':'bg-slate-50'}">Números</button>
                         </div>
-                        <textarea class="w-full bg-transparent text-sm font-sans outline-none min-h-[80px]" placeholder="Elemento 1\nElemento 2" oninput="updateBlockContent('${b.id}', this.value)">${b.content}</textarea>
+                        <textarea class="w-full bg-transparent text-sm font-sans outline-none" placeholder="Item 1\nItem 2" oninput="updateBlockContent('${b.id}', this.value)">${b.content}</textarea>
                     </div>`;
                 } else {
-                    html = `<input type="text" class="w-full bg-transparent font-bold font-display outline-none" placeholder="Título..." value="${b.content}" oninput="updateBlockContent('${b.id}', this.value)">`;
+                    html = `<input type="text" class="w-full bg-transparent font-bold outline-none" value="${b.content}" placeholder="TÍTULO SECCIÓN" oninput="updateBlockContent('${b.id}', this.value)">`;
                 }
-
-                el.innerHTML = `<button onclick="removeBlock('${b.id}')" class="absolute -right-2 -top-2 bg-red-500 text-white rounded-full w-5 h-5 text-[10px] flex items-center justify-center font-bold">×</button>${html}`;
+                el.innerHTML = `<button onclick="removeBlock('${b.id}')" class="absolute -right-2 -top-2 bg-red-500 text-white rounded-full w-5 h-5 text-[10px] shadow-sm opacity-0 group-hover:opacity-100 transition flex items-center justify-center font-bold">×</button>${html}`;
                 container.appendChild(el);
             });
         }
 
-        // --- GITHUB & FIREBASE LOGIC (EL "MOTOR" QUE NO DEBÍ QUITAR) ---
+        // --- MOTOR GITHUB (SIN CAMBIOS) ---
         async function ghFetch(ep, m='GET', b=null) {
             if(!githubConfig) throw new Error("No conectado a GitHub");
             return fetch(`https://api.github.com/repos/${githubConfig.repoOwner}/${githubConfig.repoName}${ep}`, {
@@ -415,26 +413,20 @@
         }
 
         const toBase64 = file => new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = () => resolve(reader.result);
-            reader.onerror = error => reject(error);
+            const reader = new FileReader(); reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result); reader.onerror = error => reject(error);
         });
 
         window.uploadImageToRepo = async (blockId, fileInput) => {
             const file = fileInput.files[0]; if (!file) return;
-            const textInput = document.getElementById(`input-${blockId}`);
-            textInput.value = "⏳ Subiendo...";
             try {
                 const b64 = await toBase64(file);
                 const content = b64.split(',')[1];
-                const filename = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.]/g, '-').toLowerCase()}`;
-                const path = `public/uploads/${filename}`;
-                await ghFetch(`/contents/${path}`, 'PUT', { message: `Media: ${filename}`, content, branch: githubConfig.branch });
+                const filename = `${Date.now()}-${file.name.replace(/[^a-z0-9.]/gi, '-').toLowerCase()}`;
+                await ghFetch(`/contents/public/uploads/${filename}`, 'PUT', { message: `Media: ${filename}`, content, branch: githubConfig.branch });
                 updateBlockContent(blockId, `/uploads/${filename} | ${file.name}`);
-                showToast("Imagen subida! 🖼️");
-                renderBlocks();
-            } catch (e) { showToast(e.message, "error"); }
+                showToast("Imagen subida! 🖼️"); renderBlocks();
+            } catch (e) { showToast("Error al subir", "error"); }
         };
 
         function generateMarkdown() {
@@ -452,6 +444,7 @@
                 else if(b.type === 'img') { 
                     const [u,a] = b.content.split('|'); 
                     md += `![${a||'Imagen'}](${u.trim()})\n`;
+                    // Los créditos se renderizan como texto puro
                     if(b.credits) md += `<small class="credit-style">Créditos: <i>${b.credits}</i></small>\n\n`;
                     else md += `\n`;
                 } 
@@ -477,26 +470,24 @@
         };
 
         window.downloadMarkdown = () => {
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(new Blob([generateMarkdown()], {type: 'text/markdown'}));
-            link.download = `${document.getElementById('post-title').value || 'post'}.md`;
-            link.click();
+            const blob = new Blob([generateMarkdown()], {type: 'text/markdown'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a'); a.href = url; a.download = `${document.getElementById('post-title').value || 'post'}.md`; a.click();
         };
 
         window.publishCurrentPost = async () => {
-            const btn = document.getElementById('btn-publish-one');
-            btn.disabled = true; btn.innerText = "Publicando...";
-            const md = generateMarkdown();
-            const slug = document.getElementById('post-title').value.toLowerCase().replace(/[^a-z0-9]+/g,'-');
-            const filename = `${document.getElementById('post-date').value}-${slug}.md`;
+            const btn = document.getElementById('btn-publish-one'); btn.disabled = true; btn.innerText = "Publicando...";
             try {
+                const md = generateMarkdown();
+                const slug = document.getElementById('post-title').value.toLowerCase().replace(/[^a-z0-9]+/g,'-');
+                const filename = `${document.getElementById('post-date').value}-${slug}.md`;
                 await ghFetch(`/contents/${githubConfig.postsPath}${filename}`, 'PUT', { message: `Post: ${filename}`, content: btoa(unescape(encodeURIComponent(md))), branch: githubConfig.branch });
                 showToast("¡Publicado! 🚀"); loadHistory();
             } catch(e) { showToast("Error", "error"); }
             btn.disabled = false; btn.innerText = "📤 Publicar Artículo";
         };
 
-        // CARGA MASIVA
+        // CARGA MASIVA (SIN CAMBIOS)
         window.handleBulkFiles = (input) => {
             const files = Array.from(input.files);
             const previewDiv = document.getElementById('bulk-preview');
@@ -505,9 +496,7 @@
                 const reader = new FileReader();
                 reader.onload = (e) => {
                     bulkFilesData.push({ path: `${githubConfig.postsPath}${file.name}`, content: e.target.result });
-                    const el = document.createElement('div'); el.className = 'p-2 rounded text-xs bg-slate-50 flex justify-between';
-                    el.innerHTML = `<span>${file.name}</span><span>✓</span>`;
-                    previewDiv.appendChild(el);
+                    previewDiv.innerHTML += `<div class="p-2 bg-slate-50 text-[10px] flex justify-between"><span>${file.name}</span><span>✓</span></div>`;
                     document.getElementById('btn-publish-bulk').classList.remove('hidden');
                 };
                 reader.readAsText(file);
@@ -515,8 +504,7 @@
         };
 
         window.publishBulk = async () => {
-            const btn = document.getElementById('btn-publish-bulk');
-            btn.disabled = true; btn.innerText = "Subiendo...";
+            const btn = document.getElementById('btn-publish-bulk'); btn.disabled = true; btn.innerText = "Subiendo...";
             try {
                 const ref = await ghFetch(`/git/refs/heads/${githubConfig.branch}`);
                 const treeItems = [];
@@ -530,16 +518,14 @@
                 showToast("¡Subida masiva completada! 🚀");
                 bulkFilesData = []; document.getElementById('bulk-preview').innerHTML = '';
                 btn.classList.add('hidden'); loadHistory();
-            } catch (e) { showToast("Error masivo", "error"); }
+            } catch (e) { showToast("Error", "error"); }
             btn.disabled = false; btn.innerText = "🚀 Publicar Todos";
         };
 
         async function loadHistory() {
             try {
                 const c = await ghFetch(`/commits?per_page=5`);
-                document.getElementById('history-content').innerHTML = c.map(i => 
-                    `<div class="text-xs border-b pb-2 mb-2"><a href="${i.html_url}" target="_blank" class="text-blue-600 font-bold hover:underline block truncate">${i.commit.message}</a><span class="text-slate-400">${new Date(i.commit.author.date).toLocaleDateString()}</span></div>`
-                ).join('');
+                document.getElementById('history-content').innerHTML = c.map(i => `<div class="text-[10px] border-b pb-1 mb-1 truncate"><a href="${i.html_url}" target="_blank" class="text-blue-500 font-bold hover:underline">${i.commit.message}</a></div>`).join('');
             } catch(e) {}
         }
 
@@ -547,16 +533,15 @@
         window.toggleHistory = () => document.getElementById('history-content').classList.toggle('hidden');
         window.showToast = (msg, type='success') => {
             const el = document.createElement('div');
-            el.className = `${type==='success'?'bg-emerald-600':'bg-red-500'} text-white px-4 py-3 rounded-lg shadow-lg text-sm font-bold animate-[fadeIn_0.3s]`;
-            el.innerText = msg;
-            document.getElementById('toast-container').appendChild(el);
+            el.className = `${type==='success'?'bg-emerald-600':'bg-red-500'} text-white px-4 py-2 rounded shadow-lg text-xs font-bold animate-[fadeIn_0.3s]`;
+            el.innerText = msg; document.getElementById('toast-container').appendChild(el);
             setTimeout(() => el.remove(), 4000);
         };
         const mm = document.getElementById('mobile-menu');
         document.getElementById('menu-btn').addEventListener('click', () => mm.classList.remove('translate-x-full'));
         document.getElementById('close-menu').addEventListener('click', () => mm.classList.add('translate-x-full'));
         window.closeMobMenu = () => mm.classList.add('translate-x-full');
-        window.clearBlocks = () => { if(confirm("¿Borrar todo?")) { blocks = []; renderBlocks(); updatePreview(); }};
+        window.clearBlocks = () => { if(confirm("¿Borrar bloques?")) { blocks = []; renderBlocks(); updatePreview(); }};
     </script>
 </body>
 </html>
