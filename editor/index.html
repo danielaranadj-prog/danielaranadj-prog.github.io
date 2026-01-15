@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Editor Instante Trips V4</title>
+    <title>Editor Instante Trips V5</title>
     
     <link rel="apple-touch-icon" href="public/logo-ios.png">
     <link rel="icon" type="image/png" href="public/logo-ios.png">
@@ -108,7 +108,7 @@
         <div class="clean-card p-10 w-full max-w-[400px] text-center fade-in relative overflow-hidden">
             <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
             <div class="mb-8">
-                <img src="public/blog.svg" alt="Logo" class="w-20 h-20 mx-auto mb-6">
+                <img src="public/blog.svg" alt="Logo" class="w-20 h-20 mx-auto mb-6 invert dark:invert-0">
                 <h1 class="text-2xl font-bold font-display text-slate-900 dark:text-white">Instante Trips Blog</h1>
             </div>
             <form id="login-form" class="space-y-5">
@@ -124,7 +124,7 @@
         <header class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-md sticky top-0 z-50 border-b border-slate-200">
             <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
                 <div class="flex items-center gap-3">
-                    <img src="public/blog.svg" alt="Logo" class="w-10 h-10">
+                    <img src="public/blog.svg" alt="Logo" class="w-10 h-10 invert dark:invert-0">
                     <span class="font-bold font-display text-lg dark:text-white tracking-tight">Editor IT</span>
                 </div>
                 <div class="flex items-center gap-4">
@@ -137,7 +137,7 @@
             </div>
         </header>
 
-        <main class="flex-1 max-w-7xl mx-auto w-full p-6 grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <main class="flex-1 max-w-7xl mx-auto w-full p-6 pb-24 grid grid-cols-1 lg:grid-cols-12 gap-8">
             <div class="flex flex-col gap-6 lg:col-span-7 fade-in">
                 <div class="clean-card p-6">
                     <div class="flex justify-between items-center mb-5">
@@ -148,7 +148,7 @@
                         <input type="text" id="post-title" class="w-full p-3 rounded-lg input-blog font-display font-semibold text-lg" placeholder="Título atractivo..." oninput="updatePreview()">
                         <textarea id="post-desc" rows="2" class="w-full p-3 rounded-lg input-blog resize-none" placeholder="Resumen SEO..." oninput="updatePreview()"></textarea>
                         
-                        <div class="grid grid-cols-2 gap-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <input type="date" id="post-date" class="w-full p-3 rounded-lg input-blog" onchange="updatePreview()">
                             <div class="flex gap-2">
                                 <select id="post-author" class="flex-1 p-3 rounded-lg input-blog" onchange="updatePreview()">
