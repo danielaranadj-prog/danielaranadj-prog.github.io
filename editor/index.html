@@ -462,38 +462,45 @@ export const DEFAULT_AUTHOR = AUTHORS['daniel-arana'] || Object.values(AUTHORS)[
         window.openAIModal = () => { document.getElementById('ai-modal').classList.remove('hidden'); document.getElementById('ai-topic').focus(); };
         
         window.generateIdeas = async () => {
-            const topic = document.getElementById('ai-topic').value; if(!topic) return;
-            if(!geminiApiKey) return showToast("Falta llave de Google AI", "error");
-            
-            const container = document.getElementById('ai-results');
-            container.innerHTML = '<div class="p-8 text-center animate-pulse"><i class="ph ph-brain text-4xl text-purple-400"></i><p class="text-xs font-bold mt-2">Pensando...</p></div>';
-            
-            try {
-                const prompt = `Travel expert. 3 post ideas for: "${topic}". JSON Array: [{"title": "H1", "desc": "Meta Description (max 30 words)"}]. No markdown code blocks.`;
-                
-                const r = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' }, // HEADER CORREGIDO
-                    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
-                });
-                
-                const d = await r.json();
-                
-                // Limpieza de respuesta robusta
-                let textResult = d.candidates[0].content.parts[0].text;
-                let cleanJSON = textResult.replace(/```json|```/g, '').trim();
-                
-                const ideas = JSON.parse(cleanJSON);
-                container.innerHTML = ideas.map((idea) => `
-                    <div onclick="applyIdea('${idea.title.replace(/'/g, "\\'")}','${idea.desc.replace(/'/g, "\\'")}')" class="p-4 border rounded-2xl cursor-pointer hover:border-purple-500 hover:bg-purple-50 dark:hover:bg-purple-900/20 group transition text-slate-700 dark:text-slate-300">
-                        <h4 class="font-bold text-sm group-hover:text-purple-600">${idea.title}</h4>
-                        <p class="text-[10px] mt-1">${idea.desc}</p>
-                    </div>`).join('');
-            } catch (e) { 
-                console.error(e);
-                container.innerHTML = '<p class="text-red-500 text-center text-xs">Error AI: Verifica tu API Key o conexión</p>'; 
-            }
-        };
+    const topic = document.getElementById('ai-topic').value;
+    if(!topic) return;
+    if(!geminiApiKey) return showToast("Falta configuración AI en Firebase", "error");
+
+    const container = document.getElementById('ai-results');
+    container.innerHTML = '<div class="p-8 text-center animate-pulse"><i class="ph ph-brain text-4xl text-purple-400"></i><p class="text-xs font-bold mt-2">Pensando...</p></div>';
+
+    try {
+        // Forzamos el uso de v1beta que es más flexible con Gemini 1.5 Flash
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`;
+
+        const r = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }, // INDISPENSABLE
+            body: JSON.stringify({ 
+                contents: [{ parts: [{ text: `Actúa como experto SEO de viajes. Genera 3 ideas de blog para: "${topic}". Responde exclusivamente un JSON array con este formato: [{"title": "Título H1", "desc": "Meta descripción corta"}]. No incluyas markdown ni texto extra.` }] }] 
+            })
+        });
+
+        const d = await r.json();
+        
+        if (d.error) throw new Error(d.error.message);
+
+        // Limpieza de respuesta para evitar errores si la IA manda texto extra
+        let rawText = d.candidates[0].content.parts[0].text;
+        let cleanJSON = rawText.replace(/```json|```/g, '').trim();
+        const ideas = JSON.parse(cleanJSON);
+
+        container.innerHTML = ideas.map((idea) => `
+            <div onclick="applyIdea('${idea.title.replace(/'/g, "\\'")}','${idea.desc.replace(/'/g, "\\'")}')" class="p-4 border rounded-2xl cursor-pointer hover:border-purple-500 hover:bg-purple-50 dark:hover:bg-purple-900/20 group transition text-left">
+                <h4 class="font-bold text-sm group-hover:text-purple-600 dark:text-white">${idea.title}</h4>
+                <p class="text-[10px] text-slate-500 mt-1">${idea.desc}</p>
+            </div>`).join('');
+
+    } catch (e) { 
+        console.error("Error detallado de AI:", e);
+        container.innerHTML = `<p class="text-red-500 text-center text-xs p-4">Error: ${e.message}</p>`; 
+    }
+};
 
         window.applyIdea = (t, d) => {
             document.getElementById('post-title').value = t;
