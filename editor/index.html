@@ -1,907 +1,657 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Editor Instante Trips Pro</title>
-    
-    <link rel="apple-touch-icon" href="public/logo-ios.png">
-    <link rel="icon" type="image/png" href="public/logo-ios.png">
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'media',
-            theme: {
-                extend: {
-                    fontFamily: { sans: ['Inter', 'sans-serif'], display: ['Space Grotesk', 'sans-serif'] },
-                    colors: { brand: { 50: '#eff6ff', 500: '#3b82f6', 600: '#2563eb' } }
-                }
-            }
-        }
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Editor Instante Trips</title>
+<meta name="apple-mobile-web-app-title" content="Editor IT">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="apple-touch-icon" href="public/logo-ios.png">
+<link rel="icon" type="image/png" href="public/logo-ios.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+darkMode: 'media',
+theme: {
+extend: {
+fontFamily: {
+sans: ['Inter', 'sans-serif'],
+display: ['Space Grotesk', 'sans-serif'],
+mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'monospace'],
+},
+colors: {
+brand: {
+50: '#eff6ff',
+100: '#dbeafe',
+500: '#3b82f6',
+600: '#2563eb',
+700: '#1d4ed8',
+}
+}
+}
+}
+}
+</script>
 
-    <style>
-        body { background-color: #f8fafc; color: #334155; min-height: 100vh; display: flex; flex-direction: column; transition: all 0.3s; }
-        .clean-card { background: white; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); border-radius: 1rem; }
-        .input-blog { background: #f8fafc; border: 1px solid #e2e8f0; color: #1e293b; transition: all 0.2s; font-size: 0.9rem; }
-        .input-blog:focus { background: white; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); outline: none; }
-        @media (prefers-color-scheme: dark) {
-            body { background-color: #0f172a; color: #cbd5e1; }
-            .clean-card { background: #1e293b; border-color: #334155; }
-            .input-blog { background: #0f172a; border-color: #334155; color: #e2e8f0; }
-        }
-        .preview-content h2 { font-family: 'Space Grotesk', sans-serif; font-size: 1.5rem; font-weight: 700; margin-top: 1.5em; }
-        .preview-content h3 { font-family: 'Space Grotesk', sans-serif; font-size: 1.25rem; font-weight: 600; margin-top: 1.2em; }
-        .preview-content p { margin-bottom: 1em; line-height: 1.7; color: #475569; }
-<<<<<<< HEAD
-        .preview-content img { border-radius: 8px; margin: 1.5em 0; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-        .preview-content a { color: #2563eb; text-decoration: underline; text-underline-offset: 2px; }
-        .btn-ref { display: inline-block; background: #2563eb; color: white !important; padding: 10px 20px; border-radius: 8px; text-decoration: none !important; font-weight: bold; margin: 10px 0; }
-        
-        @media (prefers-color-scheme: dark) {
-            .preview-content h2 { color: #f8fafc; }
-            .preview-content h3 { color: #cbd5e1; }
-            .preview-content p { color: #94a3b8; }
-            .preview-content a { color: #60a5fa; }
-        }
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
-=======
-        .preview-content img { border-radius: 12px; margin: 1.5em 0; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        @media (prefers-color-scheme: dark) { .preview-content p { color: #94a3b8; } }
->>>>>>> 84915b63021fb8f4c7a1504d5a6d9608a88d3e3e
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .fade-in { animation: fadeIn 0.4s ease-out forwards; }
-    </style>
+<style>
+body {
+background-color: #f8fafc;
+color: #334155;
+min-height: 100vh;
+transition: background 0.3s ease, color 0.3s ease;
+}
+
+.clean-card {
+background: white;
+border: 1px solid #e2e8f0;
+box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+border-radius: 1rem;
+}
+
+.input-blog {
+background: #f8fafc;
+border: 1px solid #e2e8f0;
+color: #1e293b;
+transition: all 0.2s;
+font-size: 0.95rem;
+}
+.input-blog:focus {
+background: white;
+border-color: #3b82f6;
+box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+outline: none;
+}
+
+/* MODO OSCURO */
+@media (prefers-color-scheme: dark) {
+body { background-color: #0f172a; color: #cbd5e1; }
+.clean-card {
+background: #1e293b;
+border-color: #334155;
+box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+}
+.input-blog {
+background: #0f172a;
+border-color: #334155;
+color: #e2e8f0;
+}
+.input-blog:focus { background: #1e293b; border-color: #60a5fa; }
+}
+
+/* PREVIEW MARKDOWN */
+.preview-content h2 { font-family: 'Space Grotesk', sans-serif; font-size: 1.5rem; font-weight: 700; color: #1e293b; margin-top: 1.5em; letter-spacing: -0.02em; }
+.preview-content h3 { font-family: 'Space Grotesk', sans-serif; font-size: 1.25rem; font-weight: 600; color: #334155; margin-top: 1.2em; }
+.preview-content p { margin-bottom: 1em; line-height: 1.7; color: #475569; }
+.preview-content img { border-radius: 8px; margin: 1.5em 0; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+.preview-content a { color: #2563eb; text-decoration: underline; text-underline-offset: 2px; }
+@media (prefers-color-scheme: dark) {
+.preview-content h2 { color: #f8fafc; }
+.preview-content h3 { color: #cbd5e1; }
+.preview-content p { color: #94a3b8; }
+.preview-content a { color: #60a5fa; }
+}
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.fade-in { animation: fadeIn 0.4s ease-out forwards; }
+</style>
 </head>
-<<<<<<< HEAD
 <body class="antialiased selection:bg-brand-100 selection:text-brand-700">
 
-    <div id="mobile-menu" class="fixed inset-0 z-[100] bg-slate-900/95 backdrop-blur-sm transform translate-x-full transition-transform duration-300 md:hidden flex flex-col items-center justify-center gap-8">
-        <button id="close-menu" class="absolute top-6 right-6 text-white text-4xl opacity-80 hover:opacity-100">×</button>
-        <div class="flex flex-col gap-6 text-center w-full px-10">
-            <span class="text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Acciones</span>
-            <button onclick="togglePreviewMode(); closeMobMenu()" class="text-xl font-bold text-white hover:text-brand-500 transition">👁️ Vista Previa</button>
-            <button onclick="downloadMarkdown(); closeMobMenu()" class="text-xl font-bold text-white hover:text-brand-500 transition">📥 Descargar .md</button>
-            <div class="h-px bg-slate-800 w-full my-2"></div>
-            <button onclick="logout(); closeMobMenu()" class="text-xl font-bold text-red-500 hover:text-red-400 transition">Salir del Editor</button>
-        </div>
-    </div>
-=======
-<body class="antialiased">
->>>>>>> 84915b63021fb8f4c7a1504d5a6d9608a88d3e3e
+<div id="mobile-menu" class="fixed inset-0 z-[100] bg-slate-900/95 backdrop-blur-sm transform translate-x-full transition-transform duration-300 md:hidden flex flex-col items-center justify-center gap-8">
+<button id="close-menu" class="absolute top-6 right-6 text-white text-4xl opacity-80 hover:opacity-100">×</button>
+<div class="flex flex-col gap-6 text-center w-full px-10">
+<span class="text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Acciones</span>
+<button onclick="togglePreviewMode(); closeMobMenu()" class="text-xl font-bold text-white hover:text-brand-500 transition">👁️ Vista Previa</button>
+<button onclick="downloadMarkdown(); closeMobMenu()" class="text-xl font-bold text-white hover:text-brand-500 transition">📥 Descargar .md</button>
+<div class="h-px bg-slate-800 w-full my-2"></div>
+<button onclick="logout(); closeMobMenu()" class="text-xl font-bold text-red-500 hover:text-red-400 transition">Salir del Editor</button>
+</div>
+</div>
 
-    <div id="login-section" class="flex items-center justify-center min-h-screen p-4">
-        <div class="clean-card p-10 w-full max-w-[380px] text-center fade-in relative overflow-hidden">
-            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
-            <div class="mb-8 flex flex-col items-center">
-<<<<<<< HEAD
-                <div class="w-24 h-24 bg-white dark:bg-slate-800 rounded-full flex items-center justify-center shadow-lg border border-slate-100 dark:border-slate-700 mb-6 p-4">
-                    <img src="public/blog.svg" alt="Logo" class="w-full h-full object-contain">
-                </div>
-                <h1 class="text-2xl font-bold font-display text-slate-900 dark:text-white mb-1 tracking-tight">Instante Trips Blog</h1>
-                <p class="text-sm font-medium text-slate-500 dark:text-slate-400 uppercase tracking-widest">Zona de Editores</p>
-            </div>
-            <form id="login-form" class="space-y-5">
-                <div class="space-y-4">
-                    <input type="email" id="email" placeholder="Correo electrónico" class="w-full p-3.5 rounded-lg input-blog" required>
-                    <input type="password" id="password" placeholder="Contraseña" class="w-full p-3.5 rounded-lg input-blog" required>
-                </div>
-                <button type="submit" class="w-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-3.5 rounded-lg hover:opacity-90 transition-all shadow-lg shadow-slate-200 dark:shadow-none transform active:scale-[0.98]">Ingresar al Editor</button>
-            </form>
-            <p id="login-error" class="text-red-500 text-xs mt-4 font-medium hidden bg-red-50 dark:bg-red-900/20 p-2 rounded"></p>
-            <div class="mt-8 pt-6 border-t border-slate-100 dark:border-slate-800">
-                <a href="https://blog.instantetrips.com" class="text-xs font-semibold text-slate-400 hover:text-slate-800 dark:hover:text-white transition flex items-center justify-center gap-1">← Volver al Sitio Web</a>
-            </div>
-=======
-                <img src="public/blog.svg" alt="Logo" class="w-16 h-16 mb-4">
-                <h1 class="text-2xl font-bold font-display dark:text-white">Instante Trips</h1>
-                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Editor de Contenidos</p>
-            </div>
-            <form id="login-form" class="space-y-4">
-                <input type="email" id="email" placeholder="Correo electrónico" class="w-full p-3 rounded-xl input-blog" required>
-                <input type="password" id="password" placeholder="Contraseña" class="w-full p-3 rounded-xl input-blog" required>
-                <button type="submit" class="w-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-3.5 rounded-xl hover:opacity-90 transition transform active:scale-95">Entrar al Editor</button>
-            </form>
-            <p id="login-error" class="text-red-500 text-xs mt-4 hidden bg-red-50 p-2 rounded-lg"></p>
->>>>>>> 84915b63021fb8f4c7a1504d5a6d9608a88d3e3e
-        </div>
-    </div>
+<div id="login-section" class="flex items-center justify-center min-h-screen p-4">
+<div class="clean-card p-10 w-full max-w-[400px] text-center fade-in relative overflow-hidden">
+<div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
 
-    <div id="app-section" class="hidden min-h-screen flex flex-col">
-        <header class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-md sticky top-0 z-50 border-b border-slate-200 dark:border-slate-800">
-            <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <img src="public/blog.svg" alt="Logo" class="w-8 h-8">
-                    <span class="font-bold font-display hidden md:block dark:text-white">Instante Trips</span>
-                </div>
-<<<<<<< HEAD
-                <div class="flex items-center gap-4">
-                    <span id="welcome-msg" class="text-sm font-medium text-slate-500 dark:text-slate-400 hidden md:block"></span>
-                    <div class="hidden md:flex gap-2">
-                        <button onclick="togglePreviewMode()" class="px-4 py-2 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition">👁️ Vista</button>
-                        <button onclick="downloadMarkdown()" class="px-4 py-2 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition">📥 Descargar</button>
-                        <button id="btn-logout" class="text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 px-3 py-2 rounded-lg text-xs font-bold transition">Salir</button>
-                    </div>
-                    <button id="menu-btn" class="md:hidden text-2xl dark:text-white p-2">☰</button>
-=======
-                <div class="flex items-center gap-3">
-                    <span id="welcome-msg" class="text-[10px] font-bold text-slate-400 uppercase mr-2 hidden sm:block"></span>
-                    <button onclick="togglePreviewMode()" class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-brand-50 hover:text-brand-600 transition"><i class="ph ph-eye text-xl"></i></button>
-                    <button onclick="downloadMarkdown()" class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-brand-50 hover:text-brand-600 transition"><i class="ph ph-download-simple text-xl"></i></button>
-                    <button onclick="logout()" class="ml-2 text-red-500 hover:bg-red-50 p-2 rounded-lg transition"><i class="ph ph-sign-out text-xl"></i></button>
->>>>>>> 84915b63021fb8f4c7a1504d5a6d9608a88d3e3e
-                </div>
-            </div>
-        </header>
+<div class="mb-8 flex flex-col items-center">
+<div class="w-24 h-24 bg-white dark:bg-slate-800 rounded-full flex items-center justify-center shadow-lg border border-slate-100 dark:border-slate-700 mb-6 p-4">
+<img src="public/blog.svg" alt="Logo" class="w-full h-full object-contain">
+</div>
+<h1 class="text-2xl font-bold font-display text-slate-900 dark:text-white mb-1 tracking-tight">
+Instante Trips Blog
+</h1>
+<p class="text-sm font-medium text-slate-500 dark:text-slate-400 uppercase tracking-widest">
+Zona de Editores
+</p>
+</div>
 
-        <main class="flex-1 max-w-7xl mx-auto w-full p-6 grid grid-cols-1 lg:grid-cols-12 gap-8">
-<<<<<<< HEAD
-            <div class="flex flex-col gap-6 lg:col-span-7 fade-in">
-                <div class="clean-card p-6">
-                    <h2 class="text-xs font-bold font-display uppercase tracking-widest text-brand-600 dark:text-brand-500 mb-5">DATA DEL POST</h2>
-                    <div class="space-y-5">
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-500 mb-1.5 ml-1">TÍTULO</label>
-                            <input type="text" id="post-title" class="w-full p-3 rounded-lg input-blog font-display font-semibold text-lg" placeholder="Escribe un título atractivo..." oninput="updatePreview()">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-500 mb-1.5 ml-1">DESCRIPCIÓN SEO</label>
-                            <textarea id="post-desc" rows="2" class="w-full p-3 rounded-lg input-blog resize-none" placeholder="Resumen para Google..." oninput="updatePreview()"></textarea>
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-500 mb-1.5 ml-1">FECHA</label>
-                                <input type="date" id="post-date" class="w-full p-3 rounded-lg input-blog dark:scheme-dark" onchange="updatePreview()">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-500 mb-1.5 ml-1">AUTOR</label>
-                                <input type="text" id="post-author" class="w-full p-3 rounded-lg input-blog" oninput="updatePreview()">
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-500 mb-1.5 ml-1">IMAGEN DE PORTADA</label>
-                            <input type="url" id="post-hero" class="w-full p-3 rounded-lg input-blog" placeholder="https://..." oninput="updatePreview()">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-500 mb-1.5 ml-1">ETIQUETAS</label>
-                            <div class="flex gap-2 mb-3">
-                                <input type="text" id="tag-input" placeholder="Añadir etiqueta..." class="flex-1 p-3 rounded-lg input-blog min-w-0">
-                                <button onclick="addTag()" class="bg-brand-600 hover:bg-brand-700 text-white px-4 rounded-lg font-bold transition shadow-sm">+</button>
-                            </div>
-                            <div id="tags-container" class="flex flex-wrap gap-2 min-h-[30px]"></div>
-                        </div>
-                    </div>
-                </div>
+<form id="login-form" class="space-y-5">
+<div class="space-y-4">
+<input type="email" id="email" placeholder="Correo electrónico" class="w-full p-3.5 rounded-lg input-blog" required>
+<input type="password" id="password" placeholder="Contraseña" class="w-full p-3.5 rounded-lg input-blog" required>
+</div>
+<button type="submit" class="w-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-3.5 rounded-lg hover:opacity-90 transition-all shadow-lg shadow-slate-200 dark:shadow-none transform active:scale-[0.98]">
+Ingresar al Editor
+</button>
+</form>
+<p id="login-error" class="text-red-500 text-xs mt-4 font-medium hidden bg-red-50 dark:bg-red-900/20 p-2 rounded"></p>
 
-                <div class="clean-card p-6 flex-1">
-                    <div class="flex justify-between items-center mb-5">
-                        <h2 class="text-xs font-bold font-display uppercase tracking-widest text-brand-600 dark:text-brand-500">Contenido</h2>
-                        <button onclick="clearBlocks()" class="text-xs font-medium text-red-500 hover:text-red-600 flex items-center gap-1 transition">🗑️ Limpiar todo</button>
-                    </div>
-                    <div class="flex flex-wrap gap-2 mb-6 p-1.5 bg-slate-100 dark:bg-slate-800 rounded-lg">
-                        <button onclick="addBlock('h2')" class="px-3 py-1.5 rounded bg-white dark:bg-slate-700 shadow-sm text-xs font-bold hover:text-brand-600 transition">Título</button>
-                        <button onclick="addBlock('h3')" class="px-3 py-1.5 rounded bg-white dark:bg-slate-700 shadow-sm text-xs font-bold hover:text-brand-600 transition">Subtitulo</button>
-                        <button onclick="addBlock('p')" class="px-3 py-1.5 rounded bg-white dark:bg-slate-700 shadow-sm text-xs font-medium hover:text-brand-600 transition">¶ Texto</button>
-                        <button onclick="addBlock('img')" class="px-3 py-1.5 rounded bg-white dark:bg-slate-700 shadow-sm text-xs font-medium hover:text-brand-600 transition">🖼️ Foto</button>
-                        <button onclick="addBlock('yt')" class="px-3 py-1.5 rounded bg-white dark:bg-slate-700 shadow-sm text-xs font-medium hover:text-brand-600 transition">📺 Youtube</button>
-                        <button onclick="addBlock('list')" class="px-3 py-1.5 rounded bg-white dark:bg-slate-700 shadow-sm text-xs font-medium hover:text-brand-600 transition">≔ Lista</button>
-                        <button onclick="addBlock('ref')" class="px-3 py-1.5 rounded bg-white dark:bg-slate-700 shadow-sm text-xs font-bold text-blue-600 hover:bg-blue-50 transition">🔗 Referido</button>
-                    </div>
-                    <div id="blocks-container" class="space-y-4 min-h-[200px]"></div>
-                </div>
+<div class="mt-8 pt-6 border-t border-slate-100 dark:border-slate-800">
+<a href="https://blog.instantetrips.com" class="text-xs font-semibold text-slate-400 hover:text-slate-800 dark:hover:text-white transition flex items-center justify-center gap-1">
+← Volver al Sitio Web
+</a>
+</div>
+</div>
+</div>
 
-                <div class="clean-card p-6">
-                    <button id="btn-publish-one" onclick="publishCurrentPost()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 rounded-xl shadow-lg transition transform active:scale-[0.99] flex items-center justify-center gap-2 mb-6">📤 Publicar Artículo</button>
-                    <div class="border-t border-slate-100 dark:border-slate-800 pt-6">
-                        <h3 class="text-sm font-bold mb-3 text-slate-700 dark:text-slate-300">Carga Masiva de Archivos (.md)</h3>
-                        <div class="border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-xl p-6 text-center hover:bg-slate-50 dark:hover:bg-slate-800/50 transition cursor-pointer relative group">
-                            <input type="file" id="bulk-files" multiple accept=".md" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" onchange="handleBulkFiles(this)">
-                            <div class="pointer-events-none">
-                                <span class="text-3xl block mb-2 group-hover:scale-110 transition">📂</span>
-                                <p class="text-xs text-slate-500 font-medium">Arrastra archivos aquí o haz clic</p>
-                            </div>
-=======
-            <div class="lg:col-span-7 space-y-6 fade-in">
-                <div class="clean-card p-6 space-y-5">
-                    <div class="flex justify-between items-center">
-                        <h2 class="text-[10px] font-bold text-brand-600 uppercase tracking-widest flex items-center gap-2"><i class="ph-fill ph-article"></i> Datos Principales</h2>
-                        <button onclick="openAIModal()" class="text-[10px] font-bold text-purple-600 bg-purple-50 dark:bg-purple-900/30 px-3 py-1 rounded-full border border-purple-100 dark:border-purple-800 flex items-center gap-1 group transition">
-                            <i class="ph-bold ph-sparkle group-hover:animate-pulse"></i> Ideas AI
-                        </button>
-                    </div>
-                    
-                    <div class="space-y-3">
-                        <input type="text" id="post-title" class="w-full p-3 rounded-xl input-blog font-display font-bold text-xl" placeholder="Título del artículo..." oninput="updatePreview()">
-                        <input type="text" id="post-subtitle" class="w-full p-3 rounded-xl input-blog font-display font-semibold text-lg border-dashed" placeholder="Subtítulo o frase corta..." oninput="updatePreview()">
-                    </div>
+<div id="app-section" class="hidden min-h-screen flex flex-col">
+<header class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-md sticky top-0 z-50 border-b border-slate-200 dark:border-slate-800">
+<div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 bg-white dark:bg-slate-800 rounded-full flex items-center justify-center shadow-sm border border-slate-200 dark:border-slate-700 p-1.5">
+<img src="public/blog.svg" alt="Logo" class="w-full h-full object-contain">
+</div>
+<span class="font-bold font-display text-lg hidden md:block dark:text-white">Editor</span>
+</div>
+<div class="flex items-center gap-4">
+<span id="welcome-msg" class="text-sm font-medium text-slate-500 dark:text-slate-400 hidden md:block"></span>
+<div class="hidden md:flex gap-2">
+<button onclick="togglePreviewMode()" class="px-4 py-2 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition">👁️ Vista</button>
+<button onclick="downloadMarkdown()" class="px-4 py-2 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition">📥 Descargar</button>
+<button id="btn-logout" class="text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 px-3 py-2 rounded-lg text-xs font-bold transition">Salir</button>
+</div>
+<button id="menu-btn" class="md:hidden text-2xl dark:text-white p-2">☰</button>
+</div>
+</div>
+</header>
 
-                    <textarea id="post-desc" rows="2" class="w-full p-3 rounded-xl input-blog resize-none" placeholder="Descripción SEO para Google..." oninput="updatePreview()"></textarea>
+<main class="flex-1 max-w-7xl mx-auto w-full p-6 grid grid-cols-1 lg:grid-cols-12 gap-8">
+<div class="flex flex-col gap-6 lg:col-span-7 fade-in">
+<div class="clean-card p-6">
+<h2 class="text-xs font-bold font-display uppercase tracking-widest text-brand-600 dark:text-brand-500 mb-5">DATA DEL POST</h2>
+<div class="space-y-5">
+<div>
+<label class="block text-xs font-semibold text-slate-500 mb-1.5 ml-1">TÍTULO</label>
+<input type="text" id="post-title" class="w-full p-3 rounded-lg input-blog font-display font-semibold text-lg" placeholder="Escribe un título atractivo..." oninput="updatePreview()">
+</div>
+<div>
+<label class="block text-xs font-semibold text-slate-500 mb-1.5 ml-1">DESCRIPCIÓN SEO</label>
+<textarea id="post-desc" rows="2" class="w-full p-3 rounded-lg input-blog resize-none" placeholder="Resumen para Google..." oninput="updatePreview()"></textarea>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div class="min-w-0 overflow-hidden">
+<label class="block text-xs font-semibold text-slate-500 mb-1.5 ml-1">FECHA</label>
+<input type="date" id="post-date" class="w-full p-3 rounded-lg input-blog dark:scheme-dark appearance-none block" style="max-width: 100%;" onchange="updatePreview()">
+</div>
+<div class="min-w-0">
+<label class="block text-xs font-semibold text-slate-500 mb-1.5 ml-1">AUTOR</label>
+<input type="text" id="post-author" class="w-full p-3 rounded-lg input-blog" oninput="updatePreview()">
+</div>
+</div>
 
-                    <div class="grid grid-cols-2 gap-4">
-                        <div class="space-y-1">
-                            <label class="text-[10px] font-bold text-slate-400 uppercase ml-1">Fecha</label>
-                            <input type="date" id="post-date" class="w-full p-2.5 rounded-xl input-blog" onchange="updatePreview()">
->>>>>>> 84915b63021fb8f4c7a1504d5a6d9608a88d3e3e
-                        </div>
-                        <div class="space-y-1">
-                            <div class="flex justify-between">
-                                <label class="text-[10px] font-bold text-slate-400 uppercase ml-1">Autor</label>
-                                <button onclick="openAuthorCreator()" class="text-[9px] font-bold text-blue-500 uppercase hover:underline">+ Nuevo</button>
-                            </div>
-                            <select id="post-author" class="w-full p-2.5 rounded-xl input-blog appearance-none cursor-pointer" onchange="updatePreview()"></select>
-                        </div>
-                    </div>
-                    
-                    <div class="space-y-1">
-                        <label class="text-[10px] font-bold text-slate-400 uppercase ml-1">Imagen de Portada (Hero)</label>
-                        <input type="url" id="post-hero" class="w-full p-2.5 rounded-xl input-blog font-mono text-xs" placeholder="https://..." oninput="updatePreview()">
-                    </div>
-                </div>
+<div>
+<label class="block text-xs font-semibold text-slate-500 mb-1.5 ml-1">IMAGEN DE PORTADA</label>
+<input type="url" id="post-hero" class="w-full p-3 rounded-lg input-blog" placeholder="https://..." oninput="updatePreview()">
+</div>
+<div>
+<label class="block text-xs font-semibold text-slate-500 mb-1.5 ml-1">ETIQUETAS</label>
+<div class="flex gap-2 mb-3">
+<input type="text" id="tag-input" placeholder="Añadir etiqueta..." class="flex-1 p-3 rounded-lg input-blog min-w-0">
+<button onclick="addTag()" class="bg-brand-600 hover:bg-brand-700 text-white px-4 rounded-lg font-bold transition shadow-sm flex-shrink-0">+</button>
+</div>
+<div id="tags-container" class="flex flex-wrap gap-2 min-h-[30px]"></div>
+</div>
+</div>
+</div>
 
-                <div class="clean-card p-6">
-                    <div class="flex flex-wrap gap-2 mb-6 p-2 bg-slate-50 dark:bg-slate-900/50 rounded-2xl">
-                        <button onclick="addBlock('h2')" class="px-3 py-2 rounded-xl bg-white dark:bg-slate-800 shadow-sm text-xs font-bold hover:text-brand-600 transition flex items-center gap-1"><i class="ph-bold ph-text-h-two"></i> Título</button>
-                        <button onclick="addBlock('h3')" class="px-3 py-2 rounded-xl bg-white dark:bg-slate-800 shadow-sm text-xs font-bold hover:text-brand-600 transition flex items-center gap-1"><i class="ph-bold ph-text-h-three"></i> Sub</button>
-                        <button onclick="addBlock('p')" class="px-3 py-2 rounded-xl bg-white dark:bg-slate-800 shadow-sm text-xs font-medium hover:text-brand-600 transition flex items-center gap-1"><i class="ph-bold ph-text-aa"></i> Texto</button>
-                        <button onclick="addBlock('img')" class="px-3 py-2 rounded-xl bg-white dark:bg-slate-800 shadow-sm text-xs font-medium hover:text-brand-600 transition flex items-center gap-1"><i class="ph-bold ph-image"></i> Foto</button>
-                        <button onclick="addBlock('yt')" class="px-3 py-2 rounded-xl bg-white dark:bg-slate-800 shadow-sm text-xs font-medium hover:text-brand-600 transition flex items-center gap-1"><i class="ph-bold ph-youtube-logo"></i> Video</button>
-                        <button onclick="addBlock('ref')" class="px-3 py-2 rounded-xl bg-white dark:bg-slate-800 shadow-sm text-xs font-medium text-emerald-600 transition flex items-center gap-1"><i class="ph-bold ph-link"></i> Link</button>
-                    </div>
-                    <div id="blocks-container" class="space-y-4 min-h-[300px]"></div>
-                </div>
+<div class="clean-card p-6 flex-1">
+<div class="flex justify-between items-center mb-5">
+<h2 class="text-xs font-bold font-display uppercase tracking-widest text-brand-600 dark:text-brand-500">Contenido</h2>
+<button onclick="clearBlocks()" class="text-xs font-medium text-red-500 hover:text-red-600 flex items-center gap-1 transition">🗑️ Limpiar todo</button>
+</div>
 
-                <button id="btn-publish" onclick="publishCurrentPost()" class="w-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-4 rounded-2xl shadow-xl flex items-center justify-center gap-2 transition hover:opacity-90 active:scale-[0.98]">
-                    <i class="ph-bold ph-paper-plane-right"></i> Publicar Artículo
-                </button>
-            </div>
+<div class="flex flex-wrap gap-2 mb-6 p-1.5 bg-slate-100 dark:bg-slate-800 rounded-lg">
+<button onclick="addBlock('h2')" class="px-3 py-1.5 rounded bg-white dark:bg-slate-700 shadow-sm text-xs font-bold hover:text-brand-600 transition">Título</button>
+<button onclick="addBlock('h3')" class="px-3 py-1.5 rounded bg-white dark:bg-slate-700 shadow-sm text-xs font-bold hover:text-brand-600 transition">Subtitulo</button>
+<button onclick="addBlock('p')" class="px-3 py-1.5 rounded bg-white dark:bg-slate-700 shadow-sm text-xs font-medium hover:text-brand-600 transition flex items-center gap-1">¶ Texto</button>
+<button onclick="addBlock('img')" class="px-3 py-1.5 rounded bg-white dark:bg-slate-700 shadow-sm text-xs font-medium hover:text-brand-600 transition">🖼️ Foto</button>
+<button onclick="addBlock('yt')" class="px-3 py-1.5 rounded bg-white dark:bg-slate-700 shadow-sm text-xs font-medium hover:text-brand-600 transition">📺 Youtube</button>
+<button onclick="addBlock('list')" class="px-3 py-1.5 rounded bg-white dark:bg-slate-700 shadow-sm text-xs font-medium hover:text-brand-600 transition">≔ Lista</button>
+<button onclick="addBlock('ref')" class="px-3 py-1.5 rounded bg-white dark:bg-slate-700 shadow-sm text-xs font-medium hover:text-brand-600 transition">🔗 Referido</button>
+</div>
 
-            <div class="lg:col-span-5 h-fit lg:sticky lg:top-24">
-                <div class="clean-card flex flex-col h-[650px] overflow-hidden">
-                    <div class="p-4 border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 flex justify-between items-center text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                        <span><i class="ph ph-monitor"></i> Vista Previa</span>
-                        <span id="word-count" class="font-mono bg-white dark:bg-slate-900 px-2 py-1 rounded border">0 PALABRAS</span>
-                    </div>
-<<<<<<< HEAD
-                    <div id="preview-md" class="hidden flex-1 p-6 overflow-y-auto font-mono text-xs text-slate-600 bg-slate-50 dark:bg-slate-900/50 whitespace-pre-wrap"></div>
-                    <div id="preview-html" class="flex-1 p-8 overflow-y-auto preview-content bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300"></div>
-                </div>
-                <div class="clean-card p-5">
-                    <button onclick="toggleHistory()" class="flex justify-between w-full text-left text-xs font-bold uppercase tracking-widest text-slate-500 hover:text-slate-800 dark:hover:text-white transition">
-                        <span>📜 Historial Reciente</span>
-                        <span id="hist-arrow">▼</span>
-                    </button>
-                    <div id="history-content" class="hidden mt-4 space-y-3 max-h-60 overflow-y-auto custom-scrollbar"></div>
-=======
-                    <div id="preview-md" class="hidden flex-1 p-6 font-mono text-xs overflow-auto bg-slate-50 dark:bg-slate-950 whitespace-pre-wrap"></div>
-                    <div id="preview-html" class="flex-1 p-8 overflow-auto preview-content bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300"></div>
->>>>>>> 84915b63021fb8f4c7a1504d5a6d9608a88d3e3e
-                </div>
-            </div>
-        </main>
+<div id="blocks-container" class="space-y-4 min-h-[200px]"></div>
+</div>
 
-        <footer class="py-12 text-center">
-            <p class="text-[10px] text-slate-400 font-medium uppercase tracking-[0.2em]">Herramienta desarrollada por <span class="text-slate-600 dark:text-slate-200 font-bold">Instante Trips and Tips</span></p>
-            <p class="text-[9px] text-slate-300 dark:text-slate-600 mt-1 italic">Prohibida su reproducción o modificación parcial o completa.</p>
-        </footer>
-    </div>
+<div class="clean-card p-6">
+<button id="btn-publish-one" onclick="publishCurrentPost()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 rounded-xl shadow-lg shadow-emerald-200 dark:shadow-none transition transform active:scale-[0.99] flex items-center justify-center gap-2 mb-6">
+📤 Publicar Artículo
+</button>
+<div class="border-t border-slate-100 dark:border-slate-800 pt-6">
+<h3 class="text-sm font-bold mb-3 text-slate-700 dark:text-slate-300">Carga Masiva de Archivos (.md)</h3>
+<div class="border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-xl p-6 text-center hover:bg-slate-50 dark:hover:bg-slate-800/50 transition cursor-pointer relative group">
+<input type="file" id="bulk-files" multiple accept=".md" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" onchange="handleBulkFiles(this)">
+<div class="pointer-events-none">
+<span class="text-3xl block mb-2 group-hover:scale-110 transition">📂</span>
+<p class="text-xs text-slate-500 font-medium">Arrastra archivos aquí o haz clic</p>
+</div>
+</div>
+<div id="bulk-preview" class="mt-4 space-y-2"></div>
+<button id="btn-publish-bulk" onclick="publishBulk()" class="hidden w-full mt-4 bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 rounded-lg transition">🚀 Publicar Todos</button>
+</div>
+</div>
+</div>
 
-    <div id="ai-modal" class="fixed inset-0 z-[100] bg-black/80 hidden flex items-center justify-center backdrop-blur-sm p-4">
-        <div class="bg-white dark:bg-slate-900 w-full max-w-md rounded-2xl p-6 shadow-2xl relative">
-            <h3 class="font-bold mb-4 flex items-center gap-2 dark:text-white"><i class="ph-fill ph-sparkle text-purple-500"></i> Asistente de Ideas</h3>
-            <div class="flex gap-2 mb-4">
-                <input id="ai-topic" type="text" placeholder="Ej: Que comer en Roma..." class="flex-1 p-3 rounded-xl input-blog text-sm">
-                <button onclick="generateIdeas()" id="btn-ai-gen" class="bg-purple-600 text-white px-5 rounded-xl font-bold text-xs">Generar</button>
-            </div>
-            <div id="ai-results" class="space-y-3 max-h-80 overflow-auto"></div>
-            <button onclick="document.getElementById('ai-modal').classList.add('hidden')" class="absolute top-4 right-4 text-slate-400 text-2xl">×</button>
-        </div>
-    </div>
+<div class="flex flex-col gap-6 lg:col-span-5 fade-in" style="animation-delay: 0.1s;">
+<div class="clean-card flex-1 flex flex-col h-[600px] lg:h-auto lg:sticky lg:top-24 overflow-hidden">
+<div class="p-4 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800 flex justify-between items-center">
+<span class="font-bold text-xs uppercase tracking-widest text-brand-600 dark:text-brand-500">Vista Previa</span>
+<div class="text-xs font-mono text-slate-400">
+<span id="word-count">0 words</span> • <span id="read-time">0 min</span>
+</div>
+</div>
+<div id="preview-md" class="hidden flex-1 p-6 overflow-y-auto font-mono text-xs leading-relaxed text-slate-600 bg-slate-50 dark:bg-slate-900/50 whitespace-pre-wrap"></div>
+<div id="preview-html" class="flex-1 p-8 overflow-y-auto preview-content bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300"></div>
+</div>
 
-    <div id="author-modal" class="fixed inset-0 z-[100] bg-black/80 hidden flex items-center justify-center backdrop-blur-sm p-4">
-        <div class="bg-white dark:bg-slate-900 w-full max-w-md rounded-2xl p-6 shadow-2xl relative">
-            <h3 class="font-bold mb-6 flex items-center gap-2 dark:text-white"><i class="ph ph-user-circle-plus text-blue-500"></i> Nuevo Autor</h3>
-            <div class="space-y-4">
-                <div class="flex justify-center">
-                    <label class="cursor-pointer group relative w-20 h-20 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center overflow-hidden border-2 border-dashed border-slate-300">
-                        <img id="new-author-preview" class="absolute inset-0 w-full h-full object-cover hidden">
-                        <i class="ph ph-camera text-2xl text-slate-400 group-hover:text-blue-500"></i>
-                        <input type="file" id="new-author-img" class="hidden" accept="image/*" onchange="handleAuthorImgPreview(this)">
-                    </label>
-                </div>
-                <input type="text" id="new-author-name" class="w-full p-3 rounded-xl input-blog" placeholder="Nombre completo">
-                <input type="text" id="new-author-role" class="w-full p-3 rounded-xl input-blog" placeholder="Rol (ej: Travel Editor)">
-                <textarea id="new-author-bio" rows="3" class="w-full p-3 rounded-xl input-blog resize-none" placeholder="Bio corta..."></textarea>
-                <button onclick="saveNewAuthor()" id="btn-save-author" class="w-full bg-blue-600 text-white font-bold py-3.5 rounded-xl shadow-lg transition">Guardar en Repositorio</button>
-            </div>
-            <button onclick="document.getElementById('author-modal').classList.add('hidden')" class="absolute top-4 right-4 text-slate-400 text-2xl">×</button>
-        </div>
-    </div>
+<div class="clean-card p-5">
+<button onclick="toggleHistory()" class="flex justify-between w-full text-left text-xs font-bold uppercase tracking-widest text-slate-500 hover:text-slate-800 dark:hover:text-white transition">
+<span>📜 Historial Reciente</span>
+<span id="hist-arrow">▼</span>
+</button>
+<div id="history-content" class="hidden mt-4 space-y-3 max-h-60 overflow-y-auto custom-scrollbar"></div>
+</div>
+</div>
+</main>
+</div>
 
-    <div id="toast-container" class="fixed bottom-6 right-6 z-[110] flex flex-col gap-2"></div>
+<div id="toast-container" class="fixed bottom-6 right-6 z-[70] flex flex-col gap-2"></div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        const AUTHORS_REPO_OWNER = "danielaranadj-prog"; 
-        const AUTHORS_REPO_NAME = "blog"; 
-        const AUTHORS_FILE_PATH = "src/data/authors.ts"; 
-        const AUTHORS_IMG_PATH = "public/assets/autores";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyBdsu65Voj8en9u_7eL5q0YRFuCC7fUYWA",
-            authDomain: "instantetrips-editor.firebaseapp.com",
-            projectId: "instantetrips-editor",
-            storageBucket: "instantetrips-editor.firebasestorage.app",
-            messagingSenderId: "281917140804",
-            appId: "1:281917140804:web:ed712e65c9c4b77dd3b111"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-
-        let githubConfig = null;
-        let geminiApiKey = null;
-        let blocks = [];
-        let currentUserEmail = '';
-
-        document.getElementById('login-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-<<<<<<< HEAD
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const btn = loginForm.querySelector('button');
-            btn.innerText = "Verificando...";
-            btn.disabled = true;
-            try {
-                await signInWithEmailAndPassword(auth, email, password);
-            } catch (error) {
-                const errDiv = document.getElementById('login-error');
-                errDiv.textContent = "Error: Credenciales incorrectas.";
-                errDiv.classList.remove('hidden');
-                btn.innerText = "Ingresar al Editor";
-                btn.disabled = false;
-=======
-            const btn = e.target.querySelector('button');
-            btn.disabled = true; btn.innerText = "Verificando...";
-            try {
-                await signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('password').value);
-            } catch (err) {
-                const errP = document.getElementById('login-error');
-                errP.innerText = "Error: Acceso Denegado. Revisa Firebase.";
-                errP.classList.remove('hidden');
-                btn.disabled = false; btn.innerText = "Ingresar";
->>>>>>> 84915b63021fb8f4c7a1504d5a6d9608a88d3e3e
-            }
-        });
-
-        window.logout = () => signOut(auth);
-        document.getElementById('btn-logout').addEventListener('click', logout);
-
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                document.getElementById('login-section').classList.add('hidden');
-                document.getElementById('app-section').classList.remove('hidden');
-                currentUserEmail = user.email.split('@')[0];
-                document.getElementById('welcome-msg').textContent = `EDITOR: ${currentUserEmail}`;
-                document.getElementById('post-date').valueAsDate = new Date();
-
-                const docRef = doc(db, "config", "main");
-                const docSnap = await getDoc(docRef);
-                if (docSnap.exists()) {
-                    githubConfig = docSnap.data();
-                    geminiApiKey = githubConfig.geminiToken;
-                    loadAuthors();
-                    loadHistory();
-                    showToast("Sincronizado ✅");
-                }
-            } else {
-                document.getElementById('login-section').classList.remove('hidden');
-                document.getElementById('app-section').classList.add('hidden');
-            }
-        });
-
-<<<<<<< HEAD
-        // LÓGICA DE ETIQUETAS
-        const tagInput = document.getElementById('tag-input');
-        const tagsContainer = document.getElementById('tags-container');
-
-        tagInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') { e.preventDefault(); addTag(); } });
-
-        window.addTag = () => {
-            const val = tagInput.value.trim();
-            if (val && !tags.includes(val)) {
-                tags.push(val);
-                tagInput.value = '';
-                renderTags(); updatePreview();
-            }
-        };
-
-        window.removeTag = (tag) => { tags = tags.filter(t => t !== tag); renderTags(); updatePreview(); };
-
-        function renderTags() {
-            tagsContainer.innerHTML = tags.map(t => `
-                <div class="inline-flex items-center gap-1 bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-300 px-3 py-1 rounded-full text-xs font-bold border border-brand-100 dark:border-brand-800 animate-[fadeIn_0.3s]">
-                    <span>#${t}</span>
-                    <button onclick="removeTag('${t}')" class="hover:text-red-500 ml-1">×</button>
-                </div>
-            `).join('');
-        }
-
-        // LÓGICA DE BLOQUES
-        window.addBlock = (type) => {
-            blocks.push({ id: Date.now().toString(), type, content: '' });
-            renderBlocks(); updatePreview();
-=======
-        function parseTSAuthors(tsContent) {
-            try {
-                const match = tsContent.match(/export const AUTHORS: Record<string, Author> = (\{[\s\S]*?\});/);
-                if (!match) return {};
-                const fn = new Function("return " + match[1]);
-                return fn();
-            } catch (e) { return {}; }
-        }
-
-        function generateTSContent(authorsObj) {
-            return `export type Author = {
-  slug: string;
-  name: string;
-  role: string;
-  bio: string;
-  image: string;
+const firebaseConfig = {
+apiKey: "AIzaSyBdsu65Voj8en9u_7eL5q0YRFuCC7fUYWA",
+authDomain: "instantetrips-editor.firebaseapp.com",
+projectId: "instantetrips-editor",
+storageBucket: "instantetrips-editor.firebasestorage.app",
+messagingSenderId: "281917140804",
+appId: "1:281917140804:web:ed712e65c9c4b77dd3b111"
 };
 
-export const AUTHORS: Record<string, Author> = ${JSON.stringify(authorsObj, null, 2)};
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+let githubConfig = null;
+let blocks = [];
+let tags = [];
+let bulkFilesData = [];
 
-export const DEFAULT_AUTHOR = AUTHORS['daniel-arana'] || Object.values(AUTHORS)[0];
-`;
-        }
+const loginForm = document.getElementById('login-form');
+loginForm.addEventListener('submit', async (e) => {
+e.preventDefault();
+const email = document.getElementById('email').value;
+const password = document.getElementById('password').value;
+const btn = loginForm.querySelector('button');
+const originalText = btn.innerText;
+btn.innerText = "Verificando...";
+btn.disabled = true;
 
-        window.loadAuthors = async () => {
-            const select = document.getElementById('post-author');
-            try {
-                const url = `https://api.github.com/repos/${AUTHORS_REPO_OWNER}/${AUTHORS_REPO_NAME}/contents/${AUTHORS_FILE_PATH}`;
-                const resp = await fetch(url, { headers: { 'Authorization': `token ${githubConfig.githubToken}` } });
-                const data = await resp.json();
-                const content = decodeURIComponent(escape(atob(data.content.replace(/\n/g, ""))));
-                const authors = parseTSAuthors(content);
-                const list = Object.values(authors);
-                select.innerHTML = list.map(a => `<option value="${a.slug}">${a.name}</option>`).join('');
-                if(list.find(a => a.name.toLowerCase().includes(currentUserEmail))) select.value = list.find(a => a.name.toLowerCase().includes(currentUserEmail)).slug;
-            } catch (e) { select.innerHTML = '<option value="daniel-arana">Daniel Arana</option>'; }
->>>>>>> 84915b63021fb8f4c7a1504d5a6d9608a88d3e3e
-        };
+try {
+await signInWithEmailAndPassword(auth, email, password);
+} catch (error) {
+const errDiv = document.getElementById('login-error');
+errDiv.textContent = "Error: Credenciales incorrectas.";
+errDiv.classList.remove('hidden');
+btn.innerText = originalText;
+btn.disabled = false;
+}
+});
 
-        window.openAuthorCreator = () => document.getElementById('author-modal').classList.remove('hidden');
-        window.handleAuthorImgPreview = (i) => { if(i.files[0]) { const r = new FileReader(); r.onload=e=>{document.getElementById('new-author-preview').src=e.target.result; document.getElementById('new-author-preview').classList.remove('hidden');}; r.readAsDataURL(i.files[0]); } };
+document.getElementById('btn-logout').addEventListener('click', () => signOut(auth));
+window.logout = () => signOut(auth);
 
-        window.saveNewAuthor = async () => {
-            const name = document.getElementById('new-author-name').value.trim();
-            const role = document.getElementById('new-author-role').value.trim();
-            const bio = document.getElementById('new-author-bio').value.trim();
-            const fileInput = document.getElementById('new-author-img');
-            if(!name) return;
-            const btn = document.getElementById('btn-save-author');
-            btn.disabled = true; btn.innerText = "Guardando...";
+onAuthStateChanged(auth, async (user) => {
+if (user) {
+document.getElementById('login-section').classList.add('hidden');
+document.getElementById('app-section').classList.remove('hidden');
+const name = user.email.split('@')[0];
+document.getElementById('welcome-msg').textContent = `Editor: ${name}`;
+document.getElementById('post-author').value = name;
+document.getElementById('post-date').valueAsDate = new Date();
+const docRef = doc(db, "config", "main");
+const docSnap = await getDoc(docRef);
+if (docSnap.exists()) {
+githubConfig = docSnap.data();
+showToast("Conectado a GitHub ✅");
+loadHistory();
+} else {
+showToast("Falta configuración en Firestore ❌", "error");
+}
+} else {
+document.getElementById('login-section').classList.remove('hidden');
+document.getElementById('app-section').classList.add('hidden');
+}
+});
 
-            try {
-                const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-                let imgPath = "/assets/autores/default.jpg";
+const tagInput = document.getElementById('tag-input');
+const tagsContainer = document.getElementById('tags-container');
 
-<<<<<<< HEAD
-        window.clearBlocks = () => { if(confirm("¿Borrar todo el contenido?")) { blocks = []; renderBlocks(); updatePreview(); }};
+tagInput.addEventListener('keypress', (e) => {
+if (e.key === 'Enter') { e.preventDefault(); addTag(); }
+});
 
-        function renderBlocks() {
-            const container = document.getElementById('blocks-container');
-            container.innerHTML = '';
-            blocks.forEach((b) => {
-                const el = document.createElement('div');
-                el.className = 'bg-white dark:bg-slate-800 p-4 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm flex gap-3 items-start group animate-[fadeIn_0.3s]';
-                
-                let inputHtml = '';
-                const typeLabel = b.type === 'ref' ? 'LINK' : b.type.toUpperCase();
-
-                if (b.type === 'p' || b.type === 'list') {
-                    inputHtml = `<textarea class="w-full bg-transparent border-none outline-none text-slate-700 dark:text-slate-200 resize-none h-auto text-sm" rows="3" placeholder="Escribe aquí..." oninput="updateBlockContent('${b.id}', this.value)">${b.content}</textarea>`;
-                } else if (b.type === 'img') {
-                    inputHtml = `
-                    <div class="flex flex-col gap-2 w-full">
-                        <div class="flex gap-2 items-center">
-                            <input type="text" id="input-${b.id}" class="flex-1 bg-transparent border-none outline-none text-slate-700 dark:text-slate-200 text-sm" placeholder="URL | Descripción" value="${b.content}" oninput="updateBlockContent('${b.id}', this.value)">
-                            <label class="cursor-pointer bg-brand-50 dark:bg-brand-900/30 text-brand-600 px-3 py-1.5 rounded-lg text-xs font-bold border border-brand-200">
-                                <span>📤 Subir</span>
-                                <input type="file" class="hidden" accept="image/*" onchange="uploadImageToRepo('${b.id}', this)">
-                            </label>
-                        </div>
-                        ${b.content ? `<img src="${b.content.split('|')[0].trim()}" class="h-20 rounded-lg object-cover">` : ''}
-                    </div>`;
-                } else if (b.type === 'ref') {
-                    inputHtml = `<input type="text" class="w-full bg-transparent border-none outline-none text-brand-600 font-bold text-sm" placeholder="Texto del botón | Enlace (ej: Ver en Amazon|https://...)" value="${b.content}" oninput="updateBlockContent('${b.id}', this.value)">`;
-                } else {
-                    inputHtml = `<input type="text" class="w-full bg-transparent border-none outline-none text-slate-700 dark:text-slate-200 font-medium text-sm" placeholder="Escribe..." value="${b.content}" oninput="updateBlockContent('${b.id}', this.value)">`;
-                }
-
-                el.innerHTML = `
-                <div class="flex flex-col items-center gap-1 pt-1">
-                    <span class="text-[9px] font-black text-slate-400 select-none">${typeLabel}</span>
-                    <div class="flex flex-col opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button onclick="moveBlock('${b.id}',-1)" class="text-slate-400 hover:text-blue-500">▲</button>
-                        <button onclick="removeBlock('${b.id}')" class="text-slate-400 hover:text-red-500">✖</button>
-                        <button onclick="moveBlock('${b.id}',1)" class="text-slate-400 hover:text-blue-500">▼</button>
-                    </div>
-                </div>
-                ${inputHtml}`;
-=======
-                if(fileInput.files[0]) {
-                    const base64 = await toBase64(fileInput.files[0]);
-                    await ghFetch(`/contents/${AUTHORS_IMG_PATH}/${slug}.jpg`, 'PUT', { message: `Avatar: ${slug}`, content: base64.split(',')[1], branch: githubConfig.branch }, true);
-                    imgPath = `/assets/autores/${slug}.jpg`;
-                }
-
-                const url = `https://api.github.com/repos/${AUTHORS_REPO_OWNER}/${AUTHORS_REPO_NAME}/contents/${AUTHORS_FILE_PATH}`;
-                const getResp = await fetch(url, { headers: { 'Authorization': `token ${githubConfig.githubToken}` } });
-                const data = await getResp.json();
-                const content = decodeURIComponent(escape(atob(data.content.replace(/\n/g, ""))));
-                let authors = parseTSAuthors(content);
-                authors[slug] = { slug, name, role, bio, image: imgPath };
-
-                const newTS = generateTSContent(authors);
-                await fetch(url, {
-                    method: 'PUT', headers: { 'Authorization': `token ${githubConfig.githubToken}`, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: `Add author: ${name}`, content: btoa(unescape(encodeURIComponent(newTS))), sha: data.sha })
-                });
-
-                showToast("Autor sincronizado! ✅");
-                document.getElementById('author-modal').classList.add('hidden');
-                loadAuthors();
-            } catch(e) { showToast("Error al guardar autor", "error"); } finally { btn.disabled = false; btn.innerText = "Guardar en Repositorio"; }
-        };
-
-        window.addBlock = (type) => { blocks.push({ id: Date.now().toString(), type, content: '' }); renderBlocks(); updatePreview(); };
-        window.removeBlock = (id) => { blocks = blocks.filter(b => b.id !== id); renderBlocks(); updatePreview(); };
-        window.updateBlockContent = (id, val) => { const b = blocks.find(b => b.id === id); if(b) b.content = val; updatePreview(); };
-        window.updateRef = (id, t, l) => { const b = blocks.find(b => b.id === id); if(b) b.content = `${t}|${l}`; updatePreview(); };
-
-        window.applyFormat = (id, type) => {
-            const area = document.getElementById(`textarea-${id}`);
-            const start = area.selectionStart;
-            const end = area.selectionEnd;
-            const text = area.value;
-            const selected = text.substring(start, end);
-            let formatted = '';
-
-            switch(type) {
-                case 'bold': formatted = `**${selected || 'texto'}**`; break;
-                case 'link': formatted = `[${selected || 'texto'}](https://url.com)`; break;
-                case 'center': formatted = `<div align="center">\n${selected || 'texto'}\n</div>`; break;
-                case 'left': formatted = `<div align="left">\n${selected || 'texto'}\n</div>`; break;
-                case 'break': formatted = `\n<br>\n${selected}`; break;
-            }
-
-            const newVal = text.substring(0, start) + formatted + text.substring(end);
-            updateBlockContent(id, newVal);
-            renderBlocks();
-        };
-
-        function renderBlocks() {
-            const container = document.getElementById('blocks-container'); container.innerHTML = '';
-            blocks.forEach(b => {
-                const el = document.createElement('div');
-                el.className = 'bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 flex gap-4 group animate-[fadeIn_0.2s] relative';
-                let html = '';
-                
-                if(b.type === 'p') {
-                    html = `
-                    <div class="w-full space-y-2">
-                        <div class="flex gap-1.5 border-b dark:border-slate-700 pb-2 mb-2 overflow-x-auto">
-                            <button onclick="applyFormat('${b.id}', 'bold')" class="p-1.5 rounded hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500" title="Negrita"><i class="ph-bold ph-text-bolder"></i></button>
-                            <button onclick="applyFormat('${b.id}', 'link')" class="p-1.5 rounded hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500" title="Link"><i class="ph-bold ph-link"></i></button>
-                            <button onclick="applyFormat('${b.id}', 'center')" class="p-1.5 rounded hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500" title="Centrar"><i class="ph-bold ph-text-align-center"></i></button>
-                            <button onclick="applyFormat('${b.id}', 'left')" class="p-1.5 rounded hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500" title="Izquierda"><i class="ph-bold ph-text-align-left"></i></button>
-                            <button onclick="applyFormat('${b.id}', 'break')" class="p-1 px-2 rounded hover:bg-orange-50 text-orange-600 text-[9px] font-bold border border-orange-100" title="Salto de página"><i class="ph-bold ph-arrows-down-up"></i> SALTO</button>
-                        </div>
-                        <textarea id="textarea-${b.id}" class="w-full bg-transparent outline-none text-sm resize-none min-h-[100px]" placeholder="Escribe aquí..." oninput="updateBlockContent('${b.id}', this.value)">${b.content}</textarea>
-                    </div>`;
-                }
-                else if(b.type === 'img') html = `<div class="w-full space-y-2"><div class="flex gap-2"><input type="text" id="input-${b.id}" class="flex-1 bg-slate-50 dark:bg-slate-900 p-2 text-[10px] rounded-lg border dark:border-slate-700" placeholder="URL Imagen..." value="${b.content}" oninput="updateBlockContent('${b.id}', this.value)"><label class="cursor-pointer bg-brand-50 dark:bg-brand-500/10 text-brand-600 dark:text-brand-400 p-2 rounded-lg text-xs font-bold transition"><i class="ph ph-upload-simple"></i><input type="file" class="hidden" onchange="uploadImageToRepo('${b.id}', this)"></label></div>${b.content ? `<img src="${b.content.split('|')[0]}" class="h-24 rounded-xl border">` : ''}</div>`;
-                else if(b.type === 'yt') {
-                    const vid = b.content.match(/(?:v=|\/)([0-9A-Za-z_-]{11})/)?.[1];
-                    html = `<div class="w-full space-y-2"><input type="text" class="w-full bg-slate-50 dark:bg-slate-900 p-2 text-[10px] rounded-lg border dark:border-slate-700" placeholder="Link de Youtube..." value="${b.content}" oninput="updateBlockContent('${b.id}', this.value)">${vid ? `<div class="aspect-video w-full rounded-xl overflow-hidden bg-black"><iframe width="100%" height="100%" src="https://www.youtube.com/embed/${vid}"></iframe></div>` : ''}</div>`;
-                } else if(b.type === 'ref') {
-                    const [t,l] = b.content.split('|');
-                    html = `<div class="w-full p-3 bg-emerald-50 dark:bg-emerald-900/10 rounded-xl border border-emerald-100 dark:border-emerald-800/50 space-y-2"><div class="flex justify-between items-center"><span class="text-[9px] font-bold text-emerald-600 uppercase">Botón Referido</span><span class="bg-emerald-600 text-white px-2 py-0.5 rounded text-[9px]">${t || 'Botón'}</span></div><div class="grid grid-cols-2 gap-2"><input type="text" placeholder="Texto..." class="p-2 text-xs rounded-lg border dark:bg-slate-900" value="${t||''}" oninput="updateRef('${b.id}', this.value, '${l||''}')"><input type="text" placeholder="Link..." class="p-2 text-xs rounded-lg border dark:bg-slate-900" value="${l||''}" oninput="updateRef('${b.id}', '${t||''}', this.value)"></div></div>`;
-                } else {
-                    const ph = b.type === 'h2' ? 'Título Principal (H2)...' : 'Subtítulo (H3)...';
-                    html = `<input type="text" class="w-full bg-transparent outline-none font-bold text-slate-700 dark:text-white" placeholder="${ph}" value="${b.content}" oninput="updateBlockContent('${b.id}', this.value)">`;
-                }
-
-                el.innerHTML = `<div class="text-[9px] font-bold text-slate-300 dark:text-slate-600 uppercase pt-1">${b.type}</div><div class="flex-1">${html}</div><button onclick="removeBlock('${b.id}')" class="text-slate-300 hover:text-red-500 transition opacity-0 group-hover:opacity-100"><i class="ph ph-trash text-lg"></i></button>`;
->>>>>>> 84915b63021fb8f4c7a1504d5a6d9608a88d3e3e
-                container.appendChild(el);
-            });
-        }
-
-        function generateMarkdown() {
-            const title = document.getElementById('post-title').value;
-            const subtitle = document.getElementById('post-subtitle').value;
-            const desc = document.getElementById('post-desc').value;
-            const auth = document.getElementById('post-author').value;
-            let md = `---\ntitle: "${title}"\nsubtitle: "${subtitle}"\ndescription: "${desc}"\npublishDate: "${document.getElementById('post-date').value}"\nauthor: "${auth}"\nheroImage: "${document.getElementById('post-hero').value}"\nlayout: "../../layouts/BlogPost.astro"\n---\n\n`;
-            blocks.forEach(b => {
-                const c = b.content.trim(); if(!c) return;
-                if(b.type === 'h2') md += `## ${c}\n\n`;
-                else if(b.type === 'h3') md += `### ${c}\n\n`;
-                else if(b.type === 'p') md += `${c}\n\n`;
-                else if(b.type === 'img') { const [u,a] = c.split('|'); md += `![${a||'Imagen'}](${u.trim()})\n\n`; }
-<<<<<<< HEAD
-                else if(b.type === 'yt') md += `<iframe width="100%" height="400" src="${c.replace('watch?v=','embed/')}" frameborder="0" allowfullscreen class="rounded-lg"></iframe>\n\n`;
-                else if(b.type === 'list') { c.split('\n').forEach(i => md += `* ${i}\n`); md += '\n'; }
-                else if(b.type === 'ref') { 
-                    const parts = c.split('|'); 
-                    const t = parts[0] ? parts[0].trim() : 'Link';
-                    const l = parts[1] ? parts[1].trim() : '#';
-                    md += `<a href="${l}" class="btn-ref">${t}</a>\n\n`; 
-                }
-=======
-                else if(b.type === 'yt') md += `<iframe width="100%" height="450" src="https://www.youtube.com/embed/${c.match(/(?:v=|\/)([0-9A-Za-z_-]{11})/)?.[1]}" frameborder="0" allowfullscreen class="rounded-xl shadow-lg"></iframe>\n\n`;
-                else if(b.type === 'ref') { const [t,l] = c.split('|'); md += `<a href="${l}" target="_blank" class="btn-ref">${t}</a>\n\n`; }
->>>>>>> 84915b63021fb8f4c7a1504d5a6d9608a88d3e3e
-            });
-            return md;
-        }
-
-        window.updatePreview = () => {
-            const md = generateMarkdown();
-            document.getElementById('preview-md').innerText = md;
-            document.getElementById('preview-html').innerHTML = marked.parse(md);
-            const words = md.split(/\s+/).filter(w => w.length).length;
-<<<<<<< HEAD
-            document.getElementById('word-count').textContent = `${words} palabras`;
-            document.getElementById('read-time').textContent = `${Math.ceil(words/200)} min`;
-        };
-
-        window.togglePreviewMode = () => {
-            document.getElementById('preview-md').classList.toggle('hidden');
-            document.getElementById('preview-html').classList.toggle('hidden');
-        };
-
-        window.downloadMarkdown = () => {
-            const title = document.getElementById('post-title').value || 'post';
-            const blob = new Blob([generateMarkdown()], {type: 'text/markdown'});
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = `${title.toLowerCase().replace(/[^a-z0-9]+/g,'-')}.md`;
-            link.click();
-        };
-
-        async function ghFetch(ep, m='GET', b=null) {
-            return fetch(`https://api.github.com/repos/${githubConfig.repoOwner}/${githubConfig.repoName}${ep}`, {
-=======
-            document.getElementById('word-count').innerText = `${words} PALABRAS`;
-        };
-
-        window.togglePreviewMode = () => { document.getElementById('preview-md').classList.toggle('hidden'); document.getElementById('preview-html').classList.toggle('hidden'); };
-
-        async function ghFetch(ep, m='GET', b=null, useAuthorsRepo=false) {
-            const owner = useAuthorsRepo ? AUTHORS_REPO_OWNER : githubConfig.repoOwner;
-            const repo = useAuthorsRepo ? AUTHORS_REPO_NAME : githubConfig.repoName;
-            return fetch(`https://api.github.com/repos/${owner}/${repo}${ep}`, {
->>>>>>> 84915b63021fb8f4c7a1504d5a6d9608a88d3e3e
-                method: m, headers: { 'Authorization': `token ${githubConfig.githubToken}`, 'Content-Type': 'application/json' },
-                body: b ? JSON.stringify(b) : null
-            }).then(r => r.json());
-        }
-
-<<<<<<< HEAD
-        window.uploadImageToRepo = async (blockId, fileInput) => {
-            const file = fileInput.files[0]; if (!file) return;
-            const textInput = document.getElementById(`input-${blockId}`);
-            textInput.value = "⏳ Subiendo...";
-            try {
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = async () => {
-                    const content = reader.result.split(',')[1];
-                    const filename = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.]/g, '-')}`;
-                    const path = `public/uploads/${filename}`;
-                    await ghFetch(`/contents/${path}`, 'PUT', { message: `Upload ${filename}`, content, branch: githubConfig.branch });
-                    updateBlockContent(blockId, `/uploads/${filename} | ${file.name}`);
-                    showToast("Imagen subida! 🖼️");
-                    renderBlocks();
-                };
-            } catch (e) { showToast("Error subida", "error"); }
-        };
-
-        window.publishCurrentPost = async () => {
-            if(!document.getElementById('post-title').value) return showToast("Falta el Título", "error");
-            const btn = document.getElementById('btn-publish-one');
-            btn.disabled = true; btn.innerText = "Publicando...";
-            try {
-                const md = generateMarkdown();
-                const slug = document.getElementById('post-title').value.toLowerCase().replace(/[^a-z0-9]+/g,'-');
-                const filename = `${document.getElementById('post-date').value}-${slug}.md`;
-                await ghFetch(`/contents/${githubConfig.postsPath}${filename}`, 'PUT', { 
-                    message: `Post: ${filename}`, content: btoa(unescape(encodeURIComponent(md))), branch: githubConfig.branch 
-                });
-                showToast("¡Publicado con éxito! 🚀"); loadHistory();
-            } catch(e) { showToast(e.message, "error"); }
-            btn.disabled = false; btn.innerText = "📤 Publicar Artículo";
-        };
-
-        window.handleBulkFiles = (input) => {
-            const files = Array.from(input.files);
-            const previewDiv = document.getElementById('bulk-preview');
-            previewDiv.innerHTML = '';
-            bulkFilesData = [];
-            if(files.length === 0) return;
-            files.forEach(file => {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    bulkFilesData.push({ path: `${githubConfig.postsPath}${file.name}`, content: e.target.result });
-                    const el = document.createElement('div');
-                    el.className = 'p-2 rounded text-xs bg-brand-50 text-brand-700 flex justify-between';
-                    el.innerHTML = `<span>${file.name}</span><span>✓</span>`;
-                    previewDiv.appendChild(el);
-                    document.getElementById('btn-publish-bulk').classList.remove('hidden');
-                };
-                reader.readAsText(file);
-            });
-        };
-
-        window.publishBulk = async () => {
-            if(!confirm(`¿Publicar ${bulkFilesData.length} archivos?`)) return;
-            const btn = document.getElementById('btn-publish-bulk');
-            btn.disabled = true; btn.innerText = "Subiendo...";
-            try {
-                const ref = await ghFetch(`/git/refs/heads/${githubConfig.branch}`);
-                const treeItems = [];
-                for (const file of bulkFilesData) {
-                    const blob = await ghFetch(`/git/blobs`, 'POST', { content: file.content, encoding: 'utf-8' });
-                    treeItems.push({ path: file.path, mode: '100644', type: 'blob', sha: blob.sha });
-                }
-                const tree = await ghFetch(`/git/trees`, 'POST', { base_tree: ref.object.sha, tree: treeItems });
-                const commit = await ghFetch(`/git/commits`, 'POST', { message: `Bulk upload`, tree: tree.sha, parents: [ref.object.sha] });
-                await ghFetch(`/git/refs/heads/${githubConfig.branch}`, 'PATCH', { sha: commit.sha });
-                showToast("¡Subida masiva lista! 🚀");
-                document.getElementById('bulk-preview').innerHTML = '';
-                btn.classList.add('hidden');
-                loadHistory();
-            } catch (e) { showToast("Error masivo", "error"); }
-            btn.disabled = false; btn.innerText = "🚀 Publicar Todos";
-=======
-        const toBase64 = file => new Promise((resolve, reject) => { const r = new FileReader(); r.readAsDataURL(file); r.onload = () => resolve(r.result); r.onerror = e => reject(e); });
-
-        window.uploadImageToRepo = async (id, input) => {
-            if(!input.files[0]) return;
-            const btn = input.parentElement; btn.innerHTML = "<i class='ph ph-spinner animate-spin'></i>";
-            try {
-                const base64 = await toBase64(input.files[0]);
-                const name = `${Date.now()}.jpg`;
-                await ghFetch(`/contents/public/uploads/${name}`, 'PUT', { message: `Img: ${name}`, content: base64.split(',')[1], branch: githubConfig.branch });
-                updateBlockContent(id, `/uploads/${name}`);
-                showToast("Foto subida! 📷");
-            } catch(e) { showToast("Error al subir", "error"); } finally { renderBlocks(); }
-        };
-
-        window.publishCurrentPost = async () => {
-            if(!document.getElementById('post-title').value) return showToast("Falta Título", "error");
-            const btn = document.getElementById('btn-publish');
-            btn.disabled = true; btn.innerHTML = "<i class='ph ph-spinner animate-spin'></i> Enviando...";
-            try {
-                const md = generateMarkdown();
-                const slug = document.getElementById('post-title').value.toLowerCase().replace(/[^a-z0-9]+/g,'-');
-                const path = `${githubConfig.postsPath}${document.getElementById('post-date').value}-${slug}.md`;
-                await ghFetch(`/contents/${path}`, 'PUT', { message: `Post: ${slug}`, content: btoa(unescape(encodeURIComponent(md))), branch: githubConfig.branch });
-                showToast("Artículo Publicado! 🚀");
-            } catch(e) { showToast("Error al publicar", "error"); } finally { btn.disabled = false; btn.innerHTML = "<i class='ph-bold ph-paper-plane-right'></i> Publicar Artículo"; }
-        };
-
-        window.openAIModal = () => { document.getElementById('ai-modal').classList.remove('hidden'); document.getElementById('ai-topic').focus(); };
-        
-window.generateIdeas = async () => {
-    const topic = document.getElementById('ai-topic').value;
-    if(!topic) return;
-    if(!geminiApiKey) return showToast("Falta configuración AI en Firebase", "error");
-
-    const container = document.getElementById('ai-results');
-    container.innerHTML = '<div class="p-8 text-center animate-pulse"><i class="ph ph-brain text-4xl text-purple-400"></i><p class="text-xs font-bold mt-2">Pensando...</p></div>';
-
-    try {
-        // CAMBIO CLAVE: Usamos la versión /v1/ en lugar de /v1beta/
-        const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`;
-
-        const r = await fetch(url, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
-                contents: [{ parts: [{ text: `Actúa como experto SEO de viajes. Genera 3 ideas de blog para: "${topic}". Responde exclusivamente un JSON array con este formato: [{"title": "Título H1", "desc": "Meta descripción corta"}]. No incluyas markdown ni texto extra.` }] }] 
-            })
-        });
-
-        const d = await r.json();
-        
-        // Si Google devuelve un error (como el de la API Key), lo capturamos aquí
-        if (d.error) throw new Error(d.error.message);
-
-        if (!d.candidates || d.candidates.length === 0) throw new Error("No se generaron resultados");
-
-        let rawText = d.candidates[0].content.parts[0].text;
-        let cleanJSON = rawText.replace(/```json|```/g, '').trim();
-        const ideas = JSON.parse(cleanJSON);
-
-        container.innerHTML = ideas.map((idea) => `
-            <div onclick="applyIdea('${idea.title.replace(/'/g, "\\'")}','${idea.desc.replace(/'/g, "\\'")}')" class="p-4 border rounded-2xl cursor-pointer hover:border-purple-500 hover:bg-purple-50 dark:hover:bg-purple-900/20 group transition text-left">
-                <h4 class="font-bold text-sm group-hover:text-purple-600 dark:text-white">${idea.title}</h4>
-                <p class="text-[10px] text-slate-500 mt-1">${idea.desc}</p>
-            </div>`).join('');
-
-    } catch (e) { 
-        console.error("Error detallado:", e);
-        container.innerHTML = `<p class="text-red-500 text-center text-xs p-4">Error: ${e.message}</p>`; 
-    }
+window.addTag = () => {
+const val = tagInput.value.trim();
+if (val && !tags.includes(val)) {
+tags.push(val);
+tagInput.value = '';
+renderTags(); updatePreview();
+}
 };
 
+window.removeTag = (tag) => {
+tags = tags.filter(t => t !== tag);
+renderTags(); updatePreview();
+};
 
-        window.applyIdea = (t, d) => {
-            document.getElementById('post-title').value = t;
-            document.getElementById('post-desc').value = d;
-            document.getElementById('ai-modal').classList.add('hidden');
-            updatePreview(); showToast("Idea aplicada ✨");
->>>>>>> 84915b63021fb8f4c7a1504d5a6d9608a88d3e3e
-        };
+function renderTags() {
+tagsContainer.innerHTML = tags.map(t => `
+<div class="inline-flex items-center gap-1 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 px-3 py-1 rounded-full text-xs font-bold border border-blue-100 dark:border-blue-800 animate-[fadeIn_0.3s]">
+<span>#${t}</span>
+<button onclick="removeTag('${t}')" class="hover:text-red-500 ml-1">×</button>
+</div>
+`).join('');
+}
 
-        window.showToast = (msg, type='success') => {
-            const el = document.createElement('div');
-<<<<<<< HEAD
-            el.className = `${type==='success'?'bg-emerald-600':'bg-red-500'} text-white px-4 py-3 rounded-lg shadow-lg text-sm font-bold animate-[fadeIn_0.3s]`;
-            el.innerText = msg;
-=======
-            el.className = `${type==='success'?'bg-slate-900':'bg-red-500'} text-white px-5 py-3 rounded-2xl shadow-2xl text-[11px] font-bold flex items-center gap-2 animate-[fadeIn_0.3s]`;
-            el.innerHTML = `<i class="ph-bold ph-${type==='success'?'check-circle':'warning'} text-lg"></i> ${msg}`;
->>>>>>> 84915b63021fb8f4c7a1504d5a6d9608a88d3e3e
-            document.getElementById('toast-container').appendChild(el);
-            setTimeout(() => el.remove(), 4000);
-        };
+window.addBlock = (type) => {
+blocks.push({ id: Date.now().toString(), type, content: '' });
+renderBlocks(); updatePreview();
+};
 
-        async function loadHistory() {
-            try {
-                const c = await ghFetch(`/commits?per_page=5`);
-<<<<<<< HEAD
-                document.getElementById('history-content').innerHTML = c.map(i => 
-                    `<div class="text-xs border-b border-slate-100 dark:border-slate-800 pb-2 mb-2"><a href="${i.html_url}" target="_blank" class="text-brand-600 font-bold hover:underline block truncate">${i.commit.message}</a><span class="text-slate-400">${new Date(i.commit.author.date).toLocaleDateString()}</span></div>`
-                ).join('');
-            } catch(e) {}
-        }
-        
-        window.toggleHistory = () => document.getElementById('history-content').classList.toggle('hidden');
-        
-        const mm = document.getElementById('mobile-menu');
-        document.getElementById('menu-btn').addEventListener('click', () => mm.classList.remove('translate-x-full'));
-        document.getElementById('close-menu').addEventListener('click', () => mm.classList.add('translate-x-full'));
-        window.closeMobMenu = () => mm.classList.add('translate-x-full');
-=======
-                document.getElementById('history-content').innerHTML = c.map(i => `<div class="text-[10px] border-b border-slate-100 dark:border-slate-800 pb-2 mb-2"><a href="${i.html_url}" target="_blank" class="text-blue-500 font-bold block truncate">${i.commit.message}</a><span class="text-slate-400 font-mono">${new Date(i.commit.author.date).toLocaleDateString()}</span></div>`).join('');
-            } catch(e) {}
-        }
+window.removeBlock = (id) => {
+blocks = blocks.filter(b => b.id !== id);
+renderBlocks(); updatePreview();
+};
 
-        window.downloadMarkdown = () => {
-            const md = generateMarkdown();
-            const blob = new Blob([md], { type: 'text/markdown' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a'); a.href = url; a.download = 'post.md'; a.click();
-        };
+window.moveBlock = (id, dir) => {
+const idx = blocks.findIndex(b => b.id === id);
+if ((dir === -1 && idx > 0) || (dir === 1 && idx < blocks.length - 1)) {
+const swapIdx = idx + dir;
+[blocks[idx], blocks[swapIdx]] = [blocks[swapIdx], blocks[idx]];
+renderBlocks(); updatePreview();
+}
+};
 
-        window.toggleHistory = () => document.getElementById('history-content').classList.toggle('hidden');
+window.updateBlockContent = (id, value) => {
+const b = blocks.find(b => b.id === id);
+if(b) b.content = value;
+updatePreview();
+};
 
->>>>>>> 84915b63021fb8f4c7a1504d5a6d9608a88d3e3e
-    </script>
+window.clearBlocks = () => { if(confirm("¿Borrar todo el contenido?")) { blocks = []; renderBlocks(); updatePreview(); }};
+
+function renderBlocks() {
+const container = document.getElementById('blocks-container');
+container.innerHTML = '';
+blocks.forEach((b) => {
+const el = document.createElement('div');
+el.className = 'bg-white dark:bg-slate-800 p-4 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm flex gap-3 items-start group animate-[fadeIn_0.3s]';
+let ph = 'Escribe aquí...';
+if(b.type === 'h2') ph = 'Título de sección...';
+if(b.type === 'img') ph = 'URL de la imagen | Descripción';
+if(b.type === 'yt') ph = 'Enlace de YouTube';
+
+let inputHtml = '';
+const typeLabel = b.type === 'img' ? 'IMAGEN' : b.type.toUpperCase();
+
+if (b.type === 'p' || b.type === 'list') {
+inputHtml = `<textarea class="w-full bg-transparent border-none outline-none text-slate-700 dark:text-slate-200 resize-none h-auto text-sm font-sans" rows="3" placeholder="${ph}" oninput="updateBlockContent('${b.id}', this.value)">${b.content}</textarea>`;
+} else if (b.type === 'img') {
+// SECCIÓN MODIFICADA: Ahora permite link o subida
+inputHtml = `
+<div class="flex flex-col gap-2 w-full">
+<div class="flex gap-2 items-center w-full">
+<input type="text" id="input-${b.id}" class="flex-1 bg-transparent border-none outline-none text-slate-700 dark:text-slate-200 font-medium text-sm" placeholder="Pega URL o sube imagen ->" value="${b.content}" oninput="updateBlockContent('${b.id}', this.value)">
+<label class="cursor-pointer bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 hover:bg-blue-100 px-3 py-1.5 rounded-lg transition flex items-center gap-2 text-xs font-bold border border-blue-200 dark:border-blue-800" title="Subir a Repo">
+<span>📤 Subir</span>
+<input type="file" class="hidden" accept="image/*" onchange="uploadImageToRepo('${b.id}', this)">
+</label>
+</div>
+${b.content ? `<div class="relative w-fit group"><img src="${b.content.split('|')[0].trim()}" class="h-24 rounded-lg object-cover border border-slate-200 shadow-sm bg-slate-50"></div>` : ''}
+</div>`;
+} else {
+inputHtml = `<input type="text" class="w-full bg-transparent border-none outline-none text-slate-700 dark:text-slate-200 font-medium text-sm" placeholder="${ph}" value="${b.content}" oninput="updateBlockContent('${b.id}', this.value)">`;
+}
+
+el.innerHTML = `
+<div class="flex flex-col items-center gap-1 pt-1">
+<span class="text-[10px] font-bold text-slate-400 select-none">${typeLabel}</span>
+<div class="flex flex-col opacity-0 group-hover:opacity-100 transition-opacity">
+<button onclick="moveBlock('${b.id}',-1)" class="text-slate-400 hover:text-blue-500">▲</button>
+<button onclick="removeBlock('${b.id}')" class="text-slate-400 hover:text-red-500">✖</button>
+<button onclick="moveBlock('${b.id}',1)" class="text-slate-400 hover:text-blue-500">▼</button>
+</div>
+</div>
+${inputHtml}`;
+container.appendChild(el);
+});
+}
+
+function generateMarkdown() {
+const title = document.getElementById('post-title').value;
+const desc = document.getElementById('post-desc').value;
+const date = document.getElementById('post-date').value;
+const author = document.getElementById('post-author').value;
+const hero = document.getElementById('post-hero').value;
+const tagsString = tags.map(t => `"${t}"`).join(', ');
+
+let md = `---\ntitle: "${title}"\ndescription: "${desc}"\npublishDate: "${date}"\nauthor: "${author}"\nheroImage: "${hero}"\nlayout: "../../layouts/BlogPost.astro"\ntags: [${tagsString}]\n---\n\n`;
+
+blocks.forEach(b => {
+const c = b.content.trim(); if(!c) return;
+if(b.type === 'h2') md += `## ${c}\n\n`;
+else if(b.type === 'h3') md += `### ${c}\n\n`;
+else if(b.type === 'p') md += `${c}\n\n`;
+else if(b.type === 'img') { const [u,a] = c.split('|'); md += `![${a||'Imagen'}](${u})\n\n`; }
+else if(b.type === 'yt') md += `<iframe width="100%" height="400" src="${c.replace('watch?v=','embed/')}" frameborder="0" allowfullscreen class="rounded-lg shadow-sm"></iframe>\n\n`;
+else if(b.type === 'list') { c.split('\n').forEach(i => md += `* ${i}\n`); md += '\n'; }
+else if(b.type === 'ref') { const [t,l] = c.split('|'); md += `<a href="${l}" class="btn-ref">${t}</a>\n\n`; }
+});
+return md;
+}
+
+window.updatePreview = () => {
+const md = generateMarkdown();
+document.getElementById('preview-md').textContent = md;
+document.getElementById('preview-html').innerHTML = marked.parse(md);
+const words = md.split(/\s+/).filter(w => w.length).length;
+document.getElementById('word-count').textContent = `${words} palabras`;
+document.getElementById('read-time').textContent = `${Math.ceil(words/200)} min`;
+};
+window.togglePreviewMode = () => {
+const m = document.getElementById('preview-md'), h = document.getElementById('preview-html');
+m.classList.toggle('hidden'); h.classList.toggle('hidden');
+};
+
+window.downloadMarkdown = () => {
+const title = document.getElementById('post-title').value || 'post';
+const date = document.getElementById('post-date').value || 'draft';
+const filename = `${date}-${title.toLowerCase().replace(/[^a-z0-9]+/g,'-')}.md`;
+const link = document.createElement('a');
+link.href = URL.createObjectURL(new Blob([generateMarkdown()], {type: 'text/markdown'}));
+link.download = filename;
+link.click();
+};
+
+async function ghFetch(ep, m='GET', b=null) {
+if(!githubConfig) throw new Error("No conectado a GitHub");
+return fetch(`https://api.github.com/repos/${githubConfig.repoOwner}/${githubConfig.repoName}${ep}`, {
+method: m, headers: { 'Authorization': `token ${githubConfig.githubToken}`, 'Content-Type': 'application/json' },
+body: b ? JSON.stringify(b) : null
+}).then(r => { if(!r.ok) throw new Error(r.statusText); return r.json(); });
+}
+
+// --- FUNCIONES DE SUBIDA DE IMAGEN (NUEVAS) ---
+
+const toBase64 = file => new Promise((resolve, reject) => {
+const reader = new FileReader();
+reader.readAsDataURL(file);
+reader.onload = () => resolve(reader.result);
+reader.onerror = error => reject(error);
+});
+
+window.uploadImageToRepo = async (blockId, fileInput) => {
+const file = fileInput.files[0];
+if (!file) return;
+
+const textInput = document.getElementById(`input-${blockId}`);
+const originalValue = textInput.value;
+textInput.value = "⏳ Subiendo imagen...";
+textInput.disabled = true;
+
+try {
+if (!githubConfig) throw new Error("No hay configuración de GitHub cargada");
+
+const base64Raw = await toBase64(file);
+const content = base64Raw.split(',')[1];
+
+// Generar nombre limpio y único
+const cleanName = file.name.replace(/[^a-zA-Z0-9.]/g, '-').toLowerCase();
+const filename = `${Date.now()}-${cleanName}`;
+const path = `public/uploads/${filename}`; // Ruta para Astro
+
+// Subir a GitHub
+await ghFetch(`/contents/${path}`, 'PUT', {
+message: `Media: Upload ${filename}`,
+content: content,
+branch: githubConfig.branch
+});
+
+// Formato final: RUTA | ALT (usamos el nombre del archivo como ALT por defecto)
+const astroPath = `/uploads/${filename}`;
+const finalString = `${astroPath} | ${cleanName.split('.')[0]}`;
+
+updateBlockContent(blockId, finalString);
+showToast("¡Imagen subida! 🖼️");
+
+} catch (error) {
+console.error(error);
+showToast("Error al subir: " + error.message, "error");
+textInput.value = originalValue;
+} finally {
+textInput.disabled = false;
+renderBlocks(); // Actualizar para ver la miniatura
+updatePreview();
+}
+};
+
+// --- FIN FUNCIONES DE SUBIDA ---
+
+window.publishCurrentPost = async () => {
+const btn = document.getElementById('btn-publish-one');
+if(!document.getElementById('post-title').value) return showToast("Falta el Título", "error");
+btn.disabled = true; btn.innerText = "Publicando...";
+try {
+const md = generateMarkdown();
+const slug = document.getElementById('post-title').value.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g, '');
+const filename = `${document.getElementById('post-date').value}-${slug}.md`;
+const path = `${githubConfig.postsPath}${filename}`;
+await ghFetch(`/contents/${path}`, 'PUT', {
+message: `Post: ${filename} (Editor)`,
+content: btoa(unescape(encodeURIComponent(md))),
+branch: githubConfig.branch
+});
+showToast("¡Publicado con éxito! 🚀");
+loadHistory();
+} catch(e) { showToast(e.message, "error"); }
+btn.disabled = false; btn.innerText = "📤 Publicar Artículo";
+};
+
+window.handleBulkFiles = (input) => {
+const files = Array.from(input.files);
+const previewDiv = document.getElementById('bulk-preview');
+const btn = document.getElementById('btn-publish-bulk');
+previewDiv.innerHTML = '';
+bulkFilesData = [];
+if(files.length === 0) { btn.classList.add('hidden'); return; }
+
+files.forEach(file => {
+const reader = new FileReader();
+reader.onload = (e) => {
+const content = e.target.result;
+const isValid = content.startsWith('---');
+bulkFilesData.push({ path: `${githubConfig.postsPath}${file.name}`, content: content });
+
+const el = document.createElement('div');
+el.className = `p-2 rounded text-xs flex justify-between items-center ${isValid ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`;
+el.innerHTML = `<span>${file.name}</span><span>${isValid ? '✓' : '⚠'}</span>`;
+previewDiv.appendChild(el);
+
+btn.classList.remove('hidden');
+};
+reader.readAsText(file);
+});
+};
+
+window.publishBulk = async () => {
+if(!confirm(`¿Publicar ${bulkFilesData.length} archivos?`)) return;
+const btn = document.getElementById('btn-publish-bulk');
+btn.disabled = true; btn.innerText = "Procesando...";
+
+try {
+const ref = await ghFetch(`/git/refs/heads/${githubConfig.branch}`);
+const latestCommitSha = ref.object.sha;
+
+const treeItems = [];
+for (const file of bulkFilesData) {
+const blob = await ghFetch(`/git/blobs`, 'POST', { content: file.content, encoding: 'utf-8' });
+treeItems.push({ path: file.path, mode: '100644', type: 'blob', sha: blob.sha });
+}
+
+const tree = await ghFetch(`/git/trees`, 'POST', { base_tree: latestCommitSha, tree: treeItems });
+const newCommit = await ghFetch(`/git/commits`, 'POST', { message: `Bulk upload (${bulkFilesData.length})`, tree: tree.sha, parents: [latestCommitSha] });
+await ghFetch(`/git/refs/heads/${githubConfig.branch}`, 'PATCH', { sha: newCommit.sha });
+
+showToast("¡Subida masiva completada! 🚀");
+bulkFilesData = [];
+document.getElementById('bulk-preview').innerHTML = '';
+btn.classList.add('hidden');
+loadHistory();
+
+} catch (error) { showToast("Error en subida masiva", "error"); }
+finally { btn.disabled = false; btn.innerText = "🚀 Publicar Todos"; }
+};
+
+window.showToast = (msg, type='success') => {
+const el = document.createElement('div');
+el.className = `${type==='success'?'bg-emerald-600':'bg-red-500'} text-white px-4 py-3 rounded-lg shadow-lg text-sm font-bold flex items-center gap-2 animate-[fadeIn_0.3s]`;
+el.innerHTML = `<span>${type==='success'?'✓':'⚠'}</span> ${msg}`;
+document.getElementById('toast-container').appendChild(el);
+setTimeout(() => el.remove(), 4000);
+};
+
+async function loadHistory() {
+try {
+const c = await ghFetch(`/commits?per_page=5`);
+document.getElementById('history-content').innerHTML = c.map(i =>
+`<div class="text-xs border-b border-slate-100 dark:border-slate-800 pb-2 mb-2"><a href="${i.html_url}" target="_blank" class="text-blue-600 dark:text-blue-400 font-bold hover:underline block truncate">${i.commit.message}</a><span class="text-slate-400">${new Date(i.commit.author.date).toLocaleDateString()}</span></div>`
+).join('');
+} catch(e) {}
+}
+window.toggleHistory = () => { const h = document.getElementById('history-content'); h.classList.toggle('hidden'); };
+// CORRECCIÓN DEL MENÚ MÓVIL
+const mm = document.getElementById('mobile-menu');
+document.getElementById('menu-btn').addEventListener('click', () => mm.classList.remove('translate-x-full'));
+document.getElementById('close-menu').addEventListener('click', () => mm.classList.add('translate-x-full'));
+window.closeMobMenu = () => mm.classList.add('translate-x-full');
+</script>
 </body>
 </html>
