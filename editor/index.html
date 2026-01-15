@@ -38,8 +38,9 @@
         }
         .preview-content h2 { font-family: 'Space Grotesk', sans-serif; font-size: 1.5rem; font-weight: 700; margin-top: 1.5em; }
         .preview-content h3 { font-family: 'Space Grotesk', sans-serif; font-size: 1.25rem; font-weight: 600; margin-top: 1.2em; }
-        .preview-content p { margin-bottom: 1em; line-height: 1.7; }
+        .preview-content p { margin-bottom: 1em; line-height: 1.7; color: #475569; }
         .preview-content img { border-radius: 12px; margin: 1.5em 0; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        @media (prefers-color-scheme: dark) { .preview-content p { color: #94a3b8; } }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .fade-in { animation: fadeIn 0.4s ease-out forwards; }
     </style>
@@ -140,7 +141,7 @@
                         <span id="word-count" class="font-mono bg-white dark:bg-slate-900 px-2 py-1 rounded border">0 PALABRAS</span>
                     </div>
                     <div id="preview-md" class="hidden flex-1 p-6 font-mono text-xs overflow-auto bg-slate-50 dark:bg-slate-950 whitespace-pre-wrap"></div>
-                    <div id="preview-html" class="flex-1 p-8 overflow-auto preview-content bg-white dark:bg-slate-900"></div>
+                    <div id="preview-html" class="flex-1 p-8 overflow-auto preview-content bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300"></div>
                 </div>
             </div>
         </main>
@@ -336,7 +337,6 @@ export const DEFAULT_AUTHOR = AUTHORS['daniel-arana'] || Object.values(AUTHORS)[
         window.updateBlockContent = (id, val) => { const b = blocks.find(b => b.id === id); if(b) b.content = val; updatePreview(); };
         window.updateRef = (id, t, l) => { const b = blocks.find(b => b.id === id); if(b) b.content = `${t}|${l}`; updatePreview(); };
 
-        // --- NUEVA LÓGICA DE FORMATO ---
         window.applyFormat = (id, type) => {
             const area = document.getElementById(`textarea-${id}`);
             const start = area.selectionStart;
@@ -417,7 +417,8 @@ export const DEFAULT_AUTHOR = AUTHORS['daniel-arana'] || Object.values(AUTHORS)[
             const md = generateMarkdown();
             document.getElementById('preview-md').innerText = md;
             document.getElementById('preview-html').innerHTML = marked.parse(md);
-            document.getElementById('word-count').innerText = `${md.split(/\s+/).length} PALABRAS`;
+            const words = md.split(/\s+/).filter(w => w.length).length;
+            document.getElementById('word-count').innerText = `${words} PALABRAS`;
         };
 
         window.togglePreviewMode = () => { document.getElementById('preview-md').classList.toggle('hidden'); document.getElementById('preview-html').classList.toggle('hidden'); };
@@ -459,19 +460,39 @@ export const DEFAULT_AUTHOR = AUTHORS['daniel-arana'] || Object.values(AUTHORS)[
         };
 
         window.openAIModal = () => { document.getElementById('ai-modal').classList.remove('hidden'); document.getElementById('ai-topic').focus(); };
+        
         window.generateIdeas = async () => {
             const topic = document.getElementById('ai-topic').value; if(!topic) return;
+            if(!geminiApiKey) return showToast("Falta llave de Google AI", "error");
+            
             const container = document.getElementById('ai-results');
             container.innerHTML = '<div class="p-8 text-center animate-pulse"><i class="ph ph-brain text-4xl text-purple-400"></i><p class="text-xs font-bold mt-2">Pensando...</p></div>';
+            
             try {
-                const prompt = `Travel expert. 3 post ideas for: "${topic}". JSON Array: [{"title": "H1", "desc": "Meta Description (max 30 words)"}]. No markdown.`;
+                const prompt = `Travel expert. 3 post ideas for: "${topic}". JSON Array: [{"title": "H1", "desc": "Meta Description (max 30 words)"}]. No markdown code blocks.`;
+                
                 const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`, {
-                    method: 'POST', body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }, // HEADER CORREGIDO
+                    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
                 });
+                
                 const d = await r.json();
-                const ideas = JSON.parse(d.candidates[0].content.parts[0].text.replace(/```json|```/g, ''));
-                container.innerHTML = ideas.map((idea, i) => `<div onclick="applyIdea('${idea.title}','${idea.desc}')" class="p-4 border rounded-2xl cursor-pointer hover:border-purple-500 hover:bg-purple-50 dark:hover:bg-purple-900/20 group transition"><h4 class="font-bold text-sm group-hover:text-purple-600">${idea.title}</h4><p class="text-[10px] text-slate-500 mt-1">${idea.desc}</p></div>`).join('');
-            } catch (e) { container.innerHTML = '<p class="text-red-500 text-center text-xs">Error AI</p>'; }
+                
+                // Limpieza de respuesta robusta
+                let textResult = d.candidates[0].content.parts[0].text;
+                let cleanJSON = textResult.replace(/```json|```/g, '').trim();
+                
+                const ideas = JSON.parse(cleanJSON);
+                container.innerHTML = ideas.map((idea) => `
+                    <div onclick="applyIdea('${idea.title.replace(/'/g, "\\'")}','${idea.desc.replace(/'/g, "\\'")}')" class="p-4 border rounded-2xl cursor-pointer hover:border-purple-500 hover:bg-purple-50 dark:hover:bg-purple-900/20 group transition text-slate-700 dark:text-slate-300">
+                        <h4 class="font-bold text-sm group-hover:text-purple-600">${idea.title}</h4>
+                        <p class="text-[10px] mt-1">${idea.desc}</p>
+                    </div>`).join('');
+            } catch (e) { 
+                console.error(e);
+                container.innerHTML = '<p class="text-red-500 text-center text-xs">Error AI: Verifica tu API Key o conexión</p>'; 
+            }
         };
 
         window.applyIdea = (t, d) => {
