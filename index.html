@@ -1,375 +1,671 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Instantetrips</title>
+    <meta name="description"
+        content="Instante Trips - Tu próxima aventura comienza aquí. Descubre destinos, consejos de viaje y planifica tu próximo viaje.">
+    <title>Instante Trips | Tu próxima aventura comienza aquí</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;600;800&family=IBM+Plex+Serif:wght@400;500&display=swap"
+        rel="stylesheet">
+
     <style>
         :root {
-            /* Variables Modo Claro */
-            --bg-color: #f5f5f7;
-            --text-color: #1d1d1f;
-            --secondary-text: #86868b; 
-            --accent-color: #0071e3; /* Azul sutil tipo Apple */
-            --separator-color: #d2d2d7; 
-            --logo-filter: none;
-            
-            /* Botones y UI */
-            --btn-bg: #ffffff;
-            --btn-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            --btn-hover: 0 6px 16px rgba(0,0,0,0.12);
-            
-            /* Colores Menú Lateral */
-            --menu-bg: #ffffff;
-            --menu-item-hover: rgba(0, 0, 0, 0.03);
+            --bg: #F8F9FA;
+            --card-bg: #FFFFFF;
+            --text: #2D3748;
+            --text-secondary: #64748b;
+            --title: #1a202c;
+            --border: #e2e8f0;
+            --gold: #F4B942;
+            --celeste: #75AADB;
+            --gradient-primary: linear-gradient(135deg, var(--gold), var(--celeste));
+            --nav-bg: rgba(255, 255, 255, 0.85);
+            --btn-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            --btn-hover: 0 8px 25px rgba(244, 185, 66, 0.25);
         }
 
         @media (prefers-color-scheme: dark) {
             :root {
-                /* Variables Modo Oscuro */
-                --bg-color: #000000;
-                --text-color: #f5f5f7;
-                --secondary-text: #6e6e73;
-                --accent-color: #2997ff;
-                --separator-color: #424245;
-                --logo-filter: invert(1);
-                
-                --btn-bg: #1c1c1e;
-                --btn-shadow: 0 4px 12px rgba(0,0,0,0.3);
-                --btn-hover: 0 6px 16px rgba(0,0,0,0.5);
-
-                --menu-bg: #1c1c1e;
-                --menu-item-hover: rgba(255, 255, 255, 0.05);
+                --bg: #0f172a;
+                --card-bg: #1e293b;
+                --text: #f1f5f9;
+                --text-secondary: #94a3b8;
+                --title: #f8fafc;
+                --border: #334155;
+                --nav-bg: rgba(15, 23, 42, 0.85);
             }
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        @keyframes shimmer {
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column; /* Para empujar el footer al fondo */
-            transition: background-color 0.3s ease, color 0.3s ease;
-            overflow-x: hidden;
+            0%,
+            100% {
+                background-position: -200% center;
+            }
+
+            50% {
+                background-position: 200% center;
+            }
         }
 
-        /* --- WRAPPER PRINCIPAL (Centrado) --- */
-        .main-wrapper {
-            flex: 1; /* Ocupa todo el espacio disponible */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'IBM Plex Serif', Georgia, serif;
+            background-color: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            line-height: 1.7;
+        }
+
+        h1,
+        h2,
+        h3 {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 800;
+            color: var(--title);
+        }
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 15px 30px;
+            background: var(--nav-bg);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar-logo {
+            height: 35px;
+            width: auto;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .navbar-logo {
+                filter: brightness(0) invert(1);
+            }
+        }
+
+        .navbar-links {
+            display: flex;
+            gap: 25px;
+        }
+
+        .navbar-links a {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .navbar-links a:hover {
+            color: var(--gold);
+        }
+
+        .hero {
+            flex: 1;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            padding: 20px;
-            width: 100%;
-            max-width: 1200px;
-            margin: 0 auto;
-            gap: 2.5rem;
-            animation: fadeIn 1.5s ease-out;
+            text-align: center;
+            padding: 120px 20px 60px;
+            position: relative;
+            overflow: hidden;
         }
 
-        .logo {
-            width: 375px; 
-            max-width: 80vw;
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -30%;
+            width: 80%;
+            height: 150%;
+            background: radial-gradient(ellipse, rgba(244, 185, 66, 0.08) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: -50%;
+            left: -30%;
+            width: 80%;
+            height: 150%;
+            background: radial-gradient(ellipse, rgba(117, 170, 219, 0.08) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 700px;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .hero-logo {
+            width: 280px;
+            max-width: 70vw;
             height: auto;
-            filter: var(--logo-filter);
-            transition: filter 0.3s ease;
-            margin-bottom: 1rem;
+            margin-bottom: 30px;
+            animation: float 6s ease-in-out infinite;
         }
 
-        /* --- SECCIÓN DE ACCIÓN (Split Buttons) --- */
+        @media (prefers-color-scheme: dark) {
+            .hero-logo {
+                filter: brightness(0) invert(1);
+            }
+        }
+
+        .hero-tagline {
+            font-family: 'Montserrat', sans-serif;
+            font-size: clamp(1.8rem, 5vw, 2.8rem);
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 20px;
+            background: linear-gradient(90deg, var(--title) 0%, var(--gold) 25%, var(--title) 50%, var(--celeste) 75%, var(--title) 100%);
+            background-size: 400% auto;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shimmer 5s ease-in-out infinite;
+        }
+
+        .hero-subtitle {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+            max-width: 500px;
+        }
+
         .actions-container {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
             gap: 20px;
-            width: 100%;
+            margin-bottom: 60px;
         }
 
         .action-group {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
             position: relative;
         }
 
-        /* Estilo base de los botones principales */
         .main-btn {
-            background-color: var(--btn-bg);
-            color: var(--text-color);
-            padding: 15px 30px;
-            border-radius: 50px;
-            text-decoration: none;
-            font-size: 1rem;
-            font-weight: 500;
             display: flex;
             align-items: center;
-            gap: 10px;
-            box-shadow: var(--btn-shadow);
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-            border: 1px solid var(--separator-color);
-            cursor: pointer;
-            min-width: 200px;
             justify-content: center;
+            gap: 12px;
+            padding: 16px 32px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--title);
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            cursor: pointer;
+            text-decoration: none;
+            min-width: 200px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--btn-shadow);
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        .main-btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 50px;
+            padding: 2px;
+            background: var(--gradient-primary);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 0;
+            transition: opacity 0.4s;
         }
 
         .main-btn:hover {
             transform: translateY(-3px);
             box-shadow: var(--btn-hover);
-            border-color: var(--accent-color);
+            border-color: transparent;
         }
 
-        .main-btn svg { width: 20px; height: 20px; stroke: var(--text-color); }
-        .main-btn:hover svg { stroke: var(--accent-color); }
+        .main-btn:hover::before {
+            opacity: 1;
+        }
 
-        /* --- DESPLEGABLE DE BANDERAS --- */
+        .main-btn svg {
+            width: 20px;
+            height: 20px;
+            stroke: var(--gold);
+            stroke-width: 2;
+        }
+
+        .main-btn .arrow {
+            opacity: 0;
+            transform: translateX(-10px);
+            transition: all 0.3s;
+        }
+
+        .main-btn:hover .arrow {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
         .flags-dropdown {
-            margin-top: 15px;
+            position: absolute;
+            top: calc(100% + 15px);
+            left: 50%;
+            transform: translateX(-50%) translateY(-10px);
             display: flex;
             gap: 15px;
+            background: var(--card-bg);
+            padding: 12px 20px;
+            border-radius: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
+            border: 1px solid var(--border);
             opacity: 0;
-            transform: translateY(-10px);
             visibility: hidden;
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            position: absolute; /* Para que no empuje el contenido bruscamente */
-            top: 100%;
-            background: var(--btn-bg);
-            padding: 10px 15px;
-            border-radius: 20px;
-            box-shadow: var(--btn-shadow);
-            border: 1px solid var(--separator-color);
-            z-index: 10;
+            z-index: 100;
         }
 
         .flags-dropdown.active {
             opacity: 1;
-            transform: translateY(0);
             visibility: visible;
+            transform: translateX(-50%) translateY(0);
         }
 
         .flag-item {
-            font-size: 1.8rem;
+            font-size: 2rem;
             text-decoration: none;
-            transition: transform 0.2s ease, filter 0.2s ease;
+            transition: transform 0.2s;
             position: relative;
         }
 
-        .flag-item:hover { transform: scale(1.2); }
-
-        /* Estados de las banderas */
-        .flag-item.active { cursor: pointer; filter: grayscale(0); }
-        .flag-item.inactive { 
-            cursor: not-allowed; 
-            filter: grayscale(1) opacity(0.4); 
+        .flag-item:hover {
+            transform: scale(1.2);
         }
-        
-        /* Tooltip simple para países inactivos */
+
+        .flag-item.active {
+            cursor: pointer;
+        }
+
+        .flag-item.inactive {
+            cursor: not-allowed;
+            filter: grayscale(1) opacity(0.4);
+        }
+
         .flag-item.inactive::after {
             content: 'Pronto';
             position: absolute;
-            bottom: -15px;
+            bottom: -18px;
             left: 50%;
             transform: translateX(-50%);
-            font-size: 0.5rem;
-            color: var(--secondary-text);
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.55rem;
+            font-weight: 600;
+            color: var(--text-secondary);
             text-transform: uppercase;
+            white-space: nowrap;
         }
 
-        /* --- FOOTER SLIM (Discreto) --- */
-        .slim-footer {
-            width: 100%;
-            padding: 15px 30px;
-            border-top: 1px solid var(--separator-color);
+        .features {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+            animation: fadeInUp 1s ease-out 0.3s backwards;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .feature-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, rgba(244, 185, 66, 0.15), rgba(117, 170, 219, 0.15));
+            border-radius: 12px;
+            font-size: 1.2rem;
+        }
+
+        .footer {
+            padding: 25px 30px;
+            border-top: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            font-family: 'Montserrat', sans-serif;
             font-size: 0.75rem;
-            color: var(--secondary-text);
-            background-color: var(--bg-color);
+            color: var(--text-secondary);
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 20px;
         }
 
         .footer-links a {
-            color: var(--secondary-text);
+            color: var(--text-secondary);
             text-decoration: none;
-            margin-left: 15px;
-            transition: color 0.2s;
+            transition: color 0.3s;
         }
 
-        .footer-links a:hover { color: var(--text-color); }
-        
-        .editor-link {
+        .footer-links a:hover {
+            color: var(--gold);
+        }
+
+        .footer-links .editor-link {
             opacity: 0.5;
             font-weight: 600;
         }
-        .editor-link:hover { opacity: 1; color: var(--accent-color) !important; }
 
-        @media (max-width: 600px) {
-            .slim-footer {
-                flex-direction: column;
-                gap: 10px;
-                padding-bottom: 25px; /* Espacio para gestos en móvil */
+        .footer-links .editor-link:hover {
+            opacity: 1;
+        }
+
+        /* RESPONSIVE - TABLETS */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 12px 20px;
             }
-            .actions-container { flex-direction: column; }
-            .flags-dropdown { position: relative; top: 0; } /* En móvil que empuje hacia abajo */
+
+            .navbar-links {
+                display: none;
+            }
+
+            .hero {
+                padding: 90px 25px 50px;
+                min-height: calc(100vh - 80px);
+            }
+
+            .hero-logo {
+                width: 180px;
+                margin-bottom: 25px;
+            }
+
+            .hero-tagline {
+                font-size: 1.6rem;
+                margin-bottom: 15px;
+            }
+
+            .hero-subtitle {
+                font-size: 0.95rem;
+                margin-bottom: 30px;
+                padding: 0 10px;
+            }
+
+            .actions-container {
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 12px;
+                margin-bottom: 40px;
+            }
+
+            .main-btn {
+                padding: 14px 22px;
+                font-size: 0.8rem;
+                min-width: 150px;
+            }
+
+            .main-btn .arrow {
+                display: none;
+            }
+
+            .flags-dropdown {
+                position: absolute;
+                top: calc(100% + 10px);
+                left: 50%;
+                transform: translateX(-50%) translateY(-10px);
+            }
+
+            .flags-dropdown.active {
+                transform: translateX(-50%) translateY(0);
+            }
+
+            .features {
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+                gap: 15px;
+                width: 100%;
+            }
+
+            .feature-item {
+                flex-direction: column;
+                text-align: center;
+                gap: 6px;
+            }
+
+            .feature-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 1.1rem;
+            }
+
+            .feature-item span {
+                font-size: 0.65rem;
+            }
+
+            .footer {
+                flex-direction: column;
+                text-align: center;
+                padding: 20px;
+                gap: 12px;
+            }
+
+            .footer-links {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 15px;
+            }
         }
 
-        /* --- MENÚ HAMBURGUESA (Estilos base mantenidos) --- */
-        .hamburger-menu {
-            position: fixed; top: 25px; right: 25px; z-index: 1000;
-            background: none; border: none; cursor: pointer; padding: 10px;
-        }
-        .hamburger-icon { width: 24px; height: 14px; display: flex; flex-direction: column; justify-content: space-between; }
-        .hamburger-icon span { width: 100%; height: 2px; background: var(--text-color); border-radius: 2px; transition: all 0.3s ease; }
-        
-        .hamburger-menu.active .hamburger-icon span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
-        .hamburger-menu.active .hamburger-icon span:nth-child(2) { opacity: 0; }
-        .hamburger-menu.active .hamburger-icon span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+        /* RESPONSIVE - MÓVILES PEQUEÑOS */
+        @media (max-width: 400px) {
+            .actions-container {
+                flex-direction: column;
+                align-items: center;
+            }
 
-        .menu-overlay {
-            position: fixed; top: 0; right: -100%; width: 280px; height: 100%;
-            background: var(--menu-bg); z-index: 999;
-            transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            padding: 100px 30px; text-align: left;
-            box-shadow: -5px 0 25px rgba(0,0,0,0.1);
-        }
-        .menu-overlay.active { right: 0; }
-        
-        .menu-backdrop {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.3); backdrop-filter: blur(4px);
-            z-index: 998; opacity: 0; visibility: hidden; transition: all 0.4s ease;
-        }
-        .menu-backdrop.active { opacity: 1; visibility: visible; }
+            .main-btn {
+                width: 100%;
+                max-width: 250px;
+            }
 
-        .menu-items { list-style: none; }
-        .menu-items li { margin-bottom: 12px; }
-        .menu-items a {
-            display: flex; align-items: center; gap: 12px;
-            padding: 12px 20px; text-decoration: none; color: var(--text-color);
-            font-size: 1.1rem; font-weight: 400; border-radius: 12px;
-            transition: transform 0.2s, background 0.2s;
-        }
-        .menu-items a:hover { transform: translateX(5px); background: var(--menu-item-hover); }
-        .menu-items svg { width: 20px; height: 20px; opacity: 0.7; }
+            .features {
+                grid-template-columns: repeat(4, 1fr);
+                max-width: 100%;
+                gap: 10px;
+            }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+            .feature-item span {
+                font-size: 0.65rem;
+            }
+
+            .feature-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 1.1rem;
+            }
+        }
     </style>
 </head>
+
 <body>
-
-    <button class="hamburger-menu" id="hamburgerBtn" aria-label="Abrir menú">
-        <div class="hamburger-icon">
-            <span></span>
-            <span></span>
-            <span></span>
+    <nav class="navbar">
+        <img src="logo.svg" alt="Instante Trips" class="navbar-logo">
+        <div class="navbar-links">
+            <a href="/contacto">Contacto</a>
+            <a href="https://blog.instantetrips.com">Blog</a>
         </div>
-    </button>
-
-    <div class="menu-backdrop" id="menuBackdrop"></div>
-
-    <nav class="menu-overlay" id="menuOverlay">
-        <ul class="menu-items">
-            <li>
-                <a href="/">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                    </svg>
-                    Inicio
-                </a>
-            </li>
-            <li>
-                <a href="/contacto">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                    </svg>
-                    Contacto
-                </a>
-            </li>
-        </ul>
     </nav>
 
-    <main class="main-wrapper">
-        <img src="logo.svg" alt="Instantetrips" class="logo">
-        
-        <div class="actions-container">
-            <div class="action-group">
-                <button class="main-btn" id="destinosBtn">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    Destinos
-                </button>
-                
-                <div class="flags-dropdown" id="destinosList">
-                    <a href="destinos_argentina/" class="flag-item active" title="Argentina">🇦🇷</a>
-                    <span class="flag-item inactive" title="México">🇲🇽</span>
-                    <span class="flag-item inactive" title="España">🇪🇸</span>
+    <main class="hero">
+        <div class="hero-content">
+            <img src="logo.svg" alt="Instante Trips" class="hero-logo">
+            <h1 class="hero-tagline">Tu próxima aventura comienza aquí</h1>
+            <p class="hero-subtitle">Descubre destinos únicos, consejos de viaje y planifica tu próxima escapada con
+                nosotros.</p>
+
+            <div class="actions-container">
+                <div class="action-group">
+                    <button class="main-btn" id="destinosBtn">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Explorar Destinos
+                        <span class="arrow">→</span>
+                    </button>
+                    <div class="flags-dropdown" id="destinosList">
+                        <a href="destinos_argentina/" class="flag-item active" title="Argentina">🇦🇷</a>
+                        <span class="flag-item inactive" title="México">🇲🇽</span>
+                        <span class="flag-item inactive" title="España">🇪🇸</span>
+                    </div>
+                </div>
+
+                <div class="action-group">
+                    <a href="https://blog.instantetrips.com" class="main-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                        </svg>
+                        Leer el Blog
+                        <span class="arrow">→</span>
+                    </a>
                 </div>
             </div>
 
-            <div class="action-group">
-                <a href="https://blog.instantetrips.com" class="main-btn">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                    </svg>
-                    Blog Instante Trips
-                </a>
+            <div class="features">
+                <div class="feature-item">
+                    <div class="feature-icon">✈️</div>
+                    <span>Vuelos</span>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">🏨</div>
+                    <span>Hoteles</span>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">🎯</div>
+                    <span>Tours</span>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">📝</div>
+                    <span>Consejos</span>
+                </div>
+            </div>
+
+            <!-- Quiénes Somos -->
+            <div class="manifesto-quote">
+                <p>"Somos viajeros, no turistas. Te damos <strong>Trips & Tips</strong> para que explores sin ir a
+                    ciegas."</p>
+                <a href="https://blog.instantetrips.com/manifiesto" class="manifesto-link">Conoce nuestro manifiesto
+                    →</a>
             </div>
         </div>
     </main>
 
-    <footer class="slim-footer">
-        <div class="copyright">
-            &copy; 2026 Instante Trips
-        </div>
+    <footer class="footer">
+        <div class="copyright">&copy; 2026 Instante Trips. Todos los derechos reservados.</div>
         <div class="footer-links">
             <a href="/privacidad">Privacidad</a>
             <a href="/terminos">Términos</a>
-            <a href="https://www.instantetrips.com/editor/" target="_blank" class="editor-link">Zona Autores</a>
+            <a href="/contacto">Contacto</a>
+            <a href="https://www.instantetrips.com/editor/" class="editor-link">Zona Autores</a>
         </div>
     </footer>
 
     <script>
-        // Lógica del Menú Hamburguesa
-        const btn = document.getElementById('hamburgerBtn');
-        const overlay = document.getElementById('menuOverlay');
-        const backdrop = document.getElementById('menuBackdrop');
-
-        function toggleMenu() {
-            btn.classList.toggle('active');
-            overlay.classList.toggle('active');
-            backdrop.classList.toggle('active');
-        }
-
-        btn.addEventListener('click', toggleMenu);
-        backdrop.addEventListener('click', toggleMenu);
-
-        // Lógica del Botón Destinos (Toggle)
         const destinosBtn = document.getElementById('destinosBtn');
         const destinosList = document.getElementById('destinosList');
-        
-        // Cerrar destinos si se hace clic fuera
+
+        destinosBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            destinosList.classList.toggle('active');
+        });
+
         document.addEventListener('click', (e) => {
             if (!destinosBtn.contains(e.target) && !destinosList.contains(e.target)) {
                 destinosList.classList.remove('active');
             }
         });
 
-        destinosBtn.addEventListener('click', (e) => {
-            e.stopPropagation(); // Evita que el click cierre inmediatamente
-            destinosList.classList.toggle('active');
-        });
-
-        // Cerrar con Escape
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
-                if (overlay.classList.contains('active')) toggleMenu();
-                if (destinosList.classList.contains('active')) destinosList.classList.remove('active');
+                destinosList.classList.remove('active');
             }
         });
     </script>
 </body>
+
 </html>

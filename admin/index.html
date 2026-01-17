@@ -1,18 +1,20 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Panel Admin - Instantetrips</title>
-    
+
     <link rel="apple-touch-icon" href="logo-ios.png">
     <link rel="icon" type="image/png" href="logo-ios.png">
-    
+
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.js"></script>
+    <script
+        src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.js"></script>
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -31,39 +33,147 @@
 
     <style>
         /* ESTILOS BASE */
-        body { background-color: #f3f4f6; color: #111; font-family: 'Inter', sans-serif; transition: background 0.3s, color 0.3s; }
-        body.dark { background-color: #0f172a; color: #e2e8f0; }
-        
+        body {
+            background-color: #f3f4f6;
+            color: #111;
+            font-family: 'Inter', sans-serif;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        body.dark {
+            background-color: #0f172a;
+            color: #e2e8f0;
+        }
+
         /* UTILIDADES VISUALES */
-        .glass-card { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.4); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15); }
-        .dark .glass-card { background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+        }
 
-        .gradient-bg { background: linear-gradient(-45deg, #f3f4f6, #dbeafe, #fce7f3, #ffedd5, #f3f4f6); background-size: 400% 400%; animation: gradientShift 20s ease infinite; }
-        .dark .gradient-bg { background: linear-gradient(-45deg, #0f172a, #1e1b4b, #1e293b, #0f172a); background-size: 400% 400%; }
-        @keyframes gradientShift { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+        .dark .glass-card {
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
 
-        .btn-primary { background: linear-gradient(135deg, #171717 0%, #262626 100%); transition: all 0.3s; position: relative; overflow: hidden; }
-        .dark .btn-primary { background: linear-gradient(135deg, #f97316 0%, #ea580c 100%); }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .gradient-bg {
+            background: linear-gradient(-45deg, #f3f4f6, #dbeafe, #fce7f3, #ffedd5, #f3f4f6);
+            background-size: 400% 400%;
+            animation: gradientShift 20s ease infinite;
+        }
 
-        .accent-input { transition: all 0.2s ease; border: 1px solid transparent; }
-        .accent-input:focus { border-color: #f97316; box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.15); outline: none; }
+        .dark .gradient-bg {
+            background: linear-gradient(-45deg, #0f172a, #1e1b4b, #1e293b, #0f172a);
+            background-size: 400% 400%;
+        }
+
+        @keyframes gradientShift {
+
+            0%,
+            100% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #171717 0%, #262626 100%);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dark .btn-primary {
+            background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .accent-input {
+            transition: all 0.2s ease;
+            border: 1px solid transparent;
+        }
+
+        .accent-input:focus {
+            border-color: #f97316;
+            box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.15);
+            outline: none;
+        }
 
         /* MODALES */
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(8px); z-index: 50; display: none; place-items: center; }
-        .modal-overlay.open { display: grid; }
-        .modal-content { animation: modalSlideUp 0.35s cubic-bezier(0.34, 1.56, 0.64, 1); }
-        @keyframes modalSlideUp { from { opacity: 0; transform: translateY(30px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
-        
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+            z-index: 50;
+            display: none;
+            place-items: center;
+        }
+
+        .modal-overlay.open {
+            display: grid;
+        }
+
+        .modal-content {
+            animation: modalSlideUp 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes modalSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
         /* LOADER */
-        .loader { width: 48px; height: 48px; border: 5px solid #FFF; border-bottom-color: #f97316; border-radius: 50%; display: inline-block; box-sizing: border-box; animation: rotation 1s linear infinite; }
-        @keyframes rotation { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        
-        .hide-scroll::-webkit-scrollbar { display: none; }
+        .loader {
+            width: 48px;
+            height: 48px;
+            border: 5px solid #FFF;
+            border-bottom-color: #f97316;
+            border-radius: 50%;
+            display: inline-block;
+            box-sizing: border-box;
+            animation: rotation 1s linear infinite;
+        }
+
+        @keyframes rotation {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .hide-scroll::-webkit-scrollbar {
+            display: none;
+        }
 
         /* CLASES PARA EL GRID DASHBOARD */
-        .dash-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        .dash-card:hover { transform: translateY(-5px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); }
+        .dash-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .dash-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
     </style>
 </head>
 
@@ -75,35 +185,48 @@
                 <div class="w-24 h-24 mb-4 flex items-center justify-center">
                     <img src="admin.svg" alt="Admin Logo" class="w-full h-full object-contain drop-shadow-lg">
                 </div>
-                <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-orange-500 to-red-600">GOD MODE</h1>
+                <h1
+                    class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-orange-500 to-red-600">
+                    GOD MODE</h1>
                 <p class="text-xs text-gray-400 mt-1">Acceso Restringido - Solo SEO</p>
             </div>
             <form id="login-form" class="space-y-4">
-                <input type="email" id="email" placeholder="Email Admin" class="w-full p-4 bg-white/50 dark:bg-slate-800/50 rounded-xl accent-input border border-gray-200 dark:border-slate-700" required>
-                <input type="password" id="password" placeholder="Contraseña" class="w-full p-4 bg-white/50 dark:bg-slate-800/50 rounded-xl accent-input border border-gray-200 dark:border-slate-700" required>
-                <button type="submit" class="w-full btn-primary text-white font-bold py-4 rounded-xl">Acceder al Panel</button>
+                <input type="email" id="email" placeholder="Email Admin"
+                    class="w-full p-4 bg-white/50 dark:bg-slate-800/50 rounded-xl accent-input border border-gray-200 dark:border-slate-700"
+                    required>
+                <input type="password" id="password" placeholder="Contraseña"
+                    class="w-full p-4 bg-white/50 dark:bg-slate-800/50 rounded-xl accent-input border border-gray-200 dark:border-slate-700"
+                    required>
+                <button type="submit" class="w-full btn-primary text-white font-bold py-4 rounded-xl">Acceder al
+                    Panel</button>
             </form>
             <p id="login-error" class="text-red-500 text-sm mt-4 hidden"></p>
         </div>
     </div>
 
     <div id="dashboard-section" class="hidden flex-1 flex flex-col bg-gray-50 dark:bg-slate-900">
-        
-        <header class="h-16 bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 flex items-center justify-between px-6 sticky top-0 z-40 shadow-sm">
+
+        <header
+            class="h-16 bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 flex items-center justify-between px-6 sticky top-0 z-40 shadow-sm">
             <div class="flex items-center gap-3 cursor-pointer" onclick="switchTab('home')">
-                <div class="bg-red-500 text-white text-[10px] px-2 py-0.5 rounded font-bold uppercase tracking-wider">SEO</div>
+                <div class="bg-red-500 text-white text-[10px] px-2 py-0.5 rounded font-bold uppercase tracking-wider">
+                    SEO</div>
                 <h1 class="font-bold text-gray-700 dark:text-gray-200 text-sm md:text-base">Admin Panel</h1>
             </div>
             <div class="flex items-center gap-4">
-                <button onclick="switchTab('home')" class="p-2 text-gray-500 hover:text-orange-500 transition-colors" title="Inicio"><ion-icon name="grid-outline" class="text-xl"></ion-icon></button>
+                <button onclick="switchTab('home')" class="p-2 text-gray-500 hover:text-orange-500 transition-colors"
+                    title="Inicio"><ion-icon name="grid-outline" class="text-xl"></ion-icon></button>
                 <span id="admin-user-display" class="text-xs text-gray-400 hidden md:block"></span>
-                <button onclick="toggleDarkMode()" class="p-2 rounded hover:bg-gray-100 dark:hover:bg-slate-700 text-xl"><ion-icon name="moon-outline"></ion-icon></button>
-                <button onclick="logout()" class="text-red-500 hover:text-red-700 text-xl"><ion-icon name="log-out-outline"></ion-icon></button>
+                <button onclick="toggleDarkMode()"
+                    class="p-2 rounded hover:bg-gray-100 dark:hover:bg-slate-700 text-xl"><ion-icon
+                        name="moon-outline"></ion-icon></button>
+                <button onclick="logout()" class="text-red-500 hover:text-red-700 text-xl"><ion-icon
+                        name="log-out-outline"></ion-icon></button>
             </div>
         </header>
 
         <main class="flex-1 p-6 max-w-7xl mx-auto w-full overflow-y-auto">
-            
+
             <div id="view-home" class="animate-fade-in">
                 <div class="mb-8">
                     <h2 class="text-2xl font-bold text-gray-800 dark:text-white">Bienvenido, SEO</h2>
@@ -111,18 +234,21 @@
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    
+
                     <div class="space-y-4">
                         <h3 class="text-xs font-bold uppercase text-gray-400 tracking-wider flex items-center gap-2">
                             <ion-icon name="document-text-outline"></ion-icon> Gestión de Contenido
                         </h3>
-                        
-                        <div onclick="switchTab('posts')" class="dash-card cursor-pointer bg-white dark:bg-slate-800 p-6 rounded-2xl border border-gray-200 dark:border-slate-700 relative overflow-hidden group">
-                            <div class="absolute right-0 top-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+
+                        <div onclick="switchTab('posts')"
+                            class="dash-card cursor-pointer bg-white dark:bg-slate-800 p-6 rounded-2xl border border-gray-200 dark:border-slate-700 relative overflow-hidden group">
+                            <div
+                                class="absolute right-0 top-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
                                 <ion-icon name="newspaper-outline" class="text-8xl text-orange-500"></ion-icon>
                             </div>
                             <div class="relative z-10">
-                                <div class="w-12 h-12 rounded-xl bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center text-orange-600 mb-4">
+                                <div
+                                    class="w-12 h-12 rounded-xl bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center text-orange-600 mb-4">
                                     <ion-icon name="library-outline" class="text-2xl"></ion-icon>
                                 </div>
                                 <h4 class="text-lg font-bold mb-1">Artículos</h4>
@@ -130,12 +256,15 @@
                             </div>
                         </div>
 
-                        <div onclick="switchTab('authors')" class="dash-card cursor-pointer bg-white dark:bg-slate-800 p-6 rounded-2xl border border-gray-200 dark:border-slate-700 relative overflow-hidden group">
-                            <div class="absolute right-0 top-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                        <div onclick="switchTab('authors')"
+                            class="dash-card cursor-pointer bg-white dark:bg-slate-800 p-6 rounded-2xl border border-gray-200 dark:border-slate-700 relative overflow-hidden group">
+                            <div
+                                class="absolute right-0 top-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
                                 <ion-icon name="people-outline" class="text-8xl text-blue-500"></ion-icon>
                             </div>
                             <div class="relative z-10">
-                                <div class="w-12 h-12 rounded-xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 mb-4">
+                                <div
+                                    class="w-12 h-12 rounded-xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 mb-4">
                                     <ion-icon name="person-circle-outline" class="text-2xl"></ion-icon>
                                 </div>
                                 <h4 class="text-lg font-bold mb-1">Autores</h4>
@@ -148,18 +277,24 @@
                         <h3 class="text-xs font-bold uppercase text-gray-400 tracking-wider flex items-center gap-2">
                             <ion-icon name="airplane-outline"></ion-icon> Destinos
                         </h3>
-                        
-                        <div onclick="switchTab('destinations')" class="dash-card cursor-pointer bg-white dark:bg-slate-800 p-6 rounded-2xl border border-gray-200 dark:border-slate-700 relative overflow-hidden group h-full">
-                            <div class="absolute right-0 top-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+
+                        <div onclick="switchTab('destinations')"
+                            class="dash-card cursor-pointer bg-white dark:bg-slate-800 p-6 rounded-2xl border border-gray-200 dark:border-slate-700 relative overflow-hidden group h-full">
+                            <div
+                                class="absolute right-0 top-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
                                 <ion-icon name="map-outline" class="text-8xl text-green-500"></ion-icon>
                             </div>
                             <div class="relative z-10">
-                                <div class="w-12 h-12 rounded-xl bg-green-100 dark:bg-green-900/30 flex items-center justify-center text-green-600 mb-4">
+                                <div
+                                    class="w-12 h-12 rounded-xl bg-green-100 dark:bg-green-900/30 flex items-center justify-center text-green-600 mb-4">
                                     <ion-icon name="earth-outline" class="text-2xl"></ion-icon>
                                 </div>
-                                <h4 class="text-lg font-bold mb-1 flex items-center gap-2">Países y Ciudades <span class="text-[10px] bg-green-100 text-green-700 px-2 py-0.5 rounded-full">BETA</span></h4>
-                                <p class="text-xs text-gray-500 mb-4">Arquitectura de silos. Organiza el contenido por geografía.</p>
-                                
+                                <h4 class="text-lg font-bold mb-1 flex items-center gap-2">Países y Ciudades <span
+                                        class="text-[10px] bg-green-100 text-green-700 px-2 py-0.5 rounded-full">BETA</span>
+                                </h4>
+                                <p class="text-xs text-gray-500 mb-4">Arquitectura de silos. Organiza el contenido por
+                                    geografía.</p>
+
                                 <div class="space-y-2 mt-4 opacity-60 pointer-events-none">
                                     <div class="h-2 w-3/4 bg-gray-200 dark:bg-slate-700 rounded-full"></div>
                                     <div class="h-2 w-1/2 bg-gray-200 dark:bg-slate-700 rounded-full"></div>
@@ -172,43 +307,57 @@
                         <h3 class="text-xs font-bold uppercase text-gray-400 tracking-wider flex items-center gap-2">
                             <ion-icon name="stats-chart-outline"></ion-icon> Data & Ads
                         </h3>
-                        
-                        <div class="bg-gray-100 dark:bg-slate-800/50 p-6 rounded-2xl border border-dashed border-gray-300 dark:border-slate-700 relative">
-                            <div class="w-10 h-10 rounded-lg bg-gray-200 dark:bg-slate-700 flex items-center justify-center text-gray-400 mb-3">
-                                <ion-icon name="key-outline" class="text-xl"></ion-icon>
+
+                        <div onclick="switchTab('affiliates')"
+                            class="dash-card cursor-pointer bg-white dark:bg-slate-800 p-6 rounded-2xl border border-gray-200 dark:border-slate-700 relative overflow-hidden group">
+                            <div
+                                class="absolute right-0 top-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                                <ion-icon name="key-outline" class="text-8xl text-purple-500"></ion-icon>
                             </div>
-                            <h4 class="font-bold text-gray-500 dark:text-gray-400">APIs & Keys</h4>
-                            <p class="text-[10px] text-gray-400 mt-1">Configuración de Civitatis, Adsense y Analytics.</p>
-                            <span class="absolute top-4 right-4 text-[9px] font-bold text-gray-400 border border-gray-300 px-2 rounded">PRÓXIMAMENTE</span>
+                            <div class="relative z-10">
+                                <div
+                                    class="w-12 h-12 rounded-xl bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center text-purple-600 mb-4">
+                                    <ion-icon name="key-outline" class="text-2xl"></ion-icon>
+                                </div>
+                                <h4 class="text-lg font-bold mb-1">APIs & Affiliates</h4>
+                                <p class="text-xs text-gray-500">Configuración de Booking, Skyscanner, Civitatis y
+                                    Adsense.</p>
+                            </div>
                         </div>
 
-                        <div class="bg-gray-100 dark:bg-slate-800/50 p-6 rounded-2xl border border-dashed border-gray-300 dark:border-slate-700 relative">
-                            <div class="w-10 h-10 rounded-lg bg-gray-200 dark:bg-slate-700 flex items-center justify-center text-gray-400 mb-3">
+                        <div
+                            class="bg-gray-100 dark:bg-slate-800/50 p-6 rounded-2xl border border-dashed border-gray-300 dark:border-slate-700 relative">
+                            <div
+                                class="w-10 h-10 rounded-lg bg-gray-200 dark:bg-slate-700 flex items-center justify-center text-gray-400 mb-3">
                                 <ion-icon name="images-outline" class="text-xl"></ion-icon>
                             </div>
                             <h4 class="font-bold text-gray-500 dark:text-gray-400">Media Manager</h4>
                             <p class="text-[10px] text-gray-400 mt-1">Limpieza de imágenes huérfanas.</p>
-                             <span class="absolute top-4 right-4 text-[9px] font-bold text-gray-400 border border-gray-300 px-2 rounded">PRÓXIMAMENTE</span>
+                            <span
+                                class="absolute top-4 right-4 text-[9px] font-bold text-gray-400 border border-gray-300 px-2 rounded">PRÓXIMAMENTE</span>
                         </div>
                     </div>
 
                 </div>
             </div>
-            
+
             <div id="view-posts" class="hidden space-y-6">
                 <div class="flex items-center gap-2 mb-4">
-                    <button onclick="switchTab('home')" class="text-gray-400 hover:text-orange-500"><ion-icon name="arrow-back-outline"></ion-icon></button>
+                    <button onclick="switchTab('home')" class="text-gray-400 hover:text-orange-500"><ion-icon
+                            name="arrow-back-outline"></ion-icon></button>
                     <h2 class="text-xl font-bold">Gestión de Artículos</h2>
                 </div>
-                
+
                 <div class="flex flex-col md:flex-row justify-between items-center gap-4">
                     <div class="flex-1 w-full md:max-w-md relative group">
-                        <ion-icon name="search-outline" class="absolute left-3 top-3 text-gray-400 group-focus-within:text-orange-500"></ion-icon>
-                        <input type="text" id="search-input" placeholder="Buscar título, autor..." 
+                        <ion-icon name="search-outline"
+                            class="absolute left-3 top-3 text-gray-400 group-focus-within:text-orange-500"></ion-icon>
+                        <input type="text" id="search-input" placeholder="Buscar título, autor..."
                             class="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 focus:ring-2 focus:ring-orange-500 outline-none transition-all shadow-sm accent-input"
                             oninput="filterPosts(this.value)">
                     </div>
-                    <button onclick="loadPosts()" class="text-sm text-blue-500 hover:underline flex items-center gap-1 whitespace-nowrap">
+                    <button onclick="loadPosts()"
+                        class="text-sm text-blue-500 hover:underline flex items-center gap-1 whitespace-nowrap">
                         <ion-icon name="refresh-outline"></ion-icon> <span class="hidden md:inline">Recargar</span>
                     </button>
                 </div>
@@ -224,10 +373,12 @@
             <div id="view-authors" class="hidden space-y-6">
                 <div class="flex items-center justify-between mb-4">
                     <div class="flex items-center gap-2">
-                        <button onclick="switchTab('home')" class="text-gray-400 hover:text-orange-500"><ion-icon name="arrow-back-outline"></ion-icon></button>
+                        <button onclick="switchTab('home')" class="text-gray-400 hover:text-orange-500"><ion-icon
+                                name="arrow-back-outline"></ion-icon></button>
                         <h2 class="text-xl font-bold">Gestión de Autores</h2>
                     </div>
-                    <button onclick="openAuthorModal()" class="btn-primary text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2">
+                    <button onclick="openAuthorModal()"
+                        class="btn-primary text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2">
                         <ion-icon name="person-add-outline"></ion-icon> Crear
                     </button>
                 </div>
@@ -238,34 +389,45 @@
             <div id="view-destinations" class="hidden space-y-6">
                 <div class="flex justify-between items-center border-b pb-4 dark:border-slate-700 mb-6">
                     <div class="flex items-center gap-2">
-                        <button onclick="switchTab('home')" class="text-gray-400 hover:text-orange-500"><ion-icon name="arrow-back-outline"></ion-icon></button>
+                        <button onclick="switchTab('home')" class="text-gray-400 hover:text-orange-500"><ion-icon
+                                name="arrow-back-outline"></ion-icon></button>
                         <div>
-                            <h2 class="text-xl font-bold flex items-center gap-2">Gestor de Destinos <span class="text-[10px] bg-orange-100 text-orange-600 px-2 rounded-full border border-orange-200">BETA</span></h2>
+                            <h2 class="text-xl font-bold flex items-center gap-2">Gestor de Destinos <span
+                                    class="text-[10px] bg-orange-100 text-orange-600 px-2 rounded-full border border-orange-200">BETA</span>
+                            </h2>
                             <p class="text-xs text-gray-400 mt-1">Administra Países y Ciudades</p>
                         </div>
                     </div>
-                    <button onclick="alert('Próximamente: Crear Destino')" class="bg-gray-200 dark:bg-slate-700 text-gray-500 px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 hover:bg-gray-300 dark:hover:bg-slate-600 transition-colors">
+                    <button onclick="alert('Próximamente: Crear Destino')"
+                        class="bg-gray-200 dark:bg-slate-700 text-gray-500 px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 hover:bg-gray-300 dark:hover:bg-slate-600 transition-colors">
                         <ion-icon name="add-circle-outline" class="text-lg"></ion-icon> Nuevo Destino
                     </button>
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <div class="bg-white dark:bg-slate-800 rounded-2xl border border-gray-200 dark:border-slate-700 p-6 shadow-sm relative overflow-hidden group">
-                        <div class="absolute top-0 right-0 p-4 opacity-50"><ion-icon name="map-outline" class="text-6xl text-gray-100 dark:text-slate-700"></ion-icon></div>
+                    <div
+                        class="bg-white dark:bg-slate-800 rounded-2xl border border-gray-200 dark:border-slate-700 p-6 shadow-sm relative overflow-hidden group">
+                        <div class="absolute top-0 right-0 p-4 opacity-50"><ion-icon name="map-outline"
+                                class="text-6xl text-gray-100 dark:text-slate-700"></ion-icon></div>
                         <div class="relative z-10">
                             <h3 class="text-2xl font-bold mb-1">Japón</h3>
                             <span class="text-xs text-gray-400 uppercase tracking-widest">Asia</span>
                             <div class="mt-6 space-y-2">
                                 <p class="text-xs font-bold text-gray-500 mb-2">CIUDADES REGISTRADAS</p>
-                                <div class="flex justify-between items-center bg-gray-50 dark:bg-slate-700/50 p-3 rounded-lg border border-transparent hover:border-orange-200 transition-colors">
+                                <div
+                                    class="flex justify-between items-center bg-gray-50 dark:bg-slate-700/50 p-3 rounded-lg border border-transparent hover:border-orange-200 transition-colors">
                                     <span class="text-sm font-medium">Tokio</span>
-                                    <button class="text-gray-400 hover:text-red-500"><ion-icon name="trash-outline"></ion-icon></button>
+                                    <button class="text-gray-400 hover:text-red-500"><ion-icon
+                                            name="trash-outline"></ion-icon></button>
                                 </div>
-                                <div class="flex justify-between items-center bg-gray-50 dark:bg-slate-700/50 p-3 rounded-lg border border-transparent hover:border-orange-200 transition-colors">
+                                <div
+                                    class="flex justify-between items-center bg-gray-50 dark:bg-slate-700/50 p-3 rounded-lg border border-transparent hover:border-orange-200 transition-colors">
                                     <span class="text-sm font-medium">Kyoto</span>
-                                    <button class="text-gray-400 hover:text-red-500"><ion-icon name="trash-outline"></ion-icon></button>
+                                    <button class="text-gray-400 hover:text-red-500"><ion-icon
+                                            name="trash-outline"></ion-icon></button>
                                 </div>
-                                <button class="w-full py-2 border border-dashed border-gray-300 dark:border-slate-600 rounded-lg text-xs text-gray-400 hover:text-orange-500 hover:border-orange-500 transition-colors flex justify-center gap-1 items-center mt-2">
+                                <button
+                                    class="w-full py-2 border border-dashed border-gray-300 dark:border-slate-600 rounded-lg text-xs text-gray-400 hover:text-orange-500 hover:border-orange-500 transition-colors flex justify-center gap-1 items-center mt-2">
                                     <ion-icon name="add-outline"></ion-icon> Agregar Ciudad
                                 </button>
                             </div>
@@ -274,31 +436,212 @@
                 </div>
             </div>
 
+            <div id="view-affiliates" class="hidden space-y-6">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center gap-2">
+                        <button onclick="switchTab('home')" class="text-gray-400 hover:text-orange-500"><ion-icon
+                                name="arrow-back-outline"></ion-icon></button>
+                        <div>
+                            <h2 class="text-xl font-bold">APIs & Affiliates</h2>
+                            <p class="text-xs text-gray-400 mt-1">Configuración centralizada para todos los sitios</p>
+                        </div>
+                    </div>
+                    <button onclick="saveAffiliates()"
+                        class="btn-primary text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2">
+                        <ion-icon name="save-outline"></ion-icon> Guardar
+                    </button>
+                </div>
+
+                <div id="affiliates-loader" class="text-center py-20 hidden"><span class="loader"></span></div>
+
+                <div id="affiliates-content" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Booking -->
+                    <div
+                        class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-gray-200 dark:border-slate-700 shadow-sm">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center gap-3">
+                                <div
+                                    class="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
+                                    <span class="text-xl">🏨</span>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-sm">Booking.com</h3>
+                                    <p class="text-[10px] text-gray-400">Hoteles y alojamientos</p>
+                                </div>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="booking-enabled" class="sr-only peer">
+                                <div
+                                    class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 dark:peer-focus:ring-orange-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-orange-500">
+                                </div>
+                            </label>
+                        </div>
+                        <div class="space-y-3">
+                            <div>
+                                <label class="text-[10px] text-gray-400 uppercase font-bold">Affiliate ID</label>
+                                <input type="text" id="booking-affiliateId" placeholder="ej: 1234567"
+                                    class="w-full p-2.5 rounded-lg bg-gray-50 dark:bg-slate-700 border dark:border-slate-600 accent-input text-sm">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Skyscanner -->
+                    <div
+                        class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-gray-200 dark:border-slate-700 shadow-sm">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center gap-3">
+                                <div
+                                    class="w-10 h-10 rounded-lg bg-cyan-100 dark:bg-cyan-900/30 flex items-center justify-center">
+                                    <span class="text-xl">✈️</span>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-sm">Skyscanner</h3>
+                                    <p class="text-[10px] text-gray-400">Vuelos y comparador</p>
+                                </div>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="skyscanner-enabled" class="sr-only peer">
+                                <div
+                                    class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 dark:peer-focus:ring-orange-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-orange-500">
+                                </div>
+                            </label>
+                        </div>
+                        <div class="space-y-3">
+                            <div>
+                                <label class="text-[10px] text-gray-400 uppercase font-bold">Affiliate Tag</label>
+                                <input type="text" id="skyscanner-affiliateTag" placeholder="ej: instante_trips"
+                                    class="w-full p-2.5 rounded-lg bg-gray-50 dark:bg-slate-700 border dark:border-slate-600 accent-input text-sm">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Civitatis -->
+                    <div
+                        class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-gray-200 dark:border-slate-700 shadow-sm">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center gap-3">
+                                <div
+                                    class="w-10 h-10 rounded-lg bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center">
+                                    <span class="text-xl">🎫</span>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-sm">Civitatis</h3>
+                                    <p class="text-[10px] text-gray-400">Tours y actividades</p>
+                                </div>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="civitatis-enabled" class="sr-only peer">
+                                <div
+                                    class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 dark:peer-focus:ring-orange-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-orange-500">
+                                </div>
+                            </label>
+                        </div>
+                        <div class="space-y-3">
+                            <div>
+                                <label class="text-[10px] text-gray-400 uppercase font-bold">Affiliate ID</label>
+                                <input type="text" id="civitatis-affiliateId" placeholder="ej: 12345"
+                                    class="w-full p-2.5 rounded-lg bg-gray-50 dark:bg-slate-700 border dark:border-slate-600 accent-input text-sm">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Adsense -->
+                    <div
+                        class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-gray-200 dark:border-slate-700 shadow-sm">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center gap-3">
+                                <div
+                                    class="w-10 h-10 rounded-lg bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
+                                    <span class="text-xl">💰</span>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-sm">Google Adsense</h3>
+                                    <p class="text-[10px] text-gray-400">Monetización de anuncios</p>
+                                </div>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="adsense-enabled" class="sr-only peer">
+                                <div
+                                    class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 dark:peer-focus:ring-orange-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-orange-500">
+                                </div>
+                            </label>
+                        </div>
+                        <div class="space-y-3">
+                            <div>
+                                <label class="text-[10px] text-gray-400 uppercase font-bold">Publisher ID</label>
+                                <input type="text" id="adsense-publisherId" placeholder="ej: ca-pub-XXXXXXXX"
+                                    class="w-full p-2.5 rounded-lg bg-gray-50 dark:bg-slate-700 border dark:border-slate-600 accent-input text-sm">
+                            </div>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <label class="text-[10px] text-gray-400 uppercase font-bold">Slot Sidebar</label>
+                                    <input type="text" id="adsense-slot-sidebar" placeholder="ID slot"
+                                        class="w-full p-2.5 rounded-lg bg-gray-50 dark:bg-slate-700 border dark:border-slate-600 accent-input text-sm">
+                                </div>
+                                <div>
+                                    <label class="text-[10px] text-gray-400 uppercase font-bold">Slot Inline</label>
+                                    <input type="text" id="adsense-slot-inline" placeholder="ID slot"
+                                        class="w-full p-2.5 rounded-lg bg-gray-50 dark:bg-slate-700 border dark:border-slate-600 accent-input text-sm">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div
+                    class="bg-gray-50 dark:bg-slate-800/50 p-4 rounded-xl border border-dashed border-gray-300 dark:border-slate-700 mt-6">
+                    <p class="text-xs text-gray-500 flex items-center gap-2">
+                        <ion-icon name="information-circle-outline" class="text-lg"></ion-icon>
+                        Los cambios se aplicarán a todos los sitios (blog, destinos_argentina, etc.) después de rebuild.
+                    </p>
+                </div>
+            </div>
+
         </main>
     </div>
 
     <div id="author-modal" class="modal-overlay">
         <div class="modal-content bg-white dark:bg-slate-900 w-full max-w-lg rounded-2xl shadow-2xl p-6 relative m-4">
-            <button onclick="closeAuthorModal()" class="absolute top-4 right-4 text-2xl text-gray-400 hover:text-red-500"><ion-icon name="close-outline"></ion-icon></button>
+            <button onclick="closeAuthorModal()"
+                class="absolute top-4 right-4 text-2xl text-gray-400 hover:text-red-500"><ion-icon
+                    name="close-outline"></ion-icon></button>
             <h3 class="text-xl font-bold mb-6 text-orange-500" id="modal-title">Gestión de Autor</h3>
             <form id="author-form" class="space-y-4">
                 <input type="hidden" id="auth-slug-orig">
                 <div class="grid grid-cols-2 gap-4">
-                    <div><label class="text-[10px] text-gray-400 uppercase font-bold">Nombre</label><input type="text" id="auth-name" class="w-full p-2.5 rounded-lg bg-gray-50 dark:bg-slate-800 border dark:border-slate-700 accent-input" required oninput="generateSlug()"></div>
-                    <div><label class="text-[10px] text-gray-400 uppercase font-bold">Slug</label><input type="text" id="auth-slug" class="w-full p-2.5 rounded-lg bg-gray-50 dark:bg-slate-800 border dark:border-slate-700 accent-input text-gray-500" readonly></div>
+                    <div><label class="text-[10px] text-gray-400 uppercase font-bold">Nombre</label><input type="text"
+                            id="auth-name"
+                            class="w-full p-2.5 rounded-lg bg-gray-50 dark:bg-slate-800 border dark:border-slate-700 accent-input"
+                            required oninput="generateSlug()"></div>
+                    <div><label class="text-[10px] text-gray-400 uppercase font-bold">Slug</label><input type="text"
+                            id="auth-slug"
+                            class="w-full p-2.5 rounded-lg bg-gray-50 dark:bg-slate-800 border dark:border-slate-700 accent-input text-gray-500"
+                            readonly></div>
                 </div>
-                <div><label class="text-[10px] text-gray-400 uppercase font-bold">Rol</label><input type="text" id="auth-role" class="w-full p-2.5 rounded-lg bg-gray-50 dark:bg-slate-800 border dark:border-slate-700 accent-input" required></div>
-                <div><label class="text-[10px] text-gray-400 uppercase font-bold">Email</label><input type="email" id="auth-email" class="w-full p-2.5 rounded-lg bg-gray-50 dark:bg-slate-800 border dark:border-slate-700 accent-input"></div>
-                <div><label class="text-[10px] text-gray-400 uppercase font-bold">Bio</label><textarea id="auth-bio" rows="3" class="w-full p-2.5 rounded-lg bg-gray-50 dark:bg-slate-800 border dark:border-slate-700 accent-input resize-none"></textarea></div>
+                <div><label class="text-[10px] text-gray-400 uppercase font-bold">Rol</label><input type="text"
+                        id="auth-role"
+                        class="w-full p-2.5 rounded-lg bg-gray-50 dark:bg-slate-800 border dark:border-slate-700 accent-input"
+                        required></div>
+                <div><label class="text-[10px] text-gray-400 uppercase font-bold">Email</label><input type="email"
+                        id="auth-email"
+                        class="w-full p-2.5 rounded-lg bg-gray-50 dark:bg-slate-800 border dark:border-slate-700 accent-input">
+                </div>
+                <div><label class="text-[10px] text-gray-400 uppercase font-bold">Bio</label><textarea id="auth-bio"
+                        rows="3"
+                        class="w-full p-2.5 rounded-lg bg-gray-50 dark:bg-slate-800 border dark:border-slate-700 accent-input resize-none"></textarea>
+                </div>
                 <div>
                     <label class="text-[10px] text-gray-400 uppercase font-bold">Foto</label>
                     <div class="flex items-center gap-4 mt-1">
                         <img id="auth-preview" src="" class="w-12 h-12 rounded-full object-cover bg-gray-200">
-                        <input type="file" id="auth-file" class="text-xs text-gray-500" accept="image/*" onchange="previewImage(this)">
+                        <input type="file" id="auth-file" class="text-xs text-gray-500" accept="image/*"
+                            onchange="previewImage(this)">
                         <input type="hidden" id="auth-current-img">
                     </div>
                 </div>
-                <div class="pt-2"><button type="submit" class="w-full btn-primary text-white py-3 rounded-xl font-bold shadow-lg text-sm">Guardar Autor</button></div>
+                <div class="pt-2"><button type="submit"
+                        class="w-full btn-primary text-white py-3 rounded-xl font-bold shadow-lg text-sm">Guardar
+                        Autor</button></div>
             </form>
         </div>
     </div>
@@ -308,10 +651,10 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const ADMIN_EMAIL = "danielaranadj@gmail.com";
-        
+
         const firebaseConfig = {
             apiKey: "AIzaSyBdsu65Voj8en9u_7eL5q0YRFuCC7fUYWA",
             authDomain: "instantetrips-editor.firebaseapp.com",
@@ -326,19 +669,20 @@
         const db = getFirestore(app);
 
         let githubConfig = null;
-        let authorsData = {}; 
-        let authorsSha = null; 
+        let authorsData = {};
+        let authorsSha = null;
         let cachedPosts = [];
+        let affiliatesLoaded = false;
 
         // AUTH
         document.getElementById('login-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
-            if(email.toLowerCase() !== ADMIN_EMAIL.toLowerCase()) {
-                 showError("ACCESO DENEGADO: No tienes permisos."); return;
+            if (email.toLowerCase() !== ADMIN_EMAIL.toLowerCase()) {
+                showError("ACCESO DENEGADO: No tienes permisos."); return;
             }
-            try { await signInWithEmailAndPassword(auth, email, password); } 
+            try { await signInWithEmailAndPassword(auth, email, password); }
             catch (error) { showError("Credenciales incorrectas."); }
         });
 
@@ -363,7 +707,7 @@
             } else {
                 document.getElementById('login-section').classList.remove('hidden');
                 document.getElementById('dashboard-section').classList.add('hidden');
-                if(user) signOut(auth);
+                if (user) signOut(auth);
             }
         });
 
@@ -378,17 +722,18 @@
         // --- NAVIGATION LOGIC (MODIFICADO PARA EL GRID) ---
         window.switchTab = (tab) => {
             // Ocultar todas las vistas
-            ['home', 'posts', 'authors', 'destinations'].forEach(t => {
+            ['home', 'posts', 'authors', 'destinations', 'affiliates'].forEach(t => {
                 const view = document.getElementById(`view-${t}`);
-                if(view) view.classList.add('hidden');
+                if (view) view.classList.add('hidden');
             });
 
             // Mostrar la seleccionada
             document.getElementById(`view-${tab}`).classList.remove('hidden');
 
             // Lógica de carga diferida
-            if(tab === 'posts' && cachedPosts.length === 0) loadPosts();
-            if(tab === 'authors' && Object.keys(authorsData).length === 0) fetchAuthors();
+            if (tab === 'posts' && cachedPosts.length === 0) loadPosts();
+            if (tab === 'authors' && Object.keys(authorsData).length === 0) fetchAuthors();
+            if (tab === 'affiliates' && !affiliatesLoaded) loadAffiliates();
         };
 
         // --- POSTS ---
@@ -396,7 +741,7 @@
             document.getElementById('posts-loader').classList.remove('hidden');
             document.getElementById('posts-grid').innerHTML = '';
             document.getElementById('no-results').classList.add('hidden');
-            
+
             try {
                 const files = await ghFetch(`/contents/${githubConfig.postsPath}`);
                 const mdFiles = files.filter(f => f.name.endsWith('.md'));
@@ -413,7 +758,7 @@
                 cachedPosts = await Promise.all(promises);
                 cachedPosts.sort((a, b) => new Date(b.date) - new Date(a.date));
                 renderGrid(cachedPosts);
-            } catch (e) { showToast("Error cargando posts", "error"); } 
+            } catch (e) { showToast("Error cargando posts", "error"); }
             finally { document.getElementById('posts-loader').classList.add('hidden'); }
         };
 
@@ -447,8 +792,8 @@
         };
 
         window.deletePost = async (path, sha) => {
-            if(!confirm("¿Eliminar permanentemente?")) return;
-            try { await ghFetch(`/contents/${path}`, 'DELETE', { message: `[ADMIN] Del ${path}`, sha, branch: githubConfig.branch }); showToast("Post eliminado"); loadPosts(); } 
+            if (!confirm("¿Eliminar permanentemente?")) return;
+            try { await ghFetch(`/contents/${path}`, 'DELETE', { message: `[ADMIN] Del ${path}`, sha, branch: githubConfig.branch }); showToast("Post eliminado"); loadPosts(); }
             catch (e) { showToast("Error: " + e.message, "error"); }
         };
 
@@ -464,7 +809,7 @@
                     authorsData = new Function(`return ${jsonMatch[1]}`)();
                     renderAuthors();
                 }
-            } catch (e) { showToast("Error autores", "error"); } 
+            } catch (e) { showToast("Error autores", "error"); }
             finally { document.getElementById('authors-loader').classList.add('hidden'); }
         }
 
@@ -498,7 +843,7 @@
                 if (fileInput.files[0]) {
                     const f = fileInput.files[0];
                     const comp = await imageCompression(f, { maxSizeMB: 0.5, maxWidthOrHeight: 800 });
-                    const r = await new Promise(res => { const rd = new FileReader(); rd.onload=()=>res(rd.result); rd.readAsDataURL(comp); });
+                    const r = await new Promise(res => { const rd = new FileReader(); rd.onload = () => res(rd.result); rd.readAsDataURL(comp); });
                     const fname = `${slug}-${Date.now()}.jpg`;
                     await ghFetch(`/contents/public/assets/autores/${fname}`, 'PUT', { message: 'Up img', content: r.split(',')[1], branch: githubConfig.branch });
                     imageUrl = `/assets/autores/${fname}`;
@@ -522,29 +867,118 @@
         });
 
         window.deleteAuthor = async (slug) => {
-            if(!confirm("¿Borrar autor y su foto?")) return;
+            if (!confirm("¿Borrar autor y su foto?")) return;
             try {
                 const img = authorsData[slug].image;
-                if(img.startsWith('/assets/')) {
-                   try { const iData = await ghFetch(`/contents/public${img}`); await ghFetch(`/contents/public${img}`, 'DELETE', { message: 'del img', sha: iData.sha, branch: githubConfig.branch }); } catch(e){}
+                if (img.startsWith('/assets/')) {
+                    try { const iData = await ghFetch(`/contents/public${img}`); await ghFetch(`/contents/public${img}`, 'DELETE', { message: 'del img', sha: iData.sha, branch: githubConfig.branch }); } catch (e) { }
                 }
                 delete authorsData[slug];
-                 const ts = `export type Author = {\n  slug: string;\n  name: string;\n  role: string;\n  bio: string;\n  image: string;\n  email?: string;\n};\n\nexport const AUTHORS: Record<string, Author> = {\n${Object.values(authorsData).map(a => `  '${a.slug}': {\n    slug: '${a.slug}',\n    name: '${a.name}',\n    role: '${a.role}',\n    bio: '${a.bio.replace(/'/g, "\\'")}',\n    image: '${a.image}',\n    ${a.email ? `email: '${a.email}',` : ''}\n  },`).join('\n')}\n};\n\nexport const DEFAULT_AUTHOR = AUTHORS['daniel-arana'] || Object.values(AUTHORS)[0];`;
-                
+                const ts = `export type Author = {\n  slug: string;\n  name: string;\n  role: string;\n  bio: string;\n  image: string;\n  email?: string;\n};\n\nexport const AUTHORS: Record<string, Author> = {\n${Object.values(authorsData).map(a => `  '${a.slug}': {\n    slug: '${a.slug}',\n    name: '${a.name}',\n    role: '${a.role}',\n    bio: '${a.bio.replace(/'/g, "\\'")}',\n    image: '${a.image}',\n    ${a.email ? `email: '${a.email}',` : ''}\n  },`).join('\n')}\n};\n\nexport const DEFAULT_AUTHOR = AUTHORS['daniel-arana'] || Object.values(AUTHORS)[0];`;
+
                 const res = await ghFetch(`/contents/src/data/authors.ts`, 'PUT', { message: `Del auth ${slug}`, content: btoa(unescape(encodeURIComponent(ts))), sha: authorsSha, branch: githubConfig.branch });
                 authorsSha = res.content.sha;
                 fetchAuthors(); showToast("Autor eliminado");
             } catch (e) { showToast("Error: " + e.message, "error"); }
         };
 
+        // --- AFFILIATES ---
+        async function loadAffiliates() {
+            document.getElementById('affiliates-loader').classList.remove('hidden');
+            document.getElementById('affiliates-content').classList.add('opacity-50');
+            try {
+                const docSnap = await getDoc(doc(db, "config", "affiliates"));
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+
+                    // Booking
+                    if (data.booking) {
+                        document.getElementById('booking-enabled').checked = data.booking.enabled || false;
+                        document.getElementById('booking-affiliateId').value = data.booking.affiliateId || '';
+                    }
+
+                    // Skyscanner
+                    if (data.skyscanner) {
+                        document.getElementById('skyscanner-enabled').checked = data.skyscanner.enabled || false;
+                        document.getElementById('skyscanner-affiliateTag').value = data.skyscanner.affiliateTag || '';
+                    }
+
+                    // Civitatis
+                    if (data.civitatis) {
+                        document.getElementById('civitatis-enabled').checked = data.civitatis.enabled || false;
+                        document.getElementById('civitatis-affiliateId').value = data.civitatis.affiliateId || '';
+                    }
+
+                    // Adsense
+                    if (data.adsense) {
+                        document.getElementById('adsense-enabled').checked = data.adsense.enabled || false;
+                        document.getElementById('adsense-publisherId').value = data.adsense.publisherId || '';
+                        if (data.adsense.slots) {
+                            document.getElementById('adsense-slot-sidebar').value = data.adsense.slots.sidebar || '';
+                            document.getElementById('adsense-slot-inline').value = data.adsense.slots.inline || '';
+                        }
+                    }
+                }
+                affiliatesLoaded = true;
+            } catch (e) {
+                showToast("Error cargando affiliates: " + e.message, "error");
+            } finally {
+                document.getElementById('affiliates-loader').classList.add('hidden');
+                document.getElementById('affiliates-content').classList.remove('opacity-50');
+            }
+        }
+
+        window.saveAffiliates = async () => {
+            const btn = document.querySelector('#view-affiliates button[onclick=\"saveAffiliates()\"]');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<ion-icon name="hourglass-outline" class="animate-spin"></ion-icon> Guardando...';
+            btn.disabled = true;
+
+            try {
+                const affiliatesData = {
+                    booking: {
+                        affiliateId: document.getElementById('booking-affiliateId').value.trim(),
+                        enabled: document.getElementById('booking-enabled').checked
+                    },
+                    skyscanner: {
+                        affiliateTag: document.getElementById('skyscanner-affiliateTag').value.trim(),
+                        enabled: document.getElementById('skyscanner-enabled').checked
+                    },
+                    civitatis: {
+                        affiliateId: document.getElementById('civitatis-affiliateId').value.trim(),
+                        enabled: document.getElementById('civitatis-enabled').checked
+                    },
+                    adsense: {
+                        publisherId: document.getElementById('adsense-publisherId').value.trim(),
+                        slots: {
+                            sidebar: document.getElementById('adsense-slot-sidebar').value.trim(),
+                            inline: document.getElementById('adsense-slot-inline').value.trim()
+                        },
+                        enabled: document.getElementById('adsense-enabled').checked
+                    },
+                    updatedAt: serverTimestamp(),
+                    updatedBy: auth.currentUser.email
+                };
+
+                await setDoc(doc(db, "config", "affiliates"), affiliatesData);
+                showToast("Configuración guardada correctamente");
+            } catch (e) {
+                showToast("Error guardando: " + e.message, "error");
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        };
+
         // --- UTILS ---
         window.toggleDarkMode = () => document.body.classList.toggle('dark');
-        window.openAuthorModal = () => { document.getElementById('author-form').reset(); document.getElementById('auth-slug-orig').value=''; document.getElementById('auth-preview').src=''; document.getElementById('auth-slug').readOnly=true; document.getElementById('author-modal').classList.add('open'); };
+        window.openAuthorModal = () => { document.getElementById('author-form').reset(); document.getElementById('auth-slug-orig').value = ''; document.getElementById('auth-preview').src = ''; document.getElementById('auth-slug').readOnly = true; document.getElementById('author-modal').classList.add('open'); };
         window.closeAuthorModal = () => document.getElementById('author-modal').classList.remove('open');
-        window.editAuthor = (s) => { const d=authorsData[s]; document.getElementById('auth-slug-orig').value=s; document.getElementById('auth-slug').value=d.slug; document.getElementById('auth-name').value=d.name; document.getElementById('auth-role').value=d.role; document.getElementById('auth-bio').value=d.bio; document.getElementById('auth-email').value=d.email||''; document.getElementById('auth-current-img').value=d.image; document.getElementById('auth-preview').src=d.image; document.getElementById('author-modal').classList.add('open'); };
-        window.generateSlug = () => { if(!document.getElementById('auth-slug-orig').value) document.getElementById('auth-slug').value = document.getElementById('auth-name').value.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-'); };
-        window.previewImage = (i) => { if(i.files[0]) { const r=new FileReader(); r.onload=(e)=>document.getElementById('auth-preview').src=e.target.result; r.readAsDataURL(i.files[0]); }};
-        window.showToast = (m,t) => { const d=document.createElement('div'); d.className=`p-3 rounded-lg text-white text-sm font-bold shadow-lg flex items-center gap-2 animate-bounce ${t==='error'?'bg-red-500':'bg-gray-900'}`; d.innerHTML=t==='error'?`<ion-icon name="alert-circle"></ion-icon> ${m}`:`<ion-icon name="checkmark-circle"></ion-icon> ${m}`; document.getElementById('toast-container').appendChild(d); setTimeout(()=>d.remove(),3000); };
+        window.editAuthor = (s) => { const d = authorsData[s]; document.getElementById('auth-slug-orig').value = s; document.getElementById('auth-slug').value = d.slug; document.getElementById('auth-name').value = d.name; document.getElementById('auth-role').value = d.role; document.getElementById('auth-bio').value = d.bio; document.getElementById('auth-email').value = d.email || ''; document.getElementById('auth-current-img').value = d.image; document.getElementById('auth-preview').src = d.image; document.getElementById('author-modal').classList.add('open'); };
+        window.generateSlug = () => { if (!document.getElementById('auth-slug-orig').value) document.getElementById('auth-slug').value = document.getElementById('auth-name').value.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-'); };
+        window.previewImage = (i) => { if (i.files[0]) { const r = new FileReader(); r.onload = (e) => document.getElementById('auth-preview').src = e.target.result; r.readAsDataURL(i.files[0]); } };
+        window.showToast = (m, t) => { const d = document.createElement('div'); d.className = `p-3 rounded-lg text-white text-sm font-bold shadow-lg flex items-center gap-2 animate-bounce ${t === 'error' ? 'bg-red-500' : 'bg-gray-900'}`; d.innerHTML = t === 'error' ? `<ion-icon name="alert-circle"></ion-icon> ${m}` : `<ion-icon name="checkmark-circle"></ion-icon> ${m}`; document.getElementById('toast-container').appendChild(d); setTimeout(() => d.remove(), 3000); };
     </script>
 </body>
+
 </html>

@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arquitectura Instante Trips - Enero 2026</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: #fff;
+            color: #1a1a2e;
+            line-height: 1.6;
+            padding: 40px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        @media print {
+            body {
+                padding: 20px;
+            }
+
+            .no-print {
+                display: none;
+            }
+
+            .page-break {
+                page-break-before: always;
+            }
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 50px;
+            padding-bottom: 30px;
+            border-bottom: 3px solid #F4B942;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #F4B942, #75AADB);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        header .subtitle {
+            font-size: 1rem;
+            color: #64748b;
+            font-weight: 400;
+        }
+
+        header .date {
+            font-size: 0.85rem;
+            color: #94a3b8;
+            margin-top: 10px;
+        }
+
+        h2 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #0f172a;
+            margin: 40px 0 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #334155;
+            margin: 25px 0 15px;
+        }
+
+        p {
+            margin-bottom: 15px;
+            color: #475569;
+        }
+
+        .architecture-diagram {
+            background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 30px;
+            margin: 30px 0;
+            text-align: center;
+        }
+
+        .diagram-row {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .box {
+            padding: 15px 25px;
+            border-radius: 12px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            min-width: 180px;
+            text-align: center;
+        }
+
+        .box-main {
+            background: #0f172a;
+            color: #fff;
+        }
+
+        .box-admin {
+            background: #a855f7;
+            color: #fff;
+        }
+
+        .box-editor {
+            background: #3b82f6;
+            color: #fff;
+        }
+
+        .box-done {
+            background: #22c55e;
+            color: #fff;
+        }
+
+        .box-pending {
+            background: #6b7280;
+            color: #fff;
+            opacity: 0.7;
+        }
+
+        .box-firebase {
+            background: #F4B942;
+            color: #000;
+        }
+
+        .arrow {
+            font-size: 1.5rem;
+            color: #94a3b8;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 0.9rem;
+        }
+
+        th,
+        td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        th {
+            background: #f8fafc;
+            font-weight: 600;
+            color: #334155;
+        }
+
+        tr:hover {
+            background: #fafafa;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .status-done {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status-pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .code-block {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 12px;
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 0.85rem;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        ul {
+            margin: 15px 0;
+            padding-left: 25px;
+        }
+
+        li {
+            margin-bottom: 8px;
+            color: #475569;
+        }
+
+        .highlight {
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 4px solid #F4B942;
+            margin: 20px 0;
+        }
+
+        .footer {
+            margin-top: 60px;
+            padding-top: 20px;
+            border-top: 1px solid #e2e8f0;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #94a3b8;
+        }
+
+        .print-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #0f172a;
+            color: #fff;
+            padding: 15px 25px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .print-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>🌎 Instante Trips</h1>
+        <p class="subtitle">Arquitectura del Ecosistema Digital</p>
+        <p class="date">Documento Maestro • Enero 2026</p>
+    </header>
+
+    <h2>📐 Diagrama de Arquitectura</h2>
+
+    <div class="architecture-diagram">
+        <div class="diagram-row">
+            <div class="box box-main">🌐 www.instantetrips.com<br><small>Landing Principal</small></div>
+        </div>
+
+        <div class="arrow">↓</div>
+
+        <div class="diagram-row">
+            <div class="box box-admin">🔐 /admin<br><small>Panel Admin</small></div>
+            <div class="box box-editor">✍️ /editor<br><small>Editor Blog</small></div>
+        </div>
+
+        <div class="arrow">↓</div>
+
+        <div class="diagram-row">
+            <div class="box box-done">🇦🇷 /destinos_argentina<br><small>✅ Listo</small></div>
+            <div class="box box-pending">🇲🇽 /destinos_mexico<br><small>🔜 Próximo</small></div>
+            <div class="box box-pending">🇪🇸 /destinos_espana<br><small>🔜 Próximo</small></div>
+        </div>
+
+        <div class="arrow">↓</div>
+
+        <div class="diagram-row">
+            <div class="box box-done">📝 blog.instantetrips.com<br><small>✅ Netlify</small></div>
+        </div>
+
+        <div class="arrow">⟷</div>
+
+        <div class="diagram-row">
+            <div class="box box-firebase">☁️ Firebase<br><small>Firestore + Auth</small></div>
+        </div>
+    </div>
+
+    <h2>✅ Estado de Componentes</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Componente</th>
+                <th>URL</th>
+                <th>Estado</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Landing Principal</strong></td>
+                <td>www.instantetrips.com</td>
+                <td><span class="status status-done">✅ Listo</span></td>
+            </tr>
+            <tr>
+                <td><strong>Panel Admin</strong></td>
+                <td>www.instantetrips.com/admin</td>
+                <td><span class="status status-done">✅ Listo</span></td>
+            </tr>
+            <tr>
+                <td><strong>Editor Blog</strong></td>
+                <td>www.instantetrips.com/editor</td>
+                <td><span class="status status-done">✅ Listo</span></td>
+            </tr>
+            <tr>
+                <td><strong>Blog</strong></td>
+                <td>blog.instantetrips.com</td>
+                <td><span class="status status-done">✅ Listo</span></td>
+            </tr>
+            <tr>
+                <td><strong>Destinos Argentina</strong></td>
+                <td>instantetrips.com/destinos_argentina</td>
+                <td><span class="status status-done">✅ Listo</span></td>
+            </tr>
+            <tr>
+                <td><strong>Sistema Affiliates</strong></td>
+                <td>Firestore config/affiliates</td>
+                <td><span class="status status-done">✅ Listo</span></td>
+            </tr>
+            <tr>
+                <td><strong>Destinos México</strong></td>
+                <td>instantetrips.com/destinos_mexico</td>
+                <td><span class="status status-pending">🔜 Pendiente</span></td>
+            </tr>
+            <tr>
+                <td><strong>Destinos España</strong></td>
+                <td>instantetrips.com/destinos_espana</td>
+                <td><span class="status status-pending">🔜 Pendiente</span></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="page-break"></div>
+
+    <h2>🔧 Panel de Administración</h2>
+
+    <h3>Funcionalidades del Admin (/admin)</h3>
+    <ul>
+        <li><strong>Gestión de Artículos</strong> - CRUD completo de posts del blog</li>
+        <li><strong>Gestión de Autores</strong> - Perfiles, fotos, roles</li>
+        <li><strong>APIs & Affiliates</strong> - Configuración centralizada de:
+            <ul>
+                <li>Booking.com (Affiliate ID)</li>
+                <li>Skyscanner (Affiliate Tag)</li>
+                <li>Civitatis (Affiliate ID)</li>
+                <li>Google Adsense (Publisher ID + Slots)</li>
+            </ul>
+        </li>
+        <li><strong>Gestión de Destinos</strong> - Países y ciudades (en desarrollo)</li>
+    </ul>
+
+    <h3>Editor de Blog (/editor)</h3>
+    <ul>
+        <li>TinyMCE para edición rica</li>
+        <li>Preview en tiempo real</li>
+        <li>Subida de imágenes</li>
+        <li>Publicación directa a GitHub</li>
+    </ul>
+
+    <h2>💰 Sistema de Monetización</h2>
+
+    <div class="highlight">
+        <strong>Flujo de Affiliates Centralizado:</strong><br><br>
+        1. Admin edita IDs en Panel → Firestore<br>
+        2. Sitios Astro leen en build time<br>
+        3. Widgets renderizan con los IDs correctos<br>
+        4. Toggle enabled/disabled por servicio
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Programa</th>
+                <th>Widget</th>
+                <th>Estado Registro</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Booking.com</td>
+                <td>HotelWidget.astro</td>
+                <td><span class="status status-pending">🔜 Pendiente</span></td>
+            </tr>
+            <tr>
+                <td>Skyscanner</td>
+                <td>FlightSearch.astro</td>
+                <td><span class="status status-pending">🔜 Pendiente</span></td>
+            </tr>
+            <tr>
+                <td>Civitatis</td>
+                <td>ToursWidget.astro</td>
+                <td><span class="status status-pending">🔜 Pendiente</span></td>
+            </tr>
+            <tr>
+                <td>Google Adsense</td>
+                <td>AdsenseWidget.astro</td>
+                <td><span class="status status-pending">🔜 Pendiente</span></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>📁 Estructura de Archivos</h2>
+
+    <div class="code-block">
+        danielaranadj-prog.github.io/
+        ├── index.html ← Landing
+        ├── admin/index.html ← Panel Admin
+        ├── editor/index.html ← Editor Blog
+        └── destinos_argentina/ ← Sitio Astro (build)
+
+        instante-trips-blog/blog/ ← Blog Astro (Netlify)
+
+        Firebase Firestore:
+        └── config/
+        ├── main ← Config GitHub
+        └── affiliates ← IDs de afiliados
+    </div>
+
+    <h2>🚀 Próximos Pasos</h2>
+
+    <ol>
+        <li><strong>Registrarse en programas de afiliados</strong> (Booking, Skyscanner, Civitatis)</li>
+        <li><strong>Solicitar cuenta Adsense</strong></li>
+        <li><strong>Crear Destinos México</strong> (clonar Argentina)</li>
+        <li><strong>Crear Destinos España</strong></li>
+        <li><strong>Optimizar SEO</strong> del blog</li>
+    </ol>
+
+    <footer class="footer">
+        <p>Instante Trips • Arquitectura del Sistema • Enero 2026</p>
+        <p>Documento generado automáticamente</p>
+    </footer>
+
+    <button class="print-btn no-print" onclick="window.print()">
+        📄 Guardar como PDF
+    </button>
+</body>
+
+</html>
