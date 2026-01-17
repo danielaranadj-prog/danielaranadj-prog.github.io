@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blog Instantetrips - Editor V5.2</title>
+    <title>Blog Instantetrips - Editor V5.2 (Con Visualizador)</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
@@ -74,7 +74,6 @@
         .tool-btn:hover { background: #e2e8f0; color: #0f172a; }
         .dark .tool-btn:hover { background: #334155; color: #fff; }
         
-        /* Ajuste específico para Ionicons dentro de botones */
         .tool-btn ion-icon { font-size: 1.1rem; }
         
         .tool-sep { width: 1px; height: 16px; background: #e2e8f0; margin: 0 4px; }
@@ -91,10 +90,43 @@
         .dot-green { background: #22c55e; box-shadow: 0 0 5px #22c55e; }
         .dot-yellow { background: #eab308; }
         .dot-red { background: #ef4444; }
+
+        /* ESTILOS DE VISTA PREVIA (AGREGADO) */
+        .prose { max-width: 65ch; margin: 0 auto; line-height: 1.7; color: #333; }
+        .dark .prose { color: #e2e8f0; }
+        .prose h2 { font-size: 1.5em; font-weight: 700; margin-top: 1.5em; margin-bottom: 0.5em; }
+        .prose h3 { font-size: 1.25em; font-weight: 600; margin-top: 1.2em; margin-bottom: 0.5em; }
+        .prose p { margin-bottom: 1em; }
+        .prose blockquote { border-left: 4px solid #f97316; padding-left: 1em; font-style: italic; color: #666; }
+        .dark .prose blockquote { color: #94a3b8; }
+        .prose img { border-radius: 8px; margin: 1em 0; max-width: 100%; height: auto; }
+        .prose ul { list-style-type: disc; padding-left: 1.5em; margin-bottom: 1em; }
+        .prose ol { list-style-type: decimal; padding-left: 1.5em; margin-bottom: 1em; }
+        .prose a { color: #2563eb; text-decoration: underline; }
     </style>
 </head>
 
 <body class="antialiased">
+
+    <div id="preview-modal" class="modal-overlay">
+        <div class="bg-white dark:bg-slate-900 w-[95vw] h-[90vh] rounded-xl shadow-2xl flex flex-col overflow-hidden">
+            <div class="flex justify-between items-center p-4 border-b border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-950">
+                <div class="flex items-center gap-4">
+                    <h3 class="font-bold text-lg flex items-center gap-2"><ion-icon name="eye-outline"></ion-icon> Vista Previa</h3>
+                    <div class="flex bg-gray-200 dark:bg-slate-800 rounded p-1">
+                        <button onclick="switchPreview('html')" id="btn-prev-html" class="px-3 py-1 text-xs font-bold rounded bg-white dark:bg-slate-600 shadow text-black dark:text-white transition">Visual</button>
+                        <button onclick="switchPreview('md')" id="btn-prev-md" class="px-3 py-1 text-xs font-bold rounded text-gray-500 hover:text-black dark:hover:text-white transition">Código MD</button>
+                    </div>
+                </div>
+                <button onclick="closePreviewModal()" class="text-2xl hover:text-red-500"><ion-icon name="close-outline"></ion-icon></button>
+            </div>
+            
+            <div class="flex-1 overflow-y-auto p-8 bg-gray-100 dark:bg-black">
+                <div id="preview-html-content" class="bg-white dark:bg-slate-900 p-8 rounded-lg shadow-sm max-w-3xl mx-auto prose min-h-full"></div>
+                <pre id="preview-md-content" class="hidden bg-slate-900 text-green-400 p-6 rounded-lg max-w-5xl mx-auto font-mono text-xs whitespace-pre-wrap shadow-inner"></pre>
+            </div>
+        </div>
+    </div>
 
     <div id="load-post-modal" class="modal-overlay">
         <div class="bg-white dark:bg-slate-900 w-full max-w-2xl rounded-xl shadow-2xl p-6 flex flex-col max-h-[85vh]">
@@ -168,6 +200,11 @@
                         <ion-icon name="moon-outline"></ion-icon>
                     </button>
                     <div class="w-px h-6 bg-gray-300 mx-1"></div>
+                    
+                    <button onclick="openPreviewModal()" class="flex items-center gap-2 px-3 py-2 text-sm font-medium hover:bg-gray-100 dark:hover:bg-slate-800 rounded text-blue-600">
+                        <ion-icon name="eye-outline"></ion-icon> <span class="hidden sm:inline">Vista</span>
+                    </button>
+
                     <button onclick="openLoadModal()" class="flex items-center gap-2 px-3 py-2 text-sm font-medium hover:bg-gray-100 dark:hover:bg-slate-800 rounded">
                         <ion-icon name="folder-open-outline"></ion-icon> <span class="hidden sm:inline">Explorar</span>
                     </button>
@@ -367,6 +404,32 @@
             const newContent = content.replace(regex, '');
             await ghFetch(`/contents/src/data/authors.ts`, 'PUT', { message: `Del auth ${slug}`, content: btoa(unescape(encodeURIComponent(newContent))), sha: file.sha, branch: githubConfig.branch });
         }
+
+        // --- FUNCIONES DE VISTA PREVIA (AGREGADO) ---
+        window.openPreviewModal = () => {
+            document.getElementById('preview-modal').classList.add('open');
+            const md = generateMarkdown();
+            document.getElementById('preview-md-content').textContent = md;
+            const cleanContent = md.replace(/^---[\s\S]*?---\s*/, '');
+            document.getElementById('preview-html-content').innerHTML = marked.parse(cleanContent);
+            switchPreview('html');
+        };
+        window.closePreviewModal = () => document.getElementById('preview-modal').classList.remove('open');
+        window.switchPreview = (mode) => {
+            const h = document.getElementById('preview-html-content');
+            const m = document.getElementById('preview-md-content');
+            const bh = document.getElementById('btn-prev-html');
+            const bm = document.getElementById('btn-prev-md');
+            if (mode === 'html') {
+                h.classList.remove('hidden'); m.classList.add('hidden');
+                bh.className = "px-3 py-1 text-xs font-bold rounded bg-white dark:bg-slate-600 shadow text-black dark:text-white transition";
+                bm.className = "px-3 py-1 text-xs font-bold rounded text-gray-500 hover:text-black dark:hover:text-white transition";
+            } else {
+                h.classList.add('hidden'); m.classList.remove('hidden');
+                bm.className = "px-3 py-1 text-xs font-bold rounded bg-white dark:bg-slate-600 shadow text-black dark:text-white transition";
+                bh.className = "px-3 py-1 text-xs font-bold rounded text-gray-500 hover:text-black dark:hover:text-white transition";
+            }
+        };
 
         // RENDER UI
         window.openLoadModal = async () => {
@@ -684,6 +747,7 @@
         document.getElementById('tag-input').addEventListener('keydown', window.addTag);
         function renderTags() { document.getElementById('tags-container').innerHTML = tags.map(t=>`<span class="bg-gray-200 px-2 rounded text-xs">#${t} <button onclick="tags=tags.filter(x=>x!=='${t}');renderTags()">×</button></span>`).join(''); }
         window.showToast = (m,t) => { const d=document.createElement('div'); d.className=`p-3 rounded text-white text-sm font-bold flex items-center gap-2 ${t==='error'?'bg-red-500':'bg-black'}`; d.innerHTML=`<ion-icon name="${t==='error'?'alert-circle-outline':'checkmark-circle-outline'}"></ion-icon> ${m}`; document.getElementById('toast-container').appendChild(d); setTimeout(()=>d.remove(),3000); }
+        window.downloadMarkdown = () => { const blob=new Blob([generateMarkdown()],{type:'text/markdown'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`${document.getElementById('post-title').value||'post'}.md`; a.click(); }
         
         new Sortable(document.getElementById('blocks-container'), { animation: 150, handle: '.drag-handle', onEnd: (evt) => {
              const item = blocks.splice(evt.oldIndex, 1)[0]; blocks.splice(evt.newIndex, 0, item);
