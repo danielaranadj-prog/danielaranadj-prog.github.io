@@ -3,11 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blog Instantetrips - Publicaciones</title>
+    <title>Blog Instantetrips - Editor V6.2 (Video Fix)</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script> <script src="https://cdn.tiny.cloud/1/mzaiavt8ne1jnylgt9u8ns2j7xbaofg5gexdmktmbfa09jh3/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    
+    <script src="https://cdn.tiny.cloud/1/mzaiavt8ne1jnylgt9u8ns2j7xbaofg5gexdmktmbfa09jh3/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
     
     <script src="https://unpkg.com/turndown/dist/turndown.js"></script>
     <script src="https://unpkg.com/turndown-plugin-gfm/dist/turndown-plugin-gfm.js"></script>
@@ -30,13 +32,12 @@
     </script>
 
     <style>
-        body { background-color: #f3f4f6; color: #111; font-family: 'Inter', sans-serif; transition: background 0.3s; overflow: hidden; /* Fijo para split */ }
+        body { background-color: #f3f4f6; color: #111; font-family: 'Inter', sans-serif; transition: background 0.3s; overflow: hidden; }
         body.dark { background-color: #0f172a; color: #e2e8f0; }
         .logo-adaptive { filter: invert(1); transition: filter 0.3s; }
         .dark .logo-adaptive { filter: invert(0); }
         .dark .tox-tinymce { border-color: #334155 !important; }
         
-        /* Utils */
         .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 50; display: none; place-items: center; }
         .modal-overlay.open { display: grid; }
         .loader { width: 20px; height: 20px; border: 2px solid #ccc; border-top-color: #f97316; border-radius: 50%; animation: spin 0.8s linear infinite; }
@@ -46,7 +47,6 @@
         .dot-yellow { background: #eab308; }
         .dot-red { background: #ef4444; }
 
-        /* PREVIEW STYLES (Recuperados) */
         .prose { font-size: 0.95rem; line-height: 1.7; color: #333; max-width: 65ch; margin: 0 auto; }
         .dark .prose { color: #e2e8f0; }
         .prose h1 { font-size: 2.25em; font-weight: 800; margin-bottom: 0.5em; line-height: 1.2; }
@@ -54,8 +54,6 @@
         .prose p { margin-bottom: 1em; }
         .prose img { border-radius: 8px; margin: 1em 0; max-width: 100%; height: auto; }
         .prose iframe { width: 100%; aspect-ratio: 16/9; border-radius: 8px; margin: 1em 0; }
-        
-        /* Scrollbars */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
@@ -106,7 +104,7 @@
     <div id="login-section" class="flex items-center justify-center min-h-screen p-4 bg-white dark:bg-black">
         <div class="w-full max-w-sm text-center">
             <img src="public/blog.svg" alt="Logo" class="h-12 mx-auto mb-6 logo-adaptive">
-            <h1 class="text-2xl font-bold mb-2">Editor V6.1</h1>
+            <h1 class="text-2xl font-bold mb-2">Editor V6.2</h1>
             <form id="login-form" class="space-y-4">
                 <input type="email" id="email" placeholder="Email" class="w-full p-4 bg-gray-50 rounded-xl" required>
                 <input type="password" id="password" placeholder="Contraseña" class="w-full p-4 bg-gray-50 rounded-xl" required>
@@ -116,21 +114,17 @@
         </div>
     </div>
 
-    <div id="app-section" class="hidden h-screen flex flex-col">
+    <div id="app-section" class="hidden min-h-screen flex flex-col">
         <header class="bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-slate-800 h-16 flex-none z-40">
             <div class="w-full px-4 h-full flex items-center justify-between">
                 <div class="flex items-center gap-4">
                     <img src="public/blog.svg" alt="Logo" class="h-8 logo-adaptive">
-                    <span class="font-bold text-sm">Editor V6</span>
+                    <span class="font-bold text-sm">Editor V6.2</span>
                     <p class="text-[10px] text-gray-500" id="save-status"></p>
                 </div>
                 <div class="flex items-center gap-2">
                     <button onclick="toggleDarkMode()" class="p-2 rounded hover:bg-gray-100 dark:hover:bg-slate-800"><ion-icon name="moon-outline"></ion-icon></button>
-                    
-                    <button onclick="openMobilePreview()" class="lg:hidden flex items-center gap-2 px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-slate-800 rounded text-blue-500">
-                        <ion-icon name="eye-outline"></ion-icon>
-                    </button>
-
+                    <button onclick="openMobilePreview()" class="lg:hidden flex items-center gap-2 px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-slate-800 rounded text-blue-500"><ion-icon name="eye-outline"></ion-icon></button>
                     <button onclick="openLoadModal()" class="flex items-center gap-2 px-3 py-2 text-sm hover:bg-gray-100 rounded"><ion-icon name="folder-open-outline"></ion-icon> Explorar</button>
                     <button id="btn-logout" class="text-red-500 px-3 py-2 hover:bg-red-50 rounded"><ion-icon name="log-out-outline"></ion-icon></button>
                 </div>
@@ -149,28 +143,15 @@
                         <div class="space-y-4">
                             <div class="relative">
                                 <input type="text" id="post-title" class="w-full text-2xl font-bold bg-transparent border-b border-gray-200 dark:border-slate-700 py-2 outline-none" placeholder="Título del Artículo" oninput="updateSEO()">
-                                <div class="absolute right-0 top-3 flex items-center gap-2">
-                                    <span id="title-count" class="text-xs text-gray-400">0</span>
-                                    <div id="title-seo" class="dot bg-gray-200"></div>
-                                </div>
+                                <div class="absolute right-0 top-3 flex items-center gap-2"><span id="title-count" class="text-xs text-gray-400">0</span><div id="title-seo" class="dot bg-gray-200"></div></div>
                             </div>
                             <textarea id="post-desc" rows="2" class="w-full text-sm bg-gray-50 dark:bg-slate-800 p-3 rounded outline-none resize-none" placeholder="Descripción SEO..." oninput="updateSEO()"></textarea>
-                            
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div><label class="text-xs font-bold text-gray-400">Fecha</label><input type="date" id="post-date" class="w-full bg-transparent border-b py-1 dark:border-slate-700"></div>
                                 <div><label class="text-xs font-bold text-gray-400 flex justify-between">Autor <span onclick="openAuthorModal()" class="text-blue-500 cursor-pointer">+</span></label><select id="post-author" class="w-full bg-transparent border-b py-1 dark:border-slate-700"><option>Cargando...</option></select></div>
                             </div>
-                            
-                            <div class="flex items-center gap-2">
-                                <input type="text" id="post-hero" class="flex-1 text-sm bg-transparent border-b py-1 dark:border-slate-700" placeholder="Imagen Principal (URL)" oninput="renderLivePreview()">
-                                <label class="cursor-pointer hover:bg-gray-100 p-2 rounded"><ion-icon name="cloud-upload-outline"></ion-icon><input type="file" class="hidden" accept="image/*" onchange="uploadHeroImage(this)"></label>
-                            </div>
-                            
-                            <div class="flex items-center gap-2">
-                                <span class="text-gray-400 text-sm">#</span>
-                                <input type="text" id="tag-input" class="flex-1 text-sm bg-transparent outline-none" placeholder="Tags (Enter)">
-                            </div>
-                            <div id="tags-container" class="flex flex-wrap gap-2"></div>
+                            <div class="flex items-center gap-2"><input type="text" id="post-hero" class="flex-1 text-sm bg-transparent border-b py-1 dark:border-slate-700" placeholder="Imagen Principal (URL)" oninput="renderLivePreview()"><label class="cursor-pointer hover:bg-gray-100 p-2 rounded"><ion-icon name="cloud-upload-outline"></ion-icon><input type="file" class="hidden" accept="image/*" onchange="uploadHeroImage(this)"></label></div>
+                            <div class="flex items-center gap-2"><span class="text-gray-400 text-sm">#</span><input type="text" id="tag-input" class="flex-1 text-sm bg-transparent outline-none" placeholder="Tags (Enter)"></div><div id="tags-container" class="flex flex-wrap gap-2"></div>
                         </div>
                     </div>
 
@@ -191,9 +172,7 @@
                     <div class="flex items-center gap-2 mb-6 text-xs font-bold uppercase text-gray-400 tracking-widest border-b pb-2">
                         <ion-icon name="eye-outline"></ion-icon> Vista Previa en Vivo
                     </div>
-                    <div id="live-preview-content" class="prose dark:prose-invert max-w-none">
-                        <h1 class="opacity-50">El contenido aparecerá aquí...</h1>
-                    </div>
+                    <div id="live-preview-content" class="prose dark:prose-invert max-w-none"><h1 class="opacity-50">...</h1></div>
                 </div>
             </div>
 
@@ -207,7 +186,7 @@
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // TURNDOWN
+        // TURNDOWN (HTML -> MD)
         const turndownService = new TurndownService({ headingStyle: 'atx', codeBlockStyle: 'fenced', bulletListMarker: '-' });
         turndownService.use(turndownPluginGfm.gfm);
         turndownService.addRule('iframe', { filter: 'iframe', replacement: function (content, node) { return '\n\n' + node.outerHTML + '\n\n'; } });
@@ -234,7 +213,7 @@
         let currentPostSha = null;
         let currentPostFilename = null;
 
-        // INIT TINYMCE (API KEY REAL)
+        // INIT TINYMCE
         function initTinyMCE(initialContent = '') {
             tinymce.init({
                 selector: '#tiny-editor',
@@ -243,14 +222,13 @@
                 skin: window.matchMedia('(prefers-color-scheme: dark)').matches ? 'oxide-dark' : 'oxide',
                 content_css: window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'default',
                 plugins: 'image media link lists table code preview wordcount help',
-                toolbar: 'undo redo | blocks | bold italic underline | alignleft aligncenter alignright alignjustify | bullist numlist | link image media | removeformat | code',
+                // TOOLBAR REORGANIZADA: VIDEO ES EL BOTÓN "MEDIA"
+                toolbar: 'undo redo | blocks fontsize | bold italic underline | bullist numlist | alignleft aligncenter alignright | link image media | removeformat code',
                 content_style: 'body { font-family:Inter,sans-serif; font-size:16px; line-height:1.6 } img { max-width: 100%; height: auto; border-radius: 8px; }',
+                media_live_embeds: true, // ESTO HACE QUE SE VEA EL VIDEO AL PEGARLO
                 setup: function (editor) {
                     editor.on('init', function () { editor.setContent(initialContent); });
-                    // LIVE PREVIEW EVENT
-                    editor.on('input change keyup', function () {
-                        renderLivePreview();
-                    });
+                    editor.on('input change keyup', function () { renderLivePreview(); });
                 },
                 images_upload_handler: (blobInfo, progress) => new Promise(async (resolve, reject) => {
                     try {
@@ -264,36 +242,28 @@
             });
         }
 
-        // RENDER LIVE PREVIEW
         function renderLivePreview() {
-            // Obtener contenido de TinyMCE
             let content = '';
-            if (tinymce.activeEditor) {
-                content = tinymce.activeEditor.getContent();
-            }
+            if (tinymce.activeEditor) content = tinymce.activeEditor.getContent();
             
-            // Obtener Metadata
             const title = document.getElementById('post-title').value;
             const hero = document.getElementById('post-hero').value;
-            
             let finalHtml = '';
             if(hero) finalHtml += `<img src="${hero}" class="w-full h-64 object-cover rounded-xl mb-6 shadow-sm">`;
             if(title) finalHtml += `<h1 class="text-3xl font-bold mb-4">${title}</h1>`;
-            
-            finalHtml += content; // Usamos el HTML de TinyMCE directo para la vista previa rápida
+            finalHtml += content;
 
-            // Inyectar
             const deskPreview = document.getElementById('live-preview-content');
             if(deskPreview) deskPreview.innerHTML = finalHtml;
             const mobPreview = document.getElementById('mobile-preview-content');
             if(mobPreview) mobPreview.innerHTML = finalHtml;
         }
 
-        // Mobile Controls
-        window.openMobilePreview = () => { renderLivePreview(); document.getElementById('preview-modal-mobile').classList.add('open'); }
-        window.closeMobilePreview = () => document.getElementById('preview-modal-mobile').classList.remove('open');
+        // ... (RESTO DEL CÓDIGO IGUAL: AUTH, GITHUB API, UTILS) ...
+        // Para ahorrar espacio aquí, asumo que copias el bloque <script> anterior
+        // y solo reemplazas la función initTinyMCE con la nueva que puse arriba.
+        // Pero para ser completo, aquí está todo el bloque JS de nuevo:
 
-        // APP LOGIC
         const loginForm = document.getElementById('login-form');
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -332,7 +302,6 @@
 
         const toBase64 = file => new Promise(r => { const rd = new FileReader(); rd.readAsDataURL(file); rd.onload = () => r(rd.result); });
 
-        // PUBLISH
         window.publishCurrentPost = async () => {
             const btn = document.querySelector('button[onclick="publishCurrentPost()"]');
             const orig = btn.innerText; btn.innerText = "Publicando..."; btn.disabled = true;
@@ -357,7 +326,6 @@
             btn.innerText = orig; btn.disabled = false;
         };
 
-        // LOAD
         window.openLoadModal = async () => {
             document.getElementById('load-post-modal').classList.add('open');
             const files = await ghFetch(`/contents/${githubConfig.postsPath}`);
@@ -385,8 +353,7 @@
                 const bodyHtml = marked.parse(bodyMd);
                 tinymce.activeEditor.setContent(bodyHtml);
                 currentPostFilename = name; currentPostSha = d.sha;
-                closeLoadModal(); showToast("Post cargado");
-                renderLivePreview(); // Force update preview
+                closeLoadModal(); showToast("Post cargado"); renderLivePreview();
             } catch(e) { showToast("Error cargando post", "error"); }
         };
 
@@ -410,19 +377,23 @@
             } catch(e){}
         }
 
-        // UTILS
         window.deletePost = async (n, s) => { if(confirm("¿Borrar?")) { await deleteFile(`${githubConfig.postsPath}${n}`, s); openLoadModal(); }};
         window.uploadHeroImage = async (inp) => {
-            const f = inp.files[0]; const b64 = await toBase64(await imageCompression(f, { maxSizeMB: 1 }));
+            const f = inp.files[0];
+            const b64 = await toBase64(await imageCompression(f, { maxSizeMB: 1 }));
             const name = `${Date.now()}-hero`;
             await ghFetch(`/contents/public/uploads/${name}`, 'PUT', { message:'Up', content:b64.split(',')[1], branch:githubConfig.branch });
             document.getElementById('post-hero').value = `/uploads/${name}`;
             renderLivePreview();
         };
+        
         window.addTag = (e) => { if(e.key==='Enter'){ const v=e.target.value.trim(); if(v && !tags.includes(v)){ tags.push(v); e.target.value=''; renderTags(); }}};
         document.getElementById('tag-input').addEventListener('keydown', window.addTag);
         function renderTags() { document.getElementById('tags-container').innerHTML = tags.map(t=>`<span class="bg-gray-200 px-2 rounded text-xs">#${t} <button onclick="tags=tags.filter(x=>x!=='${t}');renderTags()">×</button></span>`).join(''); }
+        
         window.toggleDarkMode = () => document.body.classList.toggle('dark');
+        window.openMobilePreview = () => { renderLivePreview(); document.getElementById('preview-modal-mobile').classList.add('open'); }
+        window.closeMobilePreview = () => document.getElementById('preview-modal-mobile').classList.remove('open');
         window.closeLoadModal = () => document.getElementById('load-post-modal').classList.remove('open');
         window.closeAuthorModal = () => document.getElementById('author-modal').classList.remove('open');
         window.clearAll = () => { if(confirm("¿Limpiar?")) { tinymce.activeEditor.setContent(''); document.getElementById('post-title').value=''; tags=[]; renderTags(); currentPostFilename=null; }};
@@ -433,6 +404,11 @@
             document.getElementById('title-count').innerText = t;
             renderLivePreview();
         };
+        // API DELETE
+        async function deleteFile(path, sha) {
+            if (!canDelete()) throw new Error("Acceso denegado");
+            await ghFetch(`/contents/${path}`, 'DELETE', { message: `Delete ${path}`, sha, branch: githubConfig.branch });
+        }
     </script>
 </body>
 </html>
