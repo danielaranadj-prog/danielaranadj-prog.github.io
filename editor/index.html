@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Publicaciones - Blog.Instantetrips.com</title>
+    <title>Publicaciones - Blog.Instantetrips.com </title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.js"></script>
@@ -19,7 +19,7 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
-    <script>s
+    <script>
         tailwind.config = {
             darkMode: 'class',
             theme: {
@@ -32,7 +32,7 @@
     </script>
 
     <style>
-        body { background-color: #f3f4f6; color: #111; font-family: 'Inter', sans-serif; transition: background 0.3s; overflow: hidden; }
+        body { background-color: #f3f4f6; color: #111; font-family: 'Inter', sans-serif; transition: background 0.3s; }
         body.dark { background-color: #0f172a; color: #e2e8f0; }
         .logo-adaptive { filter: invert(1); transition: filter 0.3s; }
         .dark .logo-adaptive { filter: invert(0); }
@@ -54,10 +54,6 @@
         .prose p { margin-bottom: 1em; }
         .prose img { border-radius: 8px; margin: 1em 0; max-width: 100%; height: auto; }
         .prose iframe { width: 100%; aspect-ratio: 16/9; border-radius: 8px; margin: 1em 0; }
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
-        .dark ::-webkit-scrollbar-thumb { background: #475569; }
     </style>
 </head>
 
@@ -104,7 +100,7 @@
     <div id="login-section" class="flex items-center justify-center min-h-screen p-4 bg-white dark:bg-black">
         <div class="w-full max-w-sm text-center">
             <img src="public/blog.svg" alt="Logo" class="h-12 mx-auto mb-6 logo-adaptive">
-            <h1 class="text-2xl font-bold mb-2">Editor V6.2</h1>
+            <h1 class="text-2xl font-bold mb-2">Editor V6.3</h1>
             <form id="login-form" class="space-y-4">
                 <input type="email" id="email" placeholder="Email" class="w-full p-4 bg-gray-50 rounded-xl" required>
                 <input type="password" id="password" placeholder="Contraseña" class="w-full p-4 bg-gray-50 rounded-xl" required>
@@ -114,12 +110,12 @@
         </div>
     </div>
 
-    <div id="app-section" class="hidden min-h-screen flex flex-col">
+    <div id="app-section" class="hidden h-[100dvh] flex flex-col">
         <header class="bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-slate-800 h-16 flex-none z-40">
             <div class="w-full px-4 h-full flex items-center justify-between">
                 <div class="flex items-center gap-4">
                     <img src="public/blog.svg" alt="Logo" class="h-8 logo-adaptive">
-                    <span class="font-bold text-sm">Editor V6.2</span>
+                    <span class="font-bold text-sm">Editor V6.3</span>
                     <p class="text-[10px] text-gray-500" id="save-status"></p>
                 </div>
                 <div class="flex items-center gap-2">
@@ -186,7 +182,7 @@
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // TURNDOWN (HTML -> MD)
+        // TURNDOWN
         const turndownService = new TurndownService({ headingStyle: 'atx', codeBlockStyle: 'fenced', bulletListMarker: '-' });
         turndownService.use(turndownPluginGfm.gfm);
         turndownService.addRule('iframe', { filter: 'iframe', replacement: function (content, node) { return '\n\n' + node.outerHTML + '\n\n'; } });
@@ -222,10 +218,9 @@
                 skin: window.matchMedia('(prefers-color-scheme: dark)').matches ? 'oxide-dark' : 'oxide',
                 content_css: window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'default',
                 plugins: 'image media link lists table code preview wordcount help',
-                // TOOLBAR REORGANIZADA: VIDEO ES EL BOTÓN "MEDIA"
                 toolbar: 'undo redo | blocks fontsize | bold italic underline | bullist numlist | alignleft aligncenter alignright | link image media | removeformat code',
                 content_style: 'body { font-family:Inter,sans-serif; font-size:16px; line-height:1.6 } img { max-width: 100%; height: auto; border-radius: 8px; }',
-                media_live_embeds: true, // ESTO HACE QUE SE VEA EL VIDEO AL PEGARLO
+                media_live_embeds: true,
                 setup: function (editor) {
                     editor.on('init', function () { editor.setContent(initialContent); });
                     editor.on('input change keyup', function () { renderLivePreview(); });
@@ -245,24 +240,20 @@
         function renderLivePreview() {
             let content = '';
             if (tinymce.activeEditor) content = tinymce.activeEditor.getContent();
-            
-            const title = document.getElementById('post-title').value;
-            const hero = document.getElementById('post-hero').value;
+            const t = document.getElementById('post-title').value;
+            const h = document.getElementById('post-hero').value;
             let finalHtml = '';
-            if(hero) finalHtml += `<img src="${hero}" class="w-full h-64 object-cover rounded-xl mb-6 shadow-sm">`;
-            if(title) finalHtml += `<h1 class="text-3xl font-bold mb-4">${title}</h1>`;
+            if(h) finalHtml += `<img src="${h}" class="w-full h-64 object-cover rounded-xl mb-6 shadow-sm">`;
+            if(t) finalHtml += `<h1 class="text-3xl font-bold mb-4">${t}</h1>`;
             finalHtml += content;
-
             const deskPreview = document.getElementById('live-preview-content');
             if(deskPreview) deskPreview.innerHTML = finalHtml;
             const mobPreview = document.getElementById('mobile-preview-content');
             if(mobPreview) mobPreview.innerHTML = finalHtml;
         }
 
-        // ... (RESTO DEL CÓDIGO IGUAL: AUTH, GITHUB API, UTILS) ...
-        // Para ahorrar espacio aquí, asumo que copias el bloque <script> anterior
-        // y solo reemplazas la función initTinyMCE con la nueva que puse arriba.
-        // Pero para ser completo, aquí está todo el bloque JS de nuevo:
+        window.openMobilePreview = () => { renderLivePreview(); document.getElementById('preview-modal-mobile').classList.add('open'); }
+        window.closeMobilePreview = () => document.getElementById('preview-modal-mobile').classList.remove('open');
 
         const loginForm = document.getElementById('login-form');
         loginForm.addEventListener('submit', async (e) => {
@@ -392,8 +383,6 @@
         function renderTags() { document.getElementById('tags-container').innerHTML = tags.map(t=>`<span class="bg-gray-200 px-2 rounded text-xs">#${t} <button onclick="tags=tags.filter(x=>x!=='${t}');renderTags()">×</button></span>`).join(''); }
         
         window.toggleDarkMode = () => document.body.classList.toggle('dark');
-        window.openMobilePreview = () => { renderLivePreview(); document.getElementById('preview-modal-mobile').classList.add('open'); }
-        window.closeMobilePreview = () => document.getElementById('preview-modal-mobile').classList.remove('open');
         window.closeLoadModal = () => document.getElementById('load-post-modal').classList.remove('open');
         window.closeAuthorModal = () => document.getElementById('author-modal').classList.remove('open');
         window.clearAll = () => { if(confirm("¿Limpiar?")) { tinymce.activeEditor.setContent(''); document.getElementById('post-title').value=''; tags=[]; renderTags(); currentPostFilename=null; }};
