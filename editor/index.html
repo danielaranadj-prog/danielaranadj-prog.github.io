@@ -3,13 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blog Instantetrips - Editor V5.4.1 (Correcciones)</title>
+    <title>Blog Instantetrips - Editor V6.0 (TinyMCE)</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     
+    <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+    
+    <script src="https://unpkg.com/turndown/dist/turndown.js"></script>
+    <script src="https://unpkg.com/turndown-plugin-gfm/dist/turndown-plugin-gfm.js"></script>
+
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 
@@ -28,232 +31,131 @@
     </script>
 
     <style>
-        /* BASE */
-        body { background-color: #f3f4f6; color: #111; font-family: 'Inter', sans-serif; transition: background 0.3s; overflow: hidden; }
+        body { background-color: #f3f4f6; color: #111; font-family: 'Inter', sans-serif; transition: background 0.3s; }
         body.dark { background-color: #0f172a; color: #e2e8f0; }
-
         .logo-adaptive { filter: invert(1); transition: filter 0.3s; }
         .dark .logo-adaptive { filter: invert(0); }
-
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
-        .dark ::-webkit-scrollbar-thumb { background: #475569; }
-
-        /* CARDS */
-        .block-card {
-            background: #fff; border: 1px solid #e5e7eb; border-radius: 12px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05); transition: all 0.2s; position: relative; margin-bottom: 1rem;
-        }
-        .block-card:hover { border-color: #cbd5e1; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
-        .dark .block-card { background: #1e293b; border-color: #334155; }
-
-        /* EDITOR */
-        .rich-editor { min-height: 80px; padding: 1rem; outline: none; line-height: 1.6; }
-        .rich-editor:empty:before { content: attr(placeholder); color: #9ca3af; pointer-events: none; }
-
-        /* TOOLBARS */
-        .toolbar-inner { display: flex; gap: 0.25rem; padding: 0.5rem; border-bottom: 1px solid #f1f5f9; background: #f8fafc; border-top-left-radius: 12px; border-top-right-radius: 12px; flex-wrap: wrap; align-items: center; }
-        .dark .toolbar-inner { background: #0f172a; border-color: #334155; }
-        .tool-btn { width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; border-radius: 6px; font-size: 0.9rem; color: #64748b; cursor: pointer; transition: all 0.1s; }
-        .tool-btn:hover { background: #e2e8f0; color: #0f172a; }
-        .dark .tool-btn:hover { background: #334155; color: #fff; }
-        .tool-sep { width: 1px; height: 16px; background: #e2e8f0; margin: 0 4px; }
-        .dark .tool-sep { background: #334155; }
-
-        /* UTILS */
-        .loader { width: 20px; height: 20px; border: 2px solid #ccc; border-top-color: #f97316; border-radius: 50%; animation: spin 0.8s linear infinite; }
-        @keyframes spin { to { transform: rotate(360deg); } }
+        
+        /* Ajustes para TinyMCE en modo oscuro */
+        .dark .tox-tinymce { border-color: #334155 !important; }
+        
+        /* Utils */
         .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 50; display: none; place-items: center; }
         .modal-overlay.open { display: grid; }
+        .loader { width: 20px; height: 20px; border: 2px solid #ccc; border-top-color: #f97316; border-radius: 50%; animation: spin 0.8s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
         .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
         .dot-green { background: #22c55e; box-shadow: 0 0 5px #22c55e; }
         .dot-yellow { background: #eab308; }
         .dot-red { background: #ef4444; }
-
-        /* PREVIEW STYLES */
-        .prose { font-size: 0.95rem; line-height: 1.7; color: #333; }
-        .dark .prose { color: #e2e8f0; }
-        .prose h1 { font-size: 2.25em; font-weight: 800; margin-bottom: 0.5em; line-height: 1.2; letter-spacing: -0.02em; }
-        .prose h2 { font-size: 1.5em; font-weight: 700; margin-top: 1.5em; margin-bottom: 0.5em; color: #111; }
-        .dark .prose h2 { color: #fff; }
-        .prose h3 { font-size: 1.25em; font-weight: 600; margin-top: 1.2em; margin-bottom: 0.5em; }
-        .prose p { margin-bottom: 1em; }
-        .prose blockquote { border-left: 4px solid #f97316; padding-left: 1em; font-style: italic; color: #666; background: rgba(249, 115, 22, 0.1); padding: 1rem; border-radius: 0 8px 8px 0; }
-        .dark .prose blockquote { color: #94a3b8; }
-        .prose img { border-radius: 8px; margin: 1em 0; max-width: 100%; height: auto; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
-        .prose ul { list-style-type: disc; padding-left: 1.5em; margin-bottom: 1em; }
-        .prose ol { list-style-type: decimal; padding-left: 1.5em; margin-bottom: 1em; }
-        .prose a { color: #f97316; text-decoration: underline; font-weight: 500; }
-        .prose iframe { width: 100%; aspect-ratio: 16/9; border-radius: 8px; margin: 1em 0; }
     </style>
 </head>
 
 <body class="antialiased">
 
-    <div id="preview-modal-mobile" class="modal-overlay">
-        <div class="bg-white dark:bg-slate-900 w-full h-full md:w-[90vw] md:h-[90vh] md:rounded-xl shadow-2xl flex flex-col">
-            <div class="flex justify-between items-center p-4 border-b dark:border-slate-700">
-                <h3 class="font-bold text-lg">Vista Previa</h3>
-                <button onclick="closeMobilePreview()" class="text-2xl"><ion-icon name="close-outline"></ion-icon></button>
-            </div>
-            <div id="mobile-preview-content" class="flex-1 overflow-y-auto p-6 prose dark:prose-invert max-w-none"></div>
-        </div>
-    </div>
-
     <div id="load-post-modal" class="modal-overlay">
         <div class="bg-white dark:bg-slate-900 w-full max-w-2xl rounded-xl shadow-2xl p-6 flex flex-col max-h-[85vh]">
             <div class="flex justify-between items-center mb-4 border-b dark:border-slate-800 pb-3">
-                <h3 class="font-bold text-lg flex items-center gap-2"><ion-icon name="folder-open-outline"></ion-icon> Explorar Publicaciones</h3>
-                <button onclick="closeLoadModal()" class="text-2xl opacity-50 hover:opacity-100"><ion-icon name="close-outline"></ion-icon></button>
+                <h3 class="font-bold text-lg flex items-center gap-2"><ion-icon name="folder-open-outline"></ion-icon> Explorar</h3>
+                <button onclick="closeLoadModal()" class="text-2xl"><ion-icon name="close-outline"></ion-icon></button>
             </div>
-            <div class="relative mb-4">
-                <ion-icon name="search-outline" class="absolute left-3 top-3.5 text-gray-400"></ion-icon>
-                <input type="text" id="search-posts" placeholder="Buscar por título..." class="w-full pl-10 p-3 bg-gray-50 dark:bg-slate-800 rounded-lg outline-none" oninput="filterPosts()">
-            </div>
+            <input type="text" id="search-posts" placeholder="Buscar..." class="w-full p-3 bg-gray-50 dark:bg-slate-800 rounded-lg outline-none mb-4" oninput="filterPosts()">
             <div id="posts-list" class="space-y-2 overflow-y-auto flex-1 pr-2"></div>
         </div>
     </div>
 
     <div id="author-modal" class="modal-overlay">
-        <div class="bg-white dark:bg-slate-900 w-full max-w-lg rounded-xl shadow-2xl p-6 max-h-[90vh] overflow-y-auto">
+        <div class="bg-white dark:bg-slate-900 w-full max-w-lg rounded-xl shadow-2xl p-6">
             <div class="flex justify-between items-center mb-4">
-                <h3 class="font-bold text-lg flex items-center gap-2"><ion-icon name="people-outline"></ion-icon> Gestión de Autores</h3>
+                <h3 class="font-bold text-lg">Autores</h3>
                 <button onclick="closeAuthorModal()" class="text-2xl"><ion-icon name="close-outline"></ion-icon></button>
             </div>
-            <div class="bg-gray-50 dark:bg-slate-800 p-4 rounded-lg mb-6">
-                <p class="text-xs font-bold uppercase text-gray-400 mb-2">Crear Nuevo</p>
-                <div class="space-y-3">
-                    <input type="text" id="new-auth-name" placeholder="Nombre" class="w-full p-2 rounded border border-gray-200 dark:border-slate-600 bg-transparent">
-                    <input type="text" id="new-auth-role" placeholder="Rol" class="w-full p-2 rounded border border-gray-200 dark:border-slate-600 bg-transparent">
-                    <textarea id="new-auth-bio" rows="2" placeholder="Bio..." class="w-full p-2 rounded border border-gray-200 dark:border-slate-600 bg-transparent resize-none"></textarea>
-                    <input type="file" id="new-auth-file" accept="image/*" class="w-full text-xs">
-                    <button onclick="saveNewAuthor()" id="btn-save-auth" class="w-full bg-black dark:bg-white text-white dark:text-black font-bold py-2 rounded-lg hover:opacity-90 flex items-center justify-center gap-2"><ion-icon name="save-outline"></ion-icon> Guardar Autor</button>
-                </div>
+            <div class="space-y-3">
+                <input type="text" id="new-auth-name" placeholder="Nombre" class="w-full p-2 border rounded dark:bg-slate-800 dark:border-slate-600">
+                <input type="text" id="new-auth-role" placeholder="Rol" class="w-full p-2 border rounded dark:bg-slate-800 dark:border-slate-600">
+                <textarea id="new-auth-bio" rows="2" placeholder="Bio..." class="w-full p-2 border rounded dark:bg-slate-800 dark:border-slate-600"></textarea>
+                <input type="file" id="new-auth-file" class="w-full text-xs">
+                <button onclick="saveNewAuthor()" id="btn-save-auth" class="w-full bg-black text-white py-2 rounded font-bold">Guardar</button>
             </div>
-            <div id="authors-list-container"></div>
+            <div id="authors-list-container" class="mt-4 pt-4 border-t"></div>
         </div>
     </div>
 
     <div id="login-section" class="flex items-center justify-center min-h-screen p-4 bg-white dark:bg-black">
         <div class="w-full max-w-sm text-center">
             <img src="public/blog.svg" alt="Logo" class="h-12 mx-auto mb-6 logo-adaptive">
-            <h1 class="text-2xl font-bold mb-2">Acceso de Autor</h1>
-            <p class="text-sm text-gray-500 mb-8">Gestión de Contenido Instante Trips</p>
+            <h1 class="text-2xl font-bold mb-2">Editor V6 (TinyMCE)</h1>
             <form id="login-form" class="space-y-4">
-                <input type="email" id="email" placeholder="Email" class="w-full p-4 bg-gray-50 dark:bg-slate-900 rounded-xl outline-none border border-transparent focus:border-black" required>
-                <input type="password" id="password" placeholder="Contraseña" class="w-full p-4 bg-gray-50 dark:bg-slate-900 rounded-xl outline-none border border-transparent focus:border-black" required>
-                <button type="submit" class="w-full bg-black dark:bg-white text-white dark:text-black font-bold py-4 rounded-xl hover:scale-[1.02] transition flex items-center justify-center gap-2"><ion-icon name="log-in-outline"></ion-icon> Iniciar Sesión</button>
+                <input type="email" id="email" placeholder="Email" class="w-full p-4 bg-gray-50 rounded-xl" required>
+                <input type="password" id="password" placeholder="Contraseña" class="w-full p-4 bg-gray-50 rounded-xl" required>
+                <button type="submit" class="w-full bg-black text-white font-bold py-4 rounded-xl">Entrar</button>
             </form>
             <p id="login-error" class="text-red-500 text-sm mt-4 hidden"></p>
         </div>
     </div>
 
-    <div id="app-section" class="hidden h-screen flex flex-col">
-        
-        <header class="bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-slate-800 h-16 flex-none z-40">
-            <div class="w-full px-4 h-full flex items-center justify-between">
+    <div id="app-section" class="hidden min-h-screen flex flex-col">
+        <header class="bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-slate-800 h-16 sticky top-0 z-40">
+            <div class="max-w-6xl mx-auto px-4 h-full flex items-center justify-between">
                 <div class="flex items-center gap-4">
                     <img src="public/blog.svg" alt="Logo" class="h-8 logo-adaptive">
-                    <div class="hidden md:block w-px h-6 bg-gray-300"></div>
-                    <div>
-                        <h1 class="font-bold text-sm leading-tight">Contenido Instante Trips</h1>
-                        <p class="text-[10px] text-gray-500" id="save-status"></p>
-                    </div>
+                    <span class="font-bold text-sm">Editor Profesional V6</span>
+                    <p class="text-[10px] text-gray-500" id="save-status"></p>
                 </div>
-                
                 <div class="flex items-center gap-2">
-                    <button onclick="toggleDarkMode()" class="p-2 rounded hover:bg-gray-100 dark:hover:bg-slate-800 text-xl" title="Modo Oscuro"><ion-icon name="moon-outline"></ion-icon></button>
-                    
-                    <button onclick="openMobilePreview()" class="lg:hidden flex items-center gap-2 px-3 py-2 text-sm font-medium hover:bg-gray-100 dark:hover:bg-slate-800 rounded text-blue-600">
-                        <ion-icon name="eye-outline"></ion-icon>
-                    </button>
-
-                    <button onclick="openLoadModal()" class="flex items-center gap-2 px-3 py-2 text-sm font-medium hover:bg-gray-100 dark:hover:bg-slate-800 rounded">
-                        <ion-icon name="folder-open-outline"></ion-icon> <span class="hidden sm:inline">Explorar</span>
-                    </button>
-                    <button onclick="downloadMarkdown()" class="flex items-center gap-2 px-3 py-2 text-sm font-medium hover:bg-gray-100 dark:hover:bg-slate-800 rounded">
-                        <ion-icon name="download-outline"></ion-icon> <span class="hidden sm:inline">MD</span>
-                    </button>
-                    <button id="btn-logout" class="text-sm font-bold text-red-500 px-3 py-2 hover:bg-red-50 rounded flex items-center gap-1">
-                        <ion-icon name="log-out-outline"></ion-icon>
-                    </button>
+                    <button onclick="toggleDarkMode()" class="p-2 rounded hover:bg-gray-100 dark:hover:bg-slate-800"><ion-icon name="moon-outline"></ion-icon></button>
+                    <button onclick="openLoadModal()" class="flex items-center gap-2 px-3 py-2 text-sm hover:bg-gray-100 rounded"><ion-icon name="folder-open-outline"></ion-icon> Explorar</button>
+                    <button id="btn-logout" class="text-red-500 px-3 py-2 hover:bg-red-50 rounded"><ion-icon name="log-out-outline"></ion-icon></button>
                 </div>
             </div>
         </header>
 
-        <div class="flex-1 flex overflow-hidden">
+        <main class="flex-1 max-w-5xl mx-auto w-full p-6 pb-32">
             
-            <div class="flex-1 overflow-y-auto p-6 pb-32 border-r border-gray-200 dark:border-slate-800 relative" id="editor-column">
-                <div class="max-w-3xl mx-auto">
+            <div class="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-xl p-6 mb-6 shadow-sm">
+                <div class="flex justify-between mb-4">
+                    <h2 class="text-xs font-bold uppercase text-gray-400">Configuración</h2>
+                    <button onclick="clearAll()" class="text-xs text-red-400 hover:underline">Limpiar</button>
+                </div>
+                <div class="space-y-4">
+                    <div class="relative">
+                        <input type="text" id="post-title" class="w-full text-2xl font-bold bg-transparent border-b border-gray-200 dark:border-slate-700 py-2 outline-none" placeholder="Título del Artículo" oninput="updateSEO()">
+                        <div class="absolute right-0 top-3 flex items-center gap-2">
+                            <span id="title-count" class="text-xs text-gray-400">0</span>
+                            <div id="title-seo" class="dot bg-gray-200"></div>
+                        </div>
+                    </div>
+                    <textarea id="post-desc" rows="2" class="w-full text-sm bg-gray-50 dark:bg-slate-800 p-3 rounded outline-none resize-none" placeholder="Descripción SEO..." oninput="updateSEO()"></textarea>
                     
-                    <div class="block-card p-6 mb-8">
-                        <div class="flex items-center justify-between mb-6">
-                            <h2 class="text-xs font-bold uppercase text-gray-400 flex items-center gap-1"><ion-icon name="document-text-outline"></ion-icon> Metadata</h2>
-                            <button onclick="clearAll()" class="text-xs text-red-400 hover:text-red-600 hover:underline font-bold flex items-center gap-1"><ion-icon name="trash-outline"></ion-icon> Limpiar</button>
-                        </div>
-                        <div class="space-y-6">
-                            <div class="relative">
-                                <input type="text" id="post-title" class="w-full text-2xl font-bold bg-transparent border-b border-gray-200 dark:border-slate-700 py-2 focus:outline-none focus:border-black" placeholder="Título del Post" oninput="updateSEO()">
-                                <div class="absolute right-0 top-3 flex items-center gap-2">
-                                    <span id="title-count" class="text-[10px] text-gray-400 font-mono">0</span>
-                                    <div id="title-seo" class="dot bg-gray-200"></div>
-                                </div>
-                            </div>
-                            <div class="relative">
-                                <textarea id="post-desc" rows="2" class="w-full text-sm bg-gray-50 dark:bg-slate-800 p-3 rounded-lg outline-none resize-none" placeholder="Descripción corta para Google..." oninput="updateSEO()"></textarea>
-                                <div class="absolute right-3 bottom-3 flex items-center gap-2">
-                                    <span id="desc-count" class="text-[10px] text-gray-400 font-mono">0</span>
-                                    <div id="desc-seo" class="dot bg-gray-200"></div>
-                                </div>
-                            </div>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div><label class="block text-[10px] uppercase font-bold text-gray-400 mb-1">Fecha</label><input type="date" id="post-date" class="w-full text-sm bg-transparent border-b border-gray-200 py-1 focus:outline-none focus:border-black dark:border-slate-700"></div>
-                                <div><label class="block text-[10px] uppercase font-bold text-gray-400 mb-1 flex justify-between">Autor <span class="cursor-pointer text-blue-500" onclick="openAuthorModal()">+</span></label><select id="post-author" class="w-full text-sm bg-transparent border-b border-gray-200 py-1 focus:outline-none focus:border-black dark:border-slate-700"><option>Cargando...</option></select></div>
-                            </div>
-                            <div class="flex"><input type="text" id="post-hero" class="flex-1 text-sm bg-transparent border-b border-gray-200 py-1 focus:outline-none focus:border-black dark:border-slate-700" placeholder="Hero Image URL..." oninput="updateSEO()"><label class="cursor-pointer ml-2 hover:bg-gray-100 p-1 rounded text-lg"><ion-icon name="cloud-upload-outline"></ion-icon> <input type="file" class="hidden" accept="image/*" onchange="uploadHeroImage(this)"></label></div>
-                            <div><div class="flex items-center gap-2 mb-2"><span class="text-gray-400 text-sm">#</span><input type="text" id="tag-input" class="flex-1 text-sm outline-none bg-transparent" placeholder="Etiquetas (Enter)"></div><div id="tags-container" class="flex flex-wrap gap-2"></div></div>
-                        </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div><label class="text-xs font-bold text-gray-400">Fecha</label><input type="date" id="post-date" class="w-full bg-transparent border-b py-1 dark:border-slate-700"></div>
+                        <div><label class="text-xs font-bold text-gray-400 flex justify-between">Autor <span onclick="openAuthorModal()" class="text-blue-500 cursor-pointer">+</span></label><select id="post-author" class="w-full bg-transparent border-b py-1 dark:border-slate-700"><option>Cargando...</option></select></div>
                     </div>
-
-                    <div class="sticky top-0 z-30 bg-f3f4f6/95 dark:bg-0f172a/95 backdrop-blur py-4 mb-4 flex flex-wrap gap-1 justify-center border-b border-gray-200 dark:border-slate-800">
-                        <button onclick="addBlock('h2')" class="px-3 py-1 text-xs font-bold bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 hover:border-black rounded shadow-sm">H2</button>
-                        <button onclick="addBlock('h3')" class="px-3 py-1 text-xs font-bold bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 hover:border-black rounded shadow-sm">H3</button>
-                        <button onclick="addBlock('p')" class="px-3 py-1 text-xs bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 hover:border-black rounded shadow-sm flex items-center gap-1"><ion-icon name="text-outline"></ion-icon> Texto</button>
-                        <button onclick="addBlock('quote')" class="px-3 py-1 text-xs bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 hover:border-black rounded shadow-sm flex items-center gap-1"><ion-icon name="chatbox-ellipses-outline"></ion-icon> Cita</button>
-                        <div class="w-px h-4 bg-gray-300 mx-1 self-center"></div>
-                        <button onclick="addBlock('img')" class="px-3 py-1 text-xs bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 hover:border-black rounded shadow-sm flex items-center gap-1"><ion-icon name="image-outline"></ion-icon> Img</button>
-                        <button onclick="addBlock('yt')" class="px-3 py-1 text-xs bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 hover:border-black rounded shadow-sm flex items-center gap-1"><ion-icon name="logo-youtube"></ion-icon> YT</button>
-                        <button onclick="addBlock('list')" class="px-3 py-1 text-xs bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 hover:border-black rounded shadow-sm flex items-center gap-1"><ion-icon name="list-outline"></ion-icon> Lista</button>
-                        <button onclick="addBlock('hr')" class="px-3 py-1 text-xs bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 hover:border-black rounded shadow-sm flex items-center gap-1"><ion-icon name="remove-outline"></ion-icon> HR</button>
+                    
+                    <div class="flex items-center gap-2">
+                        <input type="text" id="post-hero" class="flex-1 text-sm bg-transparent border-b py-1 dark:border-slate-700" placeholder="Imagen Principal (URL)">
+                        <label class="cursor-pointer hover:bg-gray-100 p-2 rounded"><ion-icon name="cloud-upload-outline"></ion-icon><input type="file" class="hidden" accept="image/*" onchange="uploadHeroImage(this)"></label>
                     </div>
-
-                    <div id="blocks-container" class="min-h-[200px]">
-                        <div class="text-center py-10 text-gray-300 italic flex flex-col items-center gap-2">
-                            <ion-icon name="create-outline" class="text-3xl opacity-20"></ion-icon>No hay bloques.
-                        </div>
+                    
+                    <div class="flex items-center gap-2">
+                        <span class="text-gray-400 text-sm">#</span>
+                        <input type="text" id="tag-input" class="flex-1 text-sm bg-transparent outline-none" placeholder="Tags (Enter)">
                     </div>
-
-                    <div class="mt-8 mb-8">
-                        <button onclick="publishCurrentPost()" class="w-full bg-black dark:bg-white text-white dark:text-black font-bold py-4 rounded-xl shadow-lg hover:scale-[1.01] transition flex items-center justify-center gap-2">
-                            <ion-icon name="rocket-outline" class="text-xl"></ion-icon> Publicar Cambios
-                        </button>
-                    </div>
+                    <div id="tags-container" class="flex flex-wrap gap-2"></div>
                 </div>
             </div>
 
-            <div class="hidden lg:block w-1/2 bg-white dark:bg-black overflow-y-auto p-12" id="live-preview-column">
-                <div class="max-w-2xl mx-auto">
-                    <div class="flex items-center gap-2 mb-6 text-xs font-bold uppercase text-gray-400 tracking-widest border-b pb-2">
-                        <ion-icon name="eye-outline"></ion-icon> Vista Previa en Vivo
-                    </div>
-                    <div id="live-preview-content" class="prose dark:prose-invert max-w-none">
-                        <h1 class="opacity-50">El contenido aparecerá aquí...</h1>
-                    </div>
-                </div>
+            <div class="bg-white dark:bg-slate-900 rounded-xl shadow-lg border border-gray-200 dark:border-slate-800 overflow-hidden min-h-[500px]">
+                <textarea id="tiny-editor" class="w-full h-full"></textarea>
             </div>
 
-        </div>
+            <div class="fixed bottom-6 right-6 left-6 md:left-auto md:w-80 z-50">
+                <button onclick="publishCurrentPost()" class="w-full bg-black dark:bg-white text-white dark:text-black font-bold py-4 rounded-xl shadow-2xl hover:scale-[1.02] transition flex items-center justify-center gap-2">
+                    <ion-icon name="rocket-outline" class="text-xl"></ion-icon> Publicar Artículo
+                </button>
+            </div>
+
+        </main>
     </div>
 
     <div id="toast-container" class="fixed bottom-6 left-6 z-[80] flex flex-col gap-2"></div>
@@ -263,6 +165,23 @@
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+        // CONFIGURACIÓN TURNDOWN (HTML -> MD)
+        const turndownService = new TurndownService({ 
+            headingStyle: 'atx', 
+            codeBlockStyle: 'fenced',
+            bulletListMarker: '-'
+        });
+        // Plugin para tablas y GitHub flavor markdown
+        turndownService.use(turndownPluginGfm.gfm);
+        // Regla especial para IFRAMES (Videos)
+        turndownService.addRule('iframe', {
+            filter: 'iframe',
+            replacement: function (content, node) {
+                return '\n\n' + node.outerHTML + '\n\n';
+            }
+        });
+
+        // FIREBASE
         const firebaseConfig = {
             apiKey: "AIzaSyBdsu65Voj8en9u_7eL5q0YRFuCC7fUYWA",
             authDomain: "instantetrips-editor.firebaseapp.com",
@@ -271,7 +190,6 @@
             messagingSenderId: "281917140804",
             appId: "1:281917140804:web:ed712e65c9c4b77dd3b111"
         };
-
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
@@ -280,24 +198,63 @@
         const canDelete = () => auth.currentUser && auth.currentUser.email.toLowerCase() === MASTER_ADMIN_EMAIL.toLowerCase();
 
         let githubConfig = null;
-        let blocks = [];
         let tags = [];
         let allPosts = [];
         let currentPostSha = null;
         let currentPostFilename = null;
-        let autosaveInterval = null;
 
+        // INIT TINYMCE
+        function initTinyMCE(initialContent = '') {
+            tinymce.init({
+                selector: '#tiny-editor',
+                height: 600,
+                menubar: false,
+                skin: window.matchMedia('(prefers-color-scheme: dark)').matches ? 'oxide-dark' : 'oxide',
+                content_css: window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'default',
+                plugins: 'image media link lists table code preview wordcount help',
+                toolbar: 'undo redo | blocks | bold italic underline | alignleft aligncenter alignright alignjustify | bullist numlist | link image media | removeformat | code',
+                content_style: 'body { font-family:Inter,sans-serif; font-size:16px; line-height:1.6 } img { max-width: 100%; height: auto; border-radius: 8px; }',
+                setup: function (editor) {
+                    editor.on('init', function () {
+                        editor.setContent(initialContent);
+                    });
+                    // Autosave Logic hooks here if needed
+                    editor.on('change', function () {
+                        // Debounce autosave logic here
+                    });
+                },
+                // CUSTOM IMAGE UPLOAD HANDLER
+                images_upload_handler: (blobInfo, progress) => new Promise(async (resolve, reject) => {
+                    try {
+                        const file = blobInfo.blob();
+                        const b64 = await toBase64(await imageCompression(file, { maxSizeMB: 1 }));
+                        const name = `${Date.now()}-${file.name.replace(/[^a-z0-9]/gi,'-')}`;
+                        
+                        // Subir a GitHub
+                        await ghFetch(`/contents/public/uploads/${name}`, 'PUT', { 
+                            message: 'Tiny Upload', 
+                            content: b64.split(',')[1], 
+                            branch: githubConfig.branch 
+                        });
+                        
+                        // Devolver URL pública
+                        resolve(`/uploads/${name}`);
+                    } catch (e) {
+                        reject('Error subida: ' + e.message);
+                    }
+                })
+            });
+        }
+
+        // --- AUTH & SETUP ---
         const loginForm = document.getElementById('login-form');
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const btn = loginForm.querySelector('button');
-            btn.innerHTML = '<div class="loader mx-auto"></div>'; btn.disabled = true;
             try {
                 await signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('password').value);
             } catch (error) {
                 document.getElementById('login-error').classList.remove('hidden');
-                document.getElementById('login-error').textContent = "Credenciales incorrectas";
-                btn.innerHTML = 'Iniciar Sesión'; btn.disabled = false;
+                document.getElementById('login-error').textContent = "Login fallido";
             }
         });
         document.getElementById('btn-logout').addEventListener('click', () => signOut(auth));
@@ -307,293 +264,166 @@
                 document.getElementById('login-section').classList.add('hidden');
                 document.getElementById('app-section').classList.remove('hidden');
                 document.getElementById('post-date').valueAsDate = new Date();
+                
                 const docSnap = await getDoc(doc(db, "config", "main"));
                 if (docSnap.exists()) {
                     githubConfig = docSnap.data();
                     if (!githubConfig.postsPath.endsWith('/')) githubConfig.postsPath += '/';
-                    loadAuthorsFromRepo(); startAutosave(); checkDraft();
-                } else { alert("Falta configuración en Firebase"); }
+                    loadAuthorsFromRepo();
+                    initTinyMCE(); // Iniciar editor vacío
+                }
             } else {
                 document.getElementById('login-section').classList.remove('hidden');
                 document.getElementById('app-section').classList.add('hidden');
-                stopAutosave();
             }
         });
 
+        // --- GITHUB ---
         async function ghFetch(ep, m='GET', b=null) {
             const res = await fetch(`https://api.github.com/repos/${githubConfig.repoOwner}/${githubConfig.repoName}${ep}`, {
                 method: m,
                 headers: { 'Authorization': `token ${githubConfig.githubToken}`, 'Content-Type': 'application/json' },
                 body: b ? JSON.stringify(b) : null
             });
-            if (!res.ok) throw new Error(`GitHub Error: ${res.status}`);
+            if (!res.ok) throw new Error(`GitHub: ${res.status}`);
             return res.json();
         }
 
-        async function deleteFile(path, sha) {
-            if (!canDelete()) throw new Error("Acceso denegado");
-            await ghFetch(`/contents/${path}`, 'DELETE', { message: `Delete ${path}`, sha, branch: githubConfig.branch });
-        }
-        async function deleteAuthor(slug) {
-            if (!canDelete()) throw new Error("Acceso denegado");
-            const file = await ghFetch(`/contents/src/data/authors.ts`);
-            const content = decodeURIComponent(escape(atob(file.content)));
-            const regex = new RegExp(`\\s*'${slug}':\\s*{[^}]*},?`, 'g');
-            const newContent = content.replace(regex, '');
-            await ghFetch(`/contents/src/data/authors.ts`, 'PUT', { message: `Del auth ${slug}`, content: btoa(unescape(encodeURIComponent(newContent))), sha: file.sha, branch: githubConfig.branch });
-        }
+        const toBase64 = file => new Promise(r => { const rd = new FileReader(); rd.readAsDataURL(file); rd.onload = () => r(rd.result); });
 
-        // --- RENDERIZADO PREVIEW CORREGIDO (TITULO Y VIDEO) ---
-        function renderLivePreview() {
-            const md = generateMarkdown();
-            const cleanContent = md.replace(/^---[\s\S]*?---\s*/, '');
-            const html = marked.parse(cleanContent);
+        // --- LOGICA DE POSTS ---
+        window.publishCurrentPost = async () => {
+            const btn = document.querySelector('button[onclick="publishCurrentPost()"]');
+            const orig = btn.innerText; btn.innerText = "Publicando..."; btn.disabled = true;
             
-            // Inyectar Título y Portada en la Vista Previa
-            const title = document.getElementById('post-title').value;
-            const hero = document.getElementById('post-hero').value;
-            let finalHtml = '';
-            
-            if(hero) finalHtml += `<img src="${hero}" class="w-full h-64 object-cover rounded-xl mb-6 shadow-sm">`;
-            if(title) finalHtml += `<h1 class="text-3xl font-bold mb-4">${title}</h1>`;
-            finalHtml += html;
+            try {
+                // 1. Obtener HTML de TinyMCE
+                const rawContent = tinymce.activeEditor.getContent();
+                
+                // 2. Convertir a Markdown
+                let mdContent = turndownService.turndown(rawContent);
+                
+                // 3. Preparar Frontmatter
+                const t = document.getElementById('post-title').value;
+                const d = document.getElementById('post-desc').value;
+                const dt = document.getElementById('post-date').value;
+                const a = document.getElementById('post-author').value;
+                const h = document.getElementById('post-hero').value;
+                
+                const frontmatter = `---\ntitle: "${t}"\ndescription: "${d}"\npublishDate: "${dt}"\nauthor: "${a}"\nheroImage: "${h}"\nlayout: "../../layouts/BlogPost.astro"\ntags: [${tags.map(x=>`"${x}"`).join(', ')}]\n---\n\n`;
+                
+                const finalFile = frontmatter + mdContent;
 
-            // Inyectar en Escritorio
-            const deskPreview = document.getElementById('live-preview-content');
-            if(deskPreview) deskPreview.innerHTML = finalHtml;
+                // 4. Subir
+                let fn = currentPostFilename;
+                if (!fn) {
+                    const s = t.toLowerCase().replace(/[^a-z0-9]+/g,'-');
+                    fn = `${dt}-${s}.md`;
+                }
 
-            // Inyectar en Móvil
-            const mobPreview = document.getElementById('mobile-preview-content');
-            if(mobPreview) mobPreview.innerHTML = finalHtml;
-        }
+                const payload = { 
+                    message: `Update ${fn}`, 
+                    content: btoa(unescape(encodeURIComponent(finalFile))), 
+                    branch: githubConfig.branch 
+                };
+                if (currentPostSha) payload.sha = currentPostSha;
 
-        window.openMobilePreview = () => { renderLivePreview(); document.getElementById('preview-modal-mobile').classList.add('open'); }
-        window.closeMobilePreview = () => document.getElementById('preview-modal-mobile').classList.remove('open');
+                const res = await ghFetch(`/contents/${githubConfig.postsPath}${fn}`, 'PUT', payload);
+                currentPostSha = res.content.sha;
+                currentPostFilename = fn;
+                
+                showToast("✅ Publicado con éxito");
 
+            } catch (e) {
+                showToast("Error: " + e.message, "error");
+            }
+            btn.innerText = orig; btn.disabled = false;
+        };
+
+        // --- CARGAR POSTS ---
         window.openLoadModal = async () => {
-             document.getElementById('load-post-modal').classList.add('open');
-             if(!allPosts.length) {
-                 document.getElementById('posts-list').innerHTML = '<div class="text-center py-4">Cargando...</div>';
-                 const files = await ghFetch(`/contents/${githubConfig.postsPath}`);
-                 allPosts = files.filter(f => f.name.endsWith('.md')).map(f => ({ name: f.name, sha: f.sha }));
-                 renderPostsList(allPosts);
-             }
-        }
+            document.getElementById('load-post-modal').classList.add('open');
+            const files = await ghFetch(`/contents/${githubConfig.postsPath}`);
+            allPosts = files.filter(f => f.name.endsWith('.md')).map(f => ({ name: f.name, sha: f.sha }));
+            renderPostsList(allPosts);
+        };
 
+        window.loadPost = async (name) => {
+            try {
+                const d = await ghFetch(`/contents/${githubConfig.postsPath}${name}`);
+                const raw = decodeURIComponent(escape(atob(d.content)));
+                
+                // Parse Frontmatter
+                const fmMatch = raw.match(/^---\n([\s\S]+?)\n---/);
+                if (fmMatch) {
+                    const get = k => { const m = fmMatch[1].match(new RegExp(`${k}:\\s*["'](.+?)["']`)); return m?m[1]:''; };
+                    document.getElementById('post-title').value = get('title');
+                    document.getElementById('post-desc').value = get('description');
+                    document.getElementById('post-date').value = get('publishDate');
+                    document.getElementById('post-author').value = get('author');
+                    document.getElementById('post-hero').value = get('heroImage');
+                    const tm = fmMatch[1].match(/tags:\s*\[(.*?)\]/);
+                    if(tm) tags = tm[1].split(',').map(x=>x.trim().replace(/['"]/g,'')).filter(Boolean);
+                    renderTags();
+                }
+
+                // Convert MD Body to HTML for TinyMCE
+                const bodyMd = raw.replace(/^---[\s\S]+?---\s*/, '');
+                const bodyHtml = marked.parse(bodyMd);
+                
+                tinymce.activeEditor.setContent(bodyHtml);
+                
+                currentPostFilename = name;
+                currentPostSha = d.sha;
+                closeLoadModal();
+                showToast("Post cargado");
+
+            } catch(e) { showToast("Error cargando post", "error"); }
+        };
+
+        // --- UTILS ---
         function renderPostsList(posts) {
-            const list = document.getElementById('posts-list');
-            const isAdmin = canDelete();
-            list.innerHTML = posts.map(p => `
-                <div class="flex items-center justify-between p-3 border-b border-gray-100 hover:bg-gray-50 dark:hover:bg-slate-800 transition">
-                    <div class="flex items-center gap-3 overflow-hidden">
-                        <ion-icon name="document-text-outline" class="text-gray-400"></ion-icon>
-                        <span onclick="loadPost('${p.name}')" class="cursor-pointer font-medium text-sm text-gray-700 dark:text-gray-300 hover:text-black truncate">${p.name}</span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                         <button onclick="loadPost('${p.name}')" class="text-xs bg-blue-50 text-blue-600 px-2 py-1 rounded font-bold flex items-center gap-1"><ion-icon name="create-outline"></ion-icon> Editar</button>
-                         ${isAdmin ? `<button onclick="confirmDeletePost('${p.name}', '${p.sha}')" class="text-red-500 hover:bg-red-100 p-1 rounded text-lg" title="Borrar"><ion-icon name="trash-outline"></ion-icon></button>` : ''}
-                    </div>
-                </div>
-            `).join('');
+            document.getElementById('posts-list').innerHTML = posts.map(p => 
+                `<div class="flex justify-between p-3 border-b hover:bg-gray-50 dark:hover:bg-slate-800">
+                    <span onclick="loadPost('${p.name}')" class="cursor-pointer">${p.name}</span>
+                    ${canDelete() ? `<button onclick="deletePost('${p.name}', '${p.sha}')" class="text-red-500"><ion-icon name="trash-outline"></ion-icon></button>` : ''}
+                </div>`
+            ).join('');
         }
 
         async function loadAuthorsFromRepo() {
             try {
-                const file = await ghFetch(`/contents/src/data/authors.ts`);
-                const content = decodeURIComponent(escape(atob(file.content)));
-                const regex = /slug:\s*['"]([^'"]+)['"][\s\S]*?name:\s*['"]([^'"]+)['"]/g;
-                const select = document.getElementById('post-author');
-                const adminList = document.getElementById('authors-list-container');
-                const isAdmin = canDelete();
-                select.innerHTML = '<option value="">Selecciona...</option>';
-                let htmlList = ''; let match;
-                while ((match = regex.exec(content)) !== null) {
-                    const [_, slug, name] = match;
-                    select.innerHTML += `<option value="${slug}">${name}</option>`;
-                    htmlList += `
-                        <div class="flex justify-between items-center p-2 border-b text-sm">
-                            <div class="flex items-center gap-2"><ion-icon name="person-circle-outline" class="text-gray-400 text-lg"></ion-icon><span>${name}</span></div>
-                            ${isAdmin ? `<button onclick="confirmDeleteAuthor('${slug}', '${name}')" class="text-red-500 hover:bg-red-100 p-1 rounded text-lg"><ion-icon name="trash-outline"></ion-icon></button>` : ''}
-                        </div>`;
+                const f = await ghFetch(`/contents/src/data/authors.ts`);
+                const c = decodeURIComponent(escape(atob(f.content)));
+                const r = /slug:\s*['"]([^'"]+)['"][\s\S]*?name:\s*['"]([^'"]+)['"]/g;
+                let m;
+                const sel = document.getElementById('post-author');
+                sel.innerHTML = '<option>Selecciona...</option>';
+                while ((m = r.exec(c)) !== null) {
+                    sel.innerHTML += `<option value="${m[1]}">${m[2]}</option>`;
                 }
-                adminList.innerHTML = htmlList || '<p class="text-xs text-gray-400">No hay autores.</p>';
-            } catch(e) { console.error(e); }
+            } catch(e){}
         }
 
-        window.confirmDeletePost = async (n, s) => { if(confirm(`⚠️ ADMIN: ¿Borrar permanentemente "${n}"?`)) { try { await deleteFile(`${githubConfig.postsPath}${n}`, s); allPosts = allPosts.filter(x=>x.name!==n); renderPostsList(allPosts); showToast("Archivo borrado"); } catch(e) { showToast("Error: " + e.message, "error"); } } }
-        window.confirmDeleteAuthor = async (s, n) => { if(confirm(`⚠️ ADMIN: ¿Borrar autor "${n}"?`)) { try { await deleteAuthor(s); loadAuthorsFromRepo(); showToast("Autor borrado"); } catch(e) { showToast("Error: " + e.message, "error"); } } }
-        
-        window.loadPost = async (name) => {
-             try {
-                 const d = await ghFetch(`/contents/${githubConfig.postsPath}${name}`);
-                 const c = decodeURIComponent(escape(atob(d.content)));
-                 parseMarkdown(c);
-                 currentPostFilename = name; currentPostSha = d.sha;
-                 closeLoadModal(); showToast("Post cargado");
-             } catch(e) { showToast("Error al cargar", "error"); }
-        }
-
-        window.addBlock = (type) => {
-             const c = document.getElementById('blocks-container');
-             if(c.innerText.includes("No hay bloques")) c.innerHTML = '';
-             blocks.push({ id: Date.now().toString(), type, content: '', credits: '', listType: 'ul' });
-             renderBlocks();
-        }
-        window.removeBlock = (id) => { if(confirm("¿Eliminar bloque?")) { blocks = blocks.filter(b => b.id !== id); renderBlocks(); } }
-
-        function renderBlocks() {
-            const container = document.getElementById('blocks-container');
-            const scroll = container.scrollTop; container.innerHTML = '';
-            blocks.forEach(b => {
-                const el = document.createElement('div');
-                el.className = 'block-card group';
-                let header = `
-                    <div class="flex justify-between items-center bg-gray-50 dark:bg-slate-800 p-2 rounded-t-lg border-b border-gray-100 dark:border-slate-700">
-                        <div class="drag-handle cursor-grab text-gray-400 hover:text-gray-600 px-2 flex items-center gap-2">
-                            <ion-icon name="reorder-two-outline" class="text-lg"></ion-icon> <span class="text-[10px] font-bold uppercase">${b.type}</span>
-                        </div>
-                        <button onclick="removeBlock('${b.id}')" class="text-gray-400 hover:text-red-500 px-2 text-lg" title="Eliminar"><ion-icon name="trash-outline"></ion-icon></button>
-                    </div>`;
-                let body = `<div class="p-0">`;
-                if (b.type === 'p' || b.type === 'quote') {
-                    body += `
-                        <div class="toolbar-inner">
-                            <button class="tool-btn font-serif font-bold" onclick="execCmd('bold')" title="Negrita">B</button>
-                            <button class="tool-btn font-serif italic" onclick="execCmd('italic')" title="Cursiva">I</button>
-                            <button class="tool-btn underline" onclick="execCmd('underline')" title="Subrayado">U</button>
-                            <div class="tool-sep"></div>
-                            <button class="tool-btn" onclick="execCmd('justifyLeft')" title="Izq">⬅</button>
-                            <button class="tool-btn" onclick="execCmd('justifyCenter')" title="Centro">⬌</button>
-                            <button class="tool-btn" onclick="execCmd('justifyRight')" title="Der">➡</button>
-                            <button class="tool-btn" onclick="execCmd('justifyFull')" title="Justificado"><ion-icon name="reorder-four-outline"></ion-icon></button>
-                            <div class="tool-sep"></div>
-                            <button class="tool-btn" onclick="applyLink()" title="Link"><ion-icon name="link-outline"></ion-icon></button>
-                            <button class="tool-btn text-red-300 hover:text-red-500" onclick="execCmd('removeFormat')" title="Limpiar"><ion-icon name="remove-circle-outline"></ion-icon></button>
-                        </div>
-                        <div contenteditable="true" class="rich-editor ${b.type==='quote'?'italic text-gray-600 border-l-4 border-orange-500 pl-4':''}" placeholder="Escribe aquí..." oninput="updateBlockContent('${b.id}', this.innerHTML)">${b.content}</div>`;
-                } else if (b.type === 'img' || b.type === 'yt') {
-                    body += `
-                        <div class="p-4 space-y-3">
-                            <div class="flex gap-2">
-                                <input type="text" class="flex-1 text-sm p-2 border rounded bg-gray-50" placeholder="URL del recurso..." value="${b.content}" oninput="updateBlockContent('${b.id}', this.value)">
-                                ${b.type==='img' ? `<label class="cursor-pointer bg-gray-200 hover:bg-gray-300 px-3 py-2 rounded text-xs font-bold flex items-center gap-1"><ion-icon name="cloud-upload-outline"></ion-icon> Subir<input type="file" class="hidden" onchange="uploadImg('${b.id}', this)"></label>`:''}
-                            </div>
-                            ${b.type==='img' && b.content ? `<img src="${b.content.split('|')[0]}" class="h-40 rounded object-cover border mx-auto">` : ''}
-                            <input type="text" class="w-full text-xs text-center italic text-gray-400 bg-transparent outline-none" placeholder="Créditos (opcional)" value="${b.credits}" oninput="updateBlockContent('${b.id}', this.value, 'credits')">
-                        </div>`;
-                } else if (b.type.startsWith('h')) {
-                    body += `<div class="p-4"><input type="text" class="w-full font-bold ${b.type==='h2'?'text-2xl':'text-xl'} outline-none placeholder-gray-300" placeholder="Título..." value="${b.content}" oninput="updateBlockContent('${b.id}', this.value)"></div>`;
-                } else if (b.type === 'list') {
-                     body += `
-                        <div class="p-4">
-                            <select class="text-xs mb-2 bg-gray-50 border rounded p-1" onchange="updateBlockContent('${b.id}', this.value, 'listType'); renderBlocks()">
-                                <option value="ul" ${b.listType==='ul'?'selected':''}>Viñetas</option><option value="ol" ${b.listType==='ol'?'selected':''}>Numerada</option>
-                            </select>
-                            <div contenteditable="true" class="rich-editor border rounded bg-gray-50 min-h-[60px]" oninput="updateBlockContent('${b.id}', this.innerHTML)">${b.content}</div>
-                        </div>`;
-                } else if (b.type === 'hr') {
-                    body += `<div class="p-4 flex justify-center"><div class="w-full h-px bg-gray-300"></div></div>`;
-                }
-                body += `</div>`; el.innerHTML = header + body; container.appendChild(el);
-            });
-            container.scrollTop = scroll;
-            
-            // Render Live Preview
-            renderLivePreview();
-        }
-
-        window.updateBlockContent = (id, v, extra) => { const b=blocks.find(x=>x.id===id); if(!b)return; if(extra==='credits')b.credits=v; else if(extra==='listType')b.listType=v; else b.content=v; updateSEO(); renderLivePreview(); }
-        window.execCmd = (c, v) => document.execCommand(c, false, v);
-        
-        // --- LINK CORREGIDO ---
-        window.applyLink = () => { 
-            let u = prompt("URL:"); 
-            if(u) {
-                if(!/^https?:\/\//i.test(u) && !/^mailto:/i.test(u)) u = 'https://' + u;
-                execCmd('createLink', u);
-            }
-        }
-
-        window.clearAll = () => { if(confirm("¿Borrar todo?")) { blocks=[]; tags=[]; ['post-title','post-desc','post-hero'].forEach(id=>document.getElementById(id).value=''); localStorage.removeItem('blog-draft-v5'); renderBlocks(); renderTags(); updateSEO(); currentPostFilename=null; currentPostSha=null; }}
-        const toBase64 = file => new Promise(r => { const rd = new FileReader(); rd.readAsDataURL(file); rd.onload = () => r(rd.result); });
-        window.uploadImg = async (id, input) => { const f=input.files[0]; if(!f)return; try { const b64=await toBase64(await imageCompression(f, { maxSizeMB: 1 })); const name=`${Date.now()}-${f.name.replace(/[^a-z0-9]/gi,'-')}`; await ghFetch(`/contents/public/uploads/${name}`, 'PUT', { message:'Up', content: b64.split(',')[1], branch: githubConfig.branch }); updateBlockContent(id, `/uploads/${name} | ${f.name}`); renderBlocks(); } catch(e) { showToast("Error subida", "error"); } }
-        
-        function generateMarkdown() {
-            const t=document.getElementById('post-title').value; const d=document.getElementById('post-desc').value; const dt=document.getElementById('post-date').value; const a=document.getElementById('post-author').value; const h=document.getElementById('post-hero').value;
-            let md=`---\ntitle: "${t}"\ndescription: "${d}"\npublishDate: "${dt}"\nauthor: "${a}"\nheroImage: "${h}"\nlayout: "../../layouts/BlogPost.astro"\ntags: [${tags.map(x=>`"${x}"`).join(', ')}]\n---\n\n`;
-            blocks.forEach(b => {
-                if(b.type==='h2') md+=`## ${b.content}\n\n`; else if(b.type==='h3') md+=`### ${b.content}\n\n`; else if(b.type==='p') md+=`${b.content}\n\n`; else if(b.type==='quote') md+=`> ${b.content}\n\n`; else if(b.type==='hr') md+=`***\n\n`; else if(b.type==='list') md+=`<${b.listType}>\n${b.content}\n</${b.listType}>\n\n`; 
-                else if(b.type==='img') { const [u, alt]=b.content.split('|'); if(u) md+=`![${alt||'img'}](${u.trim()})\n${b.credits?`<small class="credit-style"><i>${b.credits}</i></small>`:''}\n\n`; }
-                // --- VIDEO CORREGIDO ---
-                else if(b.type==='yt') {
-                    let src = b.content;
-                    if(src.includes('watch?v=')) src = src.replace('watch?v=', 'embed/');
-                    else if(src.includes('youtu.be/')) src = src.replace('youtu.be/', 'youtube.com/embed/');
-                    md += `<iframe width="100%" height="400" src="${src}" frameborder="0" allowfullscreen></iframe>\n\n`;
-                }
-            });
-            return md;
-        }
-
-        function parseMarkdown(md) {
-            const fm = md.match(/^---\n([\s\S]+?)\n---/);
-            if(fm) {
-                const get = k => { const m = fm[1].match(new RegExp(`${k}:\\s*["'](.+?)["']`)); return m?m[1]:''; };
-                document.getElementById('post-title').value = get('title');
-                document.getElementById('post-desc').value = get('description');
-                document.getElementById('post-date').value = get('publishDate');
-                document.getElementById('post-author').value = get('author');
-                document.getElementById('post-hero').value = get('heroImage');
-                const tm = fm[1].match(/tags:\s*\[(.*?)\]/);
-                if(tm) tags = tm[1].split(',').map(x=>x.trim().replace(/['"]/g,'')).filter(Boolean);
-                renderTags();
-            }
-            const content = md.replace(/^---[\s\S]+?---\s*/, '').trim();
-            blocks = [];
-            content.split('\n\n').forEach((chunk, i) => {
-                 if(chunk.startsWith('## ')) blocks.push({id:Date.now()+i, type:'h2', content:chunk.slice(3)});
-                 else if(chunk.startsWith('### ')) blocks.push({id:Date.now()+i, type:'h3', content:chunk.slice(4)});
-                 else if(chunk.startsWith('> ')) blocks.push({id:Date.now()+i, type:'quote', content:chunk.slice(2)});
-                 else if(chunk.startsWith('***')) blocks.push({id:Date.now()+i, type:'hr'});
-                 else if(chunk.startsWith('![')) {
-                     const m = chunk.match(/!\[(.*?)\]\((.*?)\)/);
-                     if(m) blocks.push({id:Date.now()+i, type:'img', content:`${m[2]} | ${m[1]}`, credits:''});
-                 }
-                 else if(chunk.startsWith('<iframe')) { // DETECTAR VIDEO
-                     const m = chunk.match(/src="([^"]+)"/);
-                     if(m) blocks.push({id:Date.now()+i, type:'yt', content:m[1]});
-                 }
-                 else blocks.push({id:Date.now()+i, type:'p', content:chunk});
-            });
-            renderBlocks();
-        }
-
-        window.publishCurrentPost = async () => {
-             const btn = document.querySelector('button[onclick="publishCurrentPost()"]'); const orig = btn.innerText; btn.innerText = "Publicando..."; btn.disabled = true;
-             try { const md=generateMarkdown(); let fn=currentPostFilename; if(!fn) { const s=document.getElementById('post-title').value.toLowerCase().replace(/[^a-z0-9]+/g,'-'); const d=document.getElementById('post-date').value; if(!s||!d) throw new Error("Faltan datos"); fn=`${d}-${s}.md`; } const p={ message: `Update ${fn}`, content: btoa(unescape(encodeURIComponent(md))), branch: githubConfig.branch }; if(currentPostSha) p.sha=currentPostSha; const res=await ghFetch(`/contents/${githubConfig.postsPath}${fn}`, 'PUT', p); currentPostSha=res.content.sha; currentPostFilename=fn; localStorage.removeItem('blog-draft-v5'); showToast("✅ Publicado"); } catch(e) { showToast("Error: "+e.message, "error"); } btn.innerText=orig; btn.disabled=false;
-        }
-
-        function startAutosave() { autosaveInterval=setInterval(()=>{ if(!blocks.length)return; const d={ title:document.getElementById('post-title').value, desc:document.getElementById('post-desc').value, date:document.getElementById('post-date').value, hero:document.getElementById('post-hero').value, author:document.getElementById('post-author').value, tags, blocks, filename:currentPostFilename, sha:currentPostSha }; localStorage.setItem('blog-draft-v5', JSON.stringify(d)); document.getElementById('save-status').innerText="Guardado auto."; }, 10000); }
-        function checkDraft() { const d=localStorage.getItem('blog-draft-v5'); if(d && confirm("¿Restaurar borrador?")) { const data=JSON.parse(d); document.getElementById('post-title').value=data.title; document.getElementById('post-desc').value=data.desc; document.getElementById('post-date').value=data.date; document.getElementById('post-hero').value=data.hero; tags=data.tags||[]; blocks=data.blocks||[]; currentPostFilename=data.filename; currentPostSha=data.sha; renderTags(); renderBlocks(); } }
-        
-        window.updateSEO = () => { 
-            const t=document.getElementById('post-title').value.length; 
-            document.getElementById('title-seo').className=`dot ${t>=50&&t<=65?'dot-green':t>10?'dot-yellow':'dot-red'}`; 
-            document.getElementById('title-count').innerText=t; 
-            renderLivePreview(); // UPDATE LIVE PREVIEW
+        // Helpers
+        window.deletePost = async (n, s) => { if(confirm("¿Borrar?")) { await deleteFile(`${githubConfig.postsPath}${n}`, s); openLoadModal(); }};
+        window.uploadHeroImage = async (inp) => {
+            const f = inp.files[0];
+            const b64 = await toBase64(await imageCompression(f, { maxSizeMB: 1 }));
+            const name = `${Date.now()}-hero`;
+            await ghFetch(`/contents/public/uploads/${name}`, 'PUT', { message:'Up', content:b64.split(',')[1], branch:githubConfig.branch });
+            document.getElementById('post-hero').value = `/uploads/${name}`;
         };
         
-        window.uploadHeroImage = async (input) => { const f=input.files[0]; if(!f)return; try { const b64=await toBase64(await imageCompression(f, { maxSizeMB: 1 })); const name=`${Date.now()}-hero-${f.name.replace(/[^a-z0-9]/gi,'-')}`; await ghFetch(`/contents/public/uploads/${name}`, 'PUT', { message:'Up', content: b64.split(',')[1], branch: githubConfig.branch }); document.getElementById('post-hero').value=`/uploads/${name}`; updateSEO(); } catch(e) { showToast("Error subida", "error"); } };
+        window.addTag = (e) => { if(e.key==='Enter'){ const v=e.target.value.trim(); if(v && !tags.includes(v)){ tags.push(v); e.target.value=''; renderTags(); }}};
+        document.getElementById('tag-input').addEventListener('keydown', window.addTag);
+        function renderTags() { document.getElementById('tags-container').innerHTML = tags.map(t=>`<span class="bg-gray-200 px-2 rounded text-xs">#${t} <button onclick="tags=tags.filter(x=>x!=='${t}');renderTags()">×</button></span>`).join(''); }
+        
         window.toggleDarkMode = () => document.body.classList.toggle('dark');
         window.closeLoadModal = () => document.getElementById('load-post-modal').classList.remove('open');
         window.closeAuthorModal = () => document.getElementById('author-modal').classList.remove('open');
-        window.addTag = (e) => { if(e.key==='Enter'){ const v=e.target.value.trim(); if(v && !tags.includes(v)){ tags.push(v); e.target.value=''; renderTags(); }}}
-        document.getElementById('tag-input').addEventListener('keydown', window.addTag);
-        function renderTags() { document.getElementById('tags-container').innerHTML = tags.map(t=>`<span class="bg-gray-200 px-2 rounded text-xs">#${t} <button onclick="tags=tags.filter(x=>x!=='${t}');renderTags()">×</button></span>`).join(''); }
-        window.showToast = (m,t) => { const d=document.createElement('div'); d.className=`p-3 rounded text-white text-sm font-bold flex items-center gap-2 ${t==='error'?'bg-red-500':'bg-black'}`; d.innerHTML=`<ion-icon name="${t==='error'?'alert-circle-outline':'checkmark-circle-outline'}"></ion-icon> ${m}`; document.getElementById('toast-container').appendChild(d); setTimeout(()=>d.remove(),3000); }
-        window.downloadMarkdown = () => { const blob=new Blob([generateMarkdown()],{type:'text/markdown'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`${document.getElementById('post-title').value||'post'}.md`; a.click(); }
-        
-        new Sortable(document.getElementById('blocks-container'), { animation: 150, handle: '.drag-handle', onEnd: (evt) => { const item=blocks.splice(evt.oldIndex, 1)[0]; blocks.splice(evt.newIndex, 0, item); renderLivePreview(); }});
+        window.clearAll = () => { if(confirm("¿Limpiar?")) { tinymce.activeEditor.setContent(''); document.getElementById('post-title').value=''; tags=[]; renderTags(); currentPostFilename=null; }};
+        window.showToast = (m,t) => { const d=document.createElement('div'); d.className=`p-3 rounded text-white text-sm font-bold ${t==='error'?'bg-red-500':'bg-black'}`; d.innerText=m; document.getElementById('toast-container').appendChild(d); setTimeout(()=>d.remove(),3000); };
     </script>
 </body>
 </html>
