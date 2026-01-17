@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>God Mode - Admin Dashboard</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.js"></script>
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: { slate: { 850: '#1e293b' } }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Estilos Base Idénticos */
+        body { background-color: #f3f4f6; color: #111; font-family: 'Inter', sans-serif; transition: background 0.3s, color 0.3s; }
+        body.dark { background-color: #0f172a; color: #e2e8f0; }
+        
+        /* Glassmorphism */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+        }
+        .dark .glass-card {
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Gradient Animado */
+        .gradient-bg {
+            background: linear-gradient(-45deg, #f3f4f6, #dbeafe, #fce7f3, #ffedd5, #f3f4f6);
+            background-size: 400% 400%;
+            animation: gradientShift 20s ease infinite;
+        }
+        .dark .gradient-bg {
+            background: linear-gradient(-45deg, #0f172a, #1e1b4b, #1e293b, #0f172a);
+            background-size: 400% 400%;
+        }
+        @keyframes gradientShift { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+
+        /* Botones y Elementos */
+        .btn-primary {
+            background: linear-gradient(135deg, #171717 0%, #262626 100%);
+            transition: all 0.3s;
+            position: relative; overflow: hidden;
+        }
+        .dark .btn-primary { background: linear-gradient(135deg, #f97316 0%, #ea580c 100%); }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+
+        .accent-input { transition: all 0.2s ease; border: 1px solid transparent; }
+        .accent-input:focus { border-color: #f97316; box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.15); outline: none; }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(8px);
+            z-index: 50; display: none; place-items: center;
+        }
+        .modal-overlay.open { display: grid; }
+        .modal-content { animation: modalSlideUp 0.35s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        @keyframes modalSlideUp { from { opacity: 0; transform: translateY(30px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+        
+        /* Loader */
+        .loader {
+            width: 48px; height: 48px;
+            border: 5px solid #FFF;
+            border-bottom-color: #f97316;
+            border-radius: 50%;
+            display: inline-block;
+            box-sizing: border-box;
+            animation: rotation 1s linear infinite;
+        }
+        @keyframes rotation { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+
+<body class="antialiased min-h-screen flex flex-col">
+
+    <div id="login-section" class="flex items-center justify-center min-h-screen p-4 gradient-bg fixed inset-0 z-50">
+        <div class="w-full max-w-sm text-center glass-card rounded-3xl p-8">
+            <div class="mb-8">
+                <ion-icon name="construct-outline" class="text-6xl text-gray-800 dark:text-white mb-4"></ion-icon>
+                <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-orange-500 to-red-600">GOD MODE</h1>
+                <p class="text-xs text-gray-400 mt-1">Acceso Restringido - Solo SEO</p>
+            </div>
+            <form id="login-form" class="space-y-4">
+                <input type="email" id="email" placeholder="Email Admin" class="w-full p-4 bg-white/50 dark:bg-slate-800/50 rounded-xl accent-input border border-gray-200 dark:border-slate-700" required>
+                <input type="password" id="password" placeholder="Contraseña" class="w-full p-4 bg-white/50 dark:bg-slate-800/50 rounded-xl accent-input border border-gray-200 dark:border-slate-700" required>
+                <button type="submit" class="w-full btn-primary text-white font-bold py-4 rounded-xl">Acceder al Panel</button>
+            </form>
+            <p id="login-error" class="text-red-500 text-sm mt-4 hidden"></p>
+        </div>
+    </div>
+
+    <div id="dashboard-section" class="hidden flex-1 flex flex-col bg-gray-50 dark:bg-slate-900">
+        
+        <header class="h-16 bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 flex items-center justify-between px-6 sticky top-0 z-40">
+            <div class="flex items-center gap-3">
+                <div class="bg-red-500 text-white text-xs px-2 py-1 rounded font-bold uppercase tracking-wider">ADMIN</div>
+                <h1 class="font-bold text-gray-700 dark:text-gray-200">Panel de Control</h1>
+            </div>
+            <div class="flex items-center gap-4">
+                <span id="admin-user-display" class="text-sm text-gray-500 hidden md:block"></span>
+                <button onclick="toggleDarkMode()" class="p-2 rounded hover:bg-gray-100 dark:hover:bg-slate-700 text-xl"><ion-icon name="moon-outline"></ion-icon></button>
+                <button onclick="logout()" class="text-red-500 hover:text-red-700 text-xl"><ion-icon name="log-out-outline"></ion-icon></button>
+            </div>
+        </header>
+
+        <div class="flex justify-center mt-6 gap-4 px-4">
+            <button onclick="switchTab('posts')" id="tab-posts" class="px-6 py-2 rounded-full font-bold transition-all bg-orange-500 text-white shadow-lg">Publicaciones</button>
+            <button onclick="switchTab('authors')" id="tab-authors" class="px-6 py-2 rounded-full font-bold transition-all bg-white dark:bg-slate-800 text-gray-500 dark:text-gray-400 hover:bg-gray-100">Autores</button>
+        </div>
+
+        <main class="flex-1 p-6 max-w-7xl mx-auto w-full">
+            
+            <div id="view-posts" class="space-y-6">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-xl font-bold">Galería de Artículos</h2>
+                    <button onclick="loadPosts()" class="text-sm text-blue-500 hover:underline flex items-center gap-1"><ion-icon name="refresh-outline"></ion-icon> Recargar</button>
+                </div>
+                <div id="posts-loader" class="text-center py-20 hidden"><span class="loader"></span></div>
+                <div id="posts-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
+            </div>
+
+            <div id="view-authors" class="hidden space-y-6">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-xl font-bold">Gestión de Autores</h2>
+                    <button onclick="openAuthorModal()" class="btn-primary text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2">
+                        <ion-icon name="person-add-outline"></ion-icon> Nuevo Autor
+                    </button>
+                </div>
+                 <div id="authors-loader" class="text-center py-20 hidden"><span class="loader"></span></div>
+                <div id="authors-list" class="space-y-4"></div>
+            </div>
+
+        </main>
+    </div>
+
+    <div id="author-modal" class="modal-overlay">
+        <div class="modal-content bg-white dark:bg-slate-900 w-full max-w-lg rounded-2xl shadow-2xl p-6 relative">
+            <button onclick="closeAuthorModal()" class="absolute top-4 right-4 text-2xl text-gray-400 hover:text-red-500"><ion-icon name="close-outline"></ion-icon></button>
+            <h3 class="text-xl font-bold mb-6 text-orange-500" id="modal-title">Editar Autor</h3>
+            
+            <form id="author-form" class="space-y-4">
+                <input type="hidden" id="auth-slug-orig"> <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-xs text-gray-400 uppercase font-bold">Nombre</label>
+                        <input type="text" id="auth-name" class="w-full p-3 rounded-lg bg-gray-50 dark:bg-slate-800 border dark:border-slate-700 accent-input" required oninput="generateSlug()">
+                    </div>
+                    <div>
+                        <label class="text-xs text-gray-400 uppercase font-bold">Slug (ID)</label>
+                        <input type="text" id="auth-slug" class="w-full p-3 rounded-lg bg-gray-50 dark:bg-slate-800 border dark:border-slate-700 accent-input text-gray-500" readonly>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="text-xs text-gray-400 uppercase font-bold">Rol (Cargo)</label>
+                    <input type="text" id="auth-role" class="w-full p-3 rounded-lg bg-gray-50 dark:bg-slate-800 border dark:border-slate-700 accent-input" required>
+                </div>
+
+                <div>
+                    <label class="text-xs text-gray-400 uppercase font-bold">Email (Login Access)</label>
+                    <input type="email" id="auth-email" placeholder="correo@ejemplo.com" class="w-full p-3 rounded-lg bg-gray-50 dark:bg-slate-800 border dark:border-slate-700 accent-input">
+                </div>
+
+                <div>
+                    <label class="text-xs text-gray-400 uppercase font-bold">Biografía</label>
+                    <textarea id="auth-bio" rows="3" class="w-full p-3 rounded-lg bg-gray-50 dark:bg-slate-800 border dark:border-slate-700 accent-input resize-none"></textarea>
+                </div>
+
+                <div>
+                    <label class="text-xs text-gray-400 uppercase font-bold">Foto de Perfil</label>
+                    <div class="flex items-center gap-4 mt-1">
+                        <img id="auth-preview" src="" class="w-12 h-12 rounded-full object-cover bg-gray-200">
+                        <input type="file" id="auth-file" class="text-sm text-gray-500" accept="image/*" onchange="previewImage(this)">
+                        <input type="hidden" id="auth-current-img">
+                    </div>
+                </div>
+
+                <div class="pt-4">
+                    <button type="submit" class="w-full btn-primary text-white py-3 rounded-xl font-bold shadow-lg">Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="toast-container" class="fixed bottom-6 right-6 z-[80] flex flex-col gap-2"></div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // --- CONFIGURACIÓN ---
+        const ADMIN_EMAIL = "daniearanadj@gmail.com"; // TU CORREO DE SUPER ADMIN
+        
+        const firebaseConfig = {
+            apiKey: "AIzaSyBdsu65Voj8en9u_7eL5q0YRFuCC7fUYWA", // Misma API key del editor
+            authDomain: "instantetrips-editor.firebaseapp.com",
+            projectId: "instantetrips-editor",
+            storageBucket: "instantetrips-editor.firebasestorage.app",
+            messagingSenderId: "281917140804",
+            appId: "1:281917140804:web:ed712e65c9c4b77dd3b111"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let githubConfig = null;
+        let authorsData = {}; // Objeto en memoria para manipular autores
+        let authorsSha = null; // SHA del archivo authors.ts para poder sobreescribirlo
+
+        // --- AUTH & INIT ---
+        const loginForm = document.getElementById('login-form');
+        
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            if(email.toLowerCase() !== ADMIN_EMAIL.toLowerCase()) {
+                 document.getElementById('login-error').classList.remove('hidden');
+                 document.getElementById('login-error').textContent = "ACCESO DENEGADO: No tienes permisos de Admin.";
+                 return;
+            }
+
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+            } catch (error) {
+                document.getElementById('login-error').classList.remove('hidden');
+                document.getElementById('login-error').textContent = "Credenciales incorrectas.";
+            }
+        });
+
+        window.logout = () => signOut(auth);
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                // DOBLE VERIFICACIÓN DE SEGURIDAD
+                if(user.email.toLowerCase() !== ADMIN_EMAIL.toLowerCase()) {
+                    await signOut(auth);
+                    alert("ALERTA DE SEGURIDAD: Cuenta no autorizada.");
+                    return;
+                }
+
+                document.getElementById('login-section').classList.add('hidden');
+                document.getElementById('dashboard-section').classList.remove('hidden');
+                document.getElementById('admin-user-display').textContent = user.email;
+
+                // Cargar Configuración de GitHub
+                const docSnap = await getDoc(doc(db, "config", "main"));
+                if (docSnap.exists()) {
+                    githubConfig = docSnap.data();
+                    if (!githubConfig.postsPath.endsWith('/')) githubConfig.postsPath += '/';
+                    
+                    // Carga inicial
+                    loadPosts();
+                } else {
+                    alert("Error crítico: No hay configuración de base de datos.");
+                }
+            } else {
+                document.getElementById('login-section').classList.remove('hidden');
+                document.getElementById('dashboard-section').classList.add('hidden');
+            }
+        });
+
+        // --- GITHUB API HELPER ---
+        async function ghFetch(endpoint, method = 'GET', body = null) {
+            const options = {
+                method: method,
+                headers: {
+                    'Authorization': `token ${githubConfig.githubToken}`,
+                    'Content-Type': 'application/json'
+                }
+            };
+            if (body) options.body = JSON.stringify(body);
+            
+            const res = await fetch(`https://api.github.com/repos/${githubConfig.repoOwner}/${githubConfig.repoName}${endpoint}`, options);
+            if (!res.ok) throw new Error(`GitHub Error: ${res.status}`);
+            return res.json();
+        }
+
+        // --- LOGICA DE POSTS (VISUAL) ---
+        window.loadPosts = async () => {
+            document.getElementById('posts-loader').classList.remove('hidden');
+            document.getElementById('posts-grid').innerHTML = '';
+            
+            try {
+                const files = await ghFetch(`/contents/${githubConfig.postsPath}`);
+                const mdFiles = files.filter(f => f.name.endsWith('.md'));
+                
+                // Cargar detalles de cada post (en paralelo para velocidad)
+                const promises = mdFiles.map(async (file) => {
+                    const data = await ghFetch(`/contents/${file.path}`);
+                    const content = decodeURIComponent(escape(atob(data.content)));
+                    
+                    // Extraer Frontmatter básico con Regex
+                    const titleMatch = content.match(/title:\s*["'](.+?)["']/);
+                    const heroMatch = content.match(/heroImage:\s*["'](.+?)["']/);
+                    const dateMatch = content.match(/publishDate:\s*["'](.+?)["']/);
+                    const authorMatch = content.match(/author:\s*["'](.+?)["']/);
+
+                    return {
+                        name: file.name,
+                        path: file.path,
+                        sha: file.sha,
+                        title: titleMatch ? titleMatch[1] : 'Sin Título',
+                        image: heroMatch ? heroMatch[1] : null,
+                        date: dateMatch ? dateMatch[1] : 'Unknown',
+                        author: authorMatch ? authorMatch[1] : 'Unknown'
+                    };
+                });
+
+                const posts = await Promise.all(promises);
+                
+                // Renderizar Grid
+                document.getElementById('posts-grid').innerHTML = posts.map(post => `
+                    <div class="bg-white dark:bg-slate-800 rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-gray-200 dark:border-slate-700 flex flex-col h-full group">
+                        <div class="h-40 overflow-hidden relative bg-gray-200">
+                            ${post.image ? `<img src="${post.image}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">` : '<div class="flex items-center justify-center h-full text-gray-400"><ion-icon name="image-outline" class="text-4xl"></ion-icon></div>'}
+                            <div class="absolute top-2 right-2 bg-black/50 text-white text-xs px-2 py-1 rounded backdrop-blur-md">${post.date}</div>
+                        </div>
+                        <div class="p-4 flex-1 flex flex-col">
+                            <h3 class="font-bold text-gray-800 dark:text-white mb-2 leading-tight line-clamp-2">${post.title}</h3>
+                            <p class="text-xs text-gray-500 mb-4">Por: ${post.author}</p>
+                            <div class="mt-auto flex gap-2">
+                                <a href="https://github.com/${githubConfig.repoOwner}/${githubConfig.repoName}/blob/${githubConfig.branch}/${post.path}" target="_blank" class="flex-1 text-center py-2 bg-gray-100 dark:bg-slate-700 rounded text-xs font-bold hover:bg-gray-200 dark:hover:bg-slate-600 transition-colors">Ver Código</a>
+                                <button onclick="deletePost('${post.path}', '${post.sha}')" class="px-3 py-2 bg-red-100 text-red-500 rounded hover:bg-red-500 hover:text-white transition-colors"><ion-icon name="trash-outline"></ion-icon></button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+
+            } catch (error) {
+                console.error(error);
+                showToast("Error cargando posts", "error");
+            } finally {
+                document.getElementById('posts-loader').classList.add('hidden');
+            }
+        };
+
+        window.deletePost = async (path, sha) => {
+            if(!confirm("¿ESTÁS SEGURO? Esta acción borrará el post del repositorio permanentemente.")) return;
+            try {
+                await ghFetch(`/contents/${path}`, 'DELETE', {
+                    message: `[ADMIN] Deleted ${path}`,
+                    sha: sha,
+                    branch: githubConfig.branch
+                });
+                showToast("Post eliminado");
+                loadPosts(); // Recargar grid
+            } catch (e) {
+                showToast("Error eliminando: " + e.message, "error");
+            }
+        };
+
+        // --- LOGICA DE AUTORES (COMPLEJA) ---
+        
+        // 1. Parsear el archivo authors.ts "sucio" a un objeto JS limpio
+        async function fetchAndParseAuthors() {
+            try {
+                document.getElementById('authors-loader').classList.remove('hidden');
+                const file = await ghFetch(`/contents/src/data/authors.ts`);
+                authorsSha = file.sha;
+                const content = decodeURIComponent(escape(atob(file.content)));
+                
+                // Magia oscura de Regex para extraer SOLO el objeto JSON dentro del TS
+                // Busca desde "export const AUTHORS... = {" hasta "};"
+                const jsonMatch = content.match(/export const AUTHORS: Record<string, Author> = ({[\s\S]*?});/);
+                
+                if (jsonMatch && jsonMatch[1]) {
+                    // Convertimos el string pseudo-JSON de TS a un objeto real
+                    // Necesitamos citar las claves que no tengan comillas para que JSON.parse o eval funcione,
+                    // pero dado que es un archivo confiable escrito por nosotros, usaremos una funcion constructora segura.
+                    // Para evitar problemas con tipos, extraemos el cuerpo y lo evaluamos.
+                    
+                    const objectString = jsonMatch[1];
+                    // Convertir sintaxis JS/TS a algo evaluable:
+                    // En este caso, el formato del usuario es bastante estándar JS.
+                    const authorsObj = new Function(`return ${objectString}`)();
+                    authorsData = authorsObj;
+                    renderAuthorsList();
+                } else {
+                    throw new Error("No se pudo parsear authors.ts");
+                }
+            } catch (e) {
+                console.error(e);
+                showToast("Error leyendo autores", "error");
+            } finally {
+                document.getElementById('authors-loader').classList.add('hidden');
+            }
+        }
+
+        function renderAuthorsList() {
+            const list = document.getElementById('authors-list');
+            list.innerHTML = '';
+            
+            Object.values(authorsData).forEach(auth => {
+                list.innerHTML += `
+                    <div class="flex items-center gap-4 bg-white dark:bg-slate-800 p-4 rounded-xl border border-gray-200 dark:border-slate-700 shadow-sm">
+                        <img src="${auth.image}" onerror="this.src='https://via.placeholder.com/150'" class="w-16 h-16 rounded-full object-cover border-2 border-orange-500">
+                        <div class="flex-1">
+                            <h3 class="font-bold text-lg">${auth.name}</h3>
+                            <p class="text-xs text-gray-500 uppercase tracking-wide">${auth.role}</p>
+                            <p class="text-sm text-gray-600 dark:text-gray-300 mt-1 line-clamp-1">${auth.bio}</p>
+                            ${auth.email ? `<span class="inline-block mt-2 px-2 py-0.5 bg-blue-100 text-blue-600 text-[10px] rounded-full font-bold">${auth.email}</span>` : ''}
+                        </div>
+                        <div class="flex flex-col gap-2">
+                            <button onclick="editAuthor('${auth.slug}')" class="p-2 bg-gray-100 dark:bg-slate-700 rounded text-blue-500 hover:bg-blue-500 hover:text-white transition-colors"><ion-icon name="create-outline"></ion-icon></button>
+                            <button onclick="deleteAuthor('${auth.slug}')" class="p-2 bg-gray-100 dark:bg-slate-700 rounded text-red-500 hover:bg-red-500 hover:text-white transition-colors"><ion-icon name="trash-outline"></ion-icon></button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // 2. Generar el archivo authors.ts final (Reconstrucción)
+        function generateTSContent(authObj) {
+            let ts = `export type Author = {\n  slug: string;\n  name: string;\n  role: string;\n  bio: string;\n  image: string;\n  email?: string;\n};\n\n`;
+            ts += `export const AUTHORS: Record<string, Author> = {\n`;
+            
+            for (const key in authObj) {
+                const a = authObj[key];
+                ts += `  '${key}': {\n`;
+                ts += `    slug: '${a.slug}',\n`;
+                ts += `    name: '${a.name}',\n`;
+                ts += `    role: '${a.role}',\n`;
+                ts += `    bio: '${a.bio.replace(/'/g, "\\'")}',\n`; // Escapar comillas simples
+                ts += `    image: '${a.image}',\n`;
+                if(a.email) ts += `    email: '${a.email}',\n`;
+                ts += `  },\n\n`;
+            }
+            
+            ts += `};\n\n`;
+            // Fallback inteligente: si existe daniel-arana usa ese, si no, el primero de la lista
+            ts += `export const DEFAULT_AUTHOR = AUTHORS['daniel-arana'] || Object.values(AUTHORS)[0];`;
+            
+            return ts;
+        }
+
+        // 3. Guardar/Editar Autor
+        document.getElementById('author-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button[type="submit"]');
+            const origText = btn.innerText;
+            btn.innerText = "Guardando..."; btn.disabled = true;
+
+            try {
+                const slug = document.getElementById('auth-slug').value;
+                const name = document.getElementById('auth-name').value;
+                const role = document.getElementById('auth-role').value;
+                const bio = document.getElementById('auth-bio').value;
+                const email = document.getElementById('auth-email').value;
+                const fileInput = document.getElementById('auth-file');
+                let imageUrl = document.getElementById('auth-current-img').value;
+
+                // Si hay nueva imagen, subirla primero
+                if (fileInput.files[0]) {
+                    const file = fileInput.files[0];
+                    const compressedFile = await imageCompression(file, { maxSizeMB: 0.5, maxWidthOrHeight: 800 });
+                    const reader = new FileReader();
+                    
+                    const base64 = await new Promise(r => { reader.readAsDataURL(compressedFile); reader.onload = () => r(reader.result); });
+                    const fileName = `${slug}-${Date.now()}.jpg`; // Nombre único
+                    
+                    // Subir a la carpeta pública del repo
+                    await ghFetch(`/contents/public/assets/autores/${fileName}`, 'PUT', {
+                        message: `[ADMIN] Upload author photo ${fileName}`,
+                        content: base64.split(',')[1],
+                        branch: githubConfig.branch
+                    });
+                    
+                    imageUrl = `/assets/autores/${fileName}`; // Ruta relativa para el frontmatter
+                }
+
+                // Actualizar objeto en memoria
+                authorsData[slug] = { slug, name, role, bio, image: imageUrl, email };
+
+                // Generar string TS
+                const newContent = generateTSContent(authorsData);
+
+                // Subir archivo actualizado a GitHub
+                const res = await ghFetch(`/contents/src/data/authors.ts`, 'PUT', {
+                    message: `[ADMIN] Update author ${slug}`,
+                    content: btoa(unescape(encodeURIComponent(newContent))),
+                    sha: authorsSha,
+                    branch: githubConfig.branch
+                });
+
+                authorsSha = res.content.sha; // Actualizar SHA
+                showToast("Autor guardado exitosamente");
+                closeAuthorModal();
+                renderAuthorsList();
+
+            } catch (e) {
+                console.error(e);
+                showToast("Error al guardar: " + e.message, "error");
+            } finally {
+                btn.innerText = origText; btn.disabled = false;
+            }
+        });
+
+        // 4. Borrar Autor
+        window.deleteAuthor = async (slug) => {
+            if(!confirm(`¿Eliminar al autor ${slug}? También se borrará su foto.`)) return;
+            
+            try {
+                const author = authorsData[slug];
+                const imagePath = author.image; // Ej: /assets/autores/foto.jpg
+
+                // 1. Intentar borrar la imagen si es local (empieza con /assets/)
+                if(imagePath && imagePath.startsWith('/assets/')) {
+                    const repoPath = 'public' + imagePath; // public/assets/autores/...
+                    try {
+                        // Obtener SHA de la imagen para borrarla
+                        const imgData = await ghFetch(`/contents/${repoPath}`);
+                        await ghFetch(`/contents/${repoPath}`, 'DELETE', {
+                            message: `[ADMIN] Del img ${slug}`,
+                            sha: imgData.sha,
+                            branch: githubConfig.branch
+                        });
+                    } catch (err) {
+                        console.warn("No se pudo borrar la imagen (quizás ya no existe):", err);
+                    }
+                }
+
+                // 2. Borrar del objeto y actualizar TS
+                delete authorsData[slug];
+                const newContent = generateTSContent(authorsData);
+
+                const res = await ghFetch(`/contents/src/data/authors.ts`, 'PUT', {
+                    message: `[ADMIN] Delete author ${slug}`,
+                    content: btoa(unescape(encodeURIComponent(newContent))),
+                    sha: authorsSha,
+                    branch: githubConfig.branch
+                });
+                
+                authorsSha = res.content.sha;
+                showToast("Autor eliminado");
+                renderAuthorsList();
+
+            } catch (e) {
+                showToast("Error eliminando autor: " + e.message, "error");
+            }
+        };
+
+        // --- UTILIDADES ---
+        window.toggleDarkMode = () => document.body.classList.toggle('dark');
+        
+        window.switchTab = (tab) => {
+            const btnPosts = document.getElementById('tab-posts');
+            const btnAuth = document.getElementById('tab-authors');
+            const viewPosts = document.getElementById('view-posts');
+            const viewAuth = document.getElementById('view-authors');
+
+            if (tab === 'posts') {
+                btnPosts.classList.replace('bg-white', 'bg-orange-500'); btnPosts.classList.replace('text-gray-500', 'text-white');
+                btnAuth.classList.replace('bg-orange-500', 'bg-white'); btnAuth.classList.replace('text-white', 'text-gray-500');
+                viewPosts.classList.remove('hidden'); viewAuth.classList.add('hidden');
+                loadPosts();
+            } else {
+                btnAuth.classList.replace('bg-white', 'bg-orange-500'); btnAuth.classList.replace('text-gray-500', 'text-white');
+                btnPosts.classList.replace('bg-orange-500', 'bg-white'); btnPosts.classList.replace('text-white', 'text-gray-500');
+                viewAuth.classList.remove('hidden'); viewPosts.classList.add('hidden');
+                fetchAndParseAuthors();
+            }
+        };
+
+        window.openAuthorModal = () => {
+            document.getElementById('author-form').reset();
+            document.getElementById('auth-slug-orig').value = '';
+            document.getElementById('modal-title').innerText = "Nuevo Autor";
+            document.getElementById('auth-preview').src = "";
+            document.getElementById('auth-slug').readOnly = true; 
+            document.getElementById('author-modal').classList.add('open');
+        };
+
+        window.editAuthor = (slug) => {
+            const data = authorsData[slug];
+            document.getElementById('auth-slug-orig').value = slug;
+            document.getElementById('auth-slug').value = data.slug;
+            document.getElementById('auth-name').value = data.name;
+            document.getElementById('auth-role').value = data.role;
+            document.getElementById('auth-bio').value = data.bio;
+            document.getElementById('auth-email').value = data.email || '';
+            document.getElementById('auth-current-img').value = data.image;
+            document.getElementById('auth-preview').src = data.image;
+            
+            document.getElementById('modal-title').innerText = "Editar Autor";
+            document.getElementById('author-modal').classList.add('open');
+        };
+
+        window.closeAuthorModal = () => document.getElementById('author-modal').classList.remove('open');
+        
+        window.generateSlug = () => {
+            // Solo genera slug automáticamente si NO estamos editando uno existente
+            if(document.getElementById('auth-slug-orig').value) return; 
+            
+            const name = document.getElementById('auth-name').value;
+            const slug = name.toLowerCase()
+                .replace(/[^\w\s-]/g, '') // Quitar caracteres especiales
+                .replace(/\s+/g, '-'); // Espacios a guiones
+            document.getElementById('auth-slug').value = slug;
+        };
+
+        window.previewImage = (input) => {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = (e) => document.getElementById('auth-preview').src = e.target.result;
+                reader.readAsDataURL(input.files[0]);
+            }
+        };
+
+        window.showToast = (m, t) => {
+            const d = document.createElement('div');
+            d.className = `p-3 rounded-lg text-white text-sm font-bold shadow-lg flex items-center gap-2 animate-bounce ${t === 'error' ? 'bg-red-500' : 'bg-gray-900'}`;
+            d.innerHTML = t === 'error' ? `<ion-icon name="alert-circle"></ion-icon> ${m}` : `<ion-icon name="checkmark-circle"></ion-icon> ${m}`;
+            document.getElementById('toast-container').appendChild(d);
+            setTimeout(() => d.remove(), 4000);
+        };
+
+    </script>
+</body>
+</html>
