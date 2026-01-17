@@ -2,233 +2,276 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Editor Instante Trips V5</title>
     
-    <link rel="apple-touch-icon" href="public/logo-ios.png">
-    <link rel="icon" type="image/png" href="public/logo-ios.png">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-    
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'media',
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        display: ['Space Grotesk', 'sans-serif'],
-                        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'monospace'],
-                    },
-                    colors: {
-                        brand: { 50: '#eff6ff', 100: '#dbeafe', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8' }
-                    }
-                }
-            }
-        }
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+    
     <style>
-        /* [PROTECCIÓN] ESTILOS CORE */
-        body { background-color: #f8fafc; color: #334155; min-height: 100vh; transition: background 0.3s ease; }
-        .clean-card { background: white; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); border-radius: 1rem; }
-        .input-blog { background: #f8fafc; border: 1px solid #e2e8f0; color: #1e293b; transition: all 0.2s; font-size: 0.95rem; }
-        .input-blog:focus { background: white; border-color: #3b82f6; outline: none; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
+            background: linear-gradient(135deg, #fef3c7 0%, #fce7f3 50%, #ddd6fe 100%);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+        }
+        
+        body.dark { background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #1e293b 100%); }
 
-        .rich-editor { min-height: 100px; padding: 0.75rem; border-radius: 0.5rem; outline: none; border: 1px solid transparent; position: relative; }
-        .rich-editor:focus { border-color: #e2e8f0; background: #fcfcfd; }
-        .rich-editor:empty:not(:focus):before { content: attr(placeholder); color: #94a3b8; pointer-events: none; display: block; }
-        .rich-editor a { color: #2563eb !important; font-weight: 600 !important; text-decoration: underline !important; cursor: pointer; }
-        .rich-editor ul { list-style-type: disc; padding-left: 1.5rem; }
-        .rich-editor ol { list-style-type: decimal; padding-left: 1.5rem; }
-
-        @media (prefers-color-scheme: dark) {
-            body { background-color: #0f172a; color: #cbd5e1; }
-            .clean-card { background: #1e293b; border-color: #334155; }
-            .input-blog { background: #0f172a; border-color: #334155; color: #e2e8f0; }
-            .rich-editor:focus { border-color: #334155; background: #1e293b; }
-            .modal-content { background: #1e293b; border-color: #334155; }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+            border-radius: 20px;
         }
 
-        .preview-content h2 { font-family: 'Space Grotesk', sans-serif; font-size: 1.5rem; font-weight: 700; color: #1e293b; margin-top: 1.5em; }
-        .preview-content p { margin-bottom: 1em; line-height: 1.7; color: #475569; }
-        .preview-content a { color: #2563eb; text-decoration: underline; font-weight: 600; }
-        .credit-style { font-size: 0.75rem; font-style: italic; opacity: 0.7; margin-top: 4px; display: block; }
+        .dark .glass-card { background: rgba(30, 41, 59, 0.85); border: 1px solid rgba(255, 255, 255, 0.1); }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .fade-in { animation: fadeIn 0.4s ease-out forwards; }
+        .input-modern {
+            background: rgba(255, 255, 255, 0.6);
+            border: 2px solid rgba(249, 115, 22, 0.1);
+            color: #1e293b;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s;
+        }
 
-        .btn-tool { display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0.8rem; background: white; border-radius: 0.6rem; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; transition: all 0.2s; border: 1px solid #f1f5f9; }
-        .btn-tool:hover { border-color: #3b82f6; color: #2563eb; transform: translateY(-1px); }
-        @media (prefers-color-scheme: dark) { .btn-tool { background: #334155; border-color: #475569; color: #e2e8f0; } }
+        .dark .input-modern { background: rgba(30, 41, 59, 0.6); color: #e2e8f0; border-color: rgba(249, 115, 22, 0.2); }
 
-        /* Modal Styles */
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 200; display: none; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s; }
+        .input-modern:focus {
+            background: rgba(255, 255, 255, 0.95);
+            border-color: #f97316;
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.1);
+        }
+
+        .btn-gradient {
+            background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+            color: white;
+            font-weight: 700;
+        }
+
+        .btn-gradient:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(249, 115, 22, 0.4); }
+
+        .rich-editor {
+            min-height: 120px;
+            padding: 1rem;
+            border-radius: 12px;
+            outline: none;
+            border: 2px solid transparent;
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        .rich-editor:focus { border-color: #f97316; background: rgba(255, 255, 255, 0.95); }
+        .rich-editor:empty:not(:focus):before { content: attr(placeholder); color: #94a3b8; pointer-events: none; }
+
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+            z-index: 200;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+        }
+
         .modal-overlay.open { display: flex; opacity: 1; }
-        .modal-box { background: white; padding: 2rem; border-radius: 1rem; width: 90%; max-width: 500px; transform: scale(0.95); transition: transform 0.3s; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
+
+        .modal-box {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            transform: scale(0.9);
+            transition: transform 0.3s;
+        }
+
+        .dark .modal-box { background: #1e293b; }
         .modal-overlay.open .modal-box { transform: scale(1); }
+
+        .loader {
+            border: 3px solid rgba(249, 115, 22, 0.1);
+            border-top: 3px solid #f97316;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        .toolbar-btn {
+            padding: 0.5rem 0.75rem;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+            background: rgba(255, 255, 255, 0.7);
+            cursor: pointer;
+        }
+
+        .toolbar-btn:hover { border-color: #f97316; background: rgba(249, 115, 22, 0.1); }
     </style>
 </head>
-<body class="antialiased selection:bg-brand-100 selection:text-brand-700">
 
+<body class="antialiased">
+
+    <!-- MODAL: Cargar Post -->
+    <div id="load-post-modal" class="modal-overlay">
+        <div class="modal-box">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold bg-gradient-to-r from-orange-600 to-orange-400 bg-clip-text text-transparent">
+                    📂 Cargar Post Existente
+                </h3>
+                <button onclick="closeLoadModal()" class="text-2xl opacity-50 hover:opacity-100">×</button>
+            </div>
+            <input type="text" id="search-posts" placeholder="🔍 Buscar..." class="w-full p-3 rounded-xl input-modern mb-4" oninput="filterPosts()">
+            <div id="posts-list" class="space-y-2 max-h-96 overflow-y-auto">
+                <div class="flex items-center justify-center py-8"><div class="loader"></div></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: Nuevo Autor -->
     <div id="author-modal" class="modal-overlay">
-        <div class="modal-box modal-content border dark:border-slate-700">
-            <h3 class="text-lg font-bold font-display mb-4 dark:text-white">Nuevo Autor</h3>
+        <div class="modal-box">
+            <h3 class="text-xl font-bold mb-4">👤 Nuevo Autor</h3>
             <div class="space-y-4">
-                <input type="text" id="new-auth-name" placeholder="Nombre completo (ej: Jonathan Arana)" class="w-full p-3 rounded-lg input-blog">
-                <input type="text" id="new-auth-role" placeholder="Rol (ej: Lead Photographer)" class="w-full p-3 rounded-lg input-blog">
-                <textarea id="new-auth-bio" rows="2" placeholder="Bio corta..." class="w-full p-3 rounded-lg input-blog"></textarea>
-                
-                <div class="border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-lg p-4 text-center">
-                    <p class="text-xs text-slate-500 mb-2">Foto de perfil (Se renombrará auto)</p>
-                    <input type="file" id="new-auth-file" accept="image/*" class="text-xs w-full">
-                </div>
-
+                <input type="text" id="new-auth-name" placeholder="Nombre completo" class="w-full p-3 rounded-xl input-modern">
+                <input type="text" id="new-auth-role" placeholder="Rol" class="w-full p-3 rounded-xl input-modern">
+                <textarea id="new-auth-bio" rows="2" placeholder="Bio..." class="w-full p-3 rounded-xl input-modern resize-none"></textarea>
+                <input type="file" id="new-auth-file" accept="image/*" class="w-full text-xs">
                 <div class="flex gap-3 pt-2">
-                    <button onclick="closeAuthorModal()" class="flex-1 py-2 rounded-lg text-sm font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition">Cancelar</button>
-                    <button onclick="saveNewAuthor()" id="btn-save-auth" class="flex-1 py-2 rounded-lg text-sm font-bold bg-brand-600 text-white hover:bg-brand-700 transition">Guardar Autor</button>
+                    <button onclick="closeAuthorModal()" class="flex-1 py-3 rounded-xl text-sm font-bold opacity-60 hover:opacity-100">Cancelar</button>
+                    <button onclick="saveNewAuthor()" id="btn-save-auth" class="flex-1 py-3 rounded-xl text-sm btn-gradient">Guardar</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <div id="mobile-menu" class="fixed inset-0 z-[100] bg-slate-900/95 backdrop-blur-sm transform translate-x-full transition-transform duration-300 md:hidden flex flex-col items-center justify-center gap-8">
-        <button id="close-menu" class="absolute top-6 right-6 text-white text-4xl opacity-80 hover:opacity-100">×</button>
-        <div class="flex flex-col gap-6 text-center w-full px-10">
-            <button onclick="togglePreviewMode(); closeMobMenu()" class="text-xl font-bold text-white">Vista Previa</button>
-            <button onclick="downloadMarkdown(); closeMobMenu()" class="text-xl font-bold text-white">Descargar .md</button>
-            <button onclick="logout(); closeMobMenu()" class="text-xl font-bold text-red-500">Salir</button>
-        </div>
-    </div>
-
+    <!-- LOGIN -->
     <div id="login-section" class="flex items-center justify-center min-h-screen p-4">
-        <div class="clean-card p-10 w-full max-w-[400px] text-center fade-in relative overflow-hidden">
-            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
-            <div class="mb-8">
-                <img src="public/blog.svg" alt="Logo" class="w-20 h-20 mx-auto mb-6 invert dark:invert-0">
-                <h1 class="text-2xl font-bold font-display text-slate-900 dark:text-white">Instante Trips Blog</h1>
-            </div>
+        <div class="glass-card p-10 w-full max-w-[420px] text-center">
+            <div class="w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-orange-400 to-orange-600 rounded-3xl flex items-center justify-center text-4xl">✈️</div>
+            <h1 class="text-3xl font-bold mb-2">Instante Trips</h1>
+            <p class="text-sm opacity-60 mb-8">Editor V5 Pro</p>
             <form id="login-form" class="space-y-5">
-                <input type="email" id="email" placeholder="Email" class="w-full p-3.5 rounded-lg input-blog" required>
-                <input type="password" id="password" placeholder="Contraseña" class="w-full p-3.5 rounded-lg input-blog" required>
-                <button type="submit" class="w-full bg-slate-900 text-white font-bold py-3.5 rounded-lg transition active:scale-[0.98]">Ingresar</button>
+                <input type="email" id="email" placeholder="📧 Email" class="w-full p-4 rounded-xl input-modern" required>
+                <input type="password" id="password" placeholder="🔒 Contraseña" class="w-full p-4 rounded-xl input-modern" required>
+                <button type="submit" class="w-full py-4 rounded-xl btn-gradient text-lg font-bold">Ingresar →</button>
             </form>
-            <p id="login-error" class="text-red-500 text-xs mt-4 hidden bg-red-50 p-2 rounded"></p>
+            <p id="login-error" class="text-red-500 text-xs mt-4 hidden p-3 rounded-xl bg-red-50"></p>
         </div>
     </div>
 
+    <!-- APP -->
     <div id="app-section" class="hidden min-h-screen flex flex-col">
-        <header class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-md sticky top-0 z-50 border-b border-slate-200">
-            <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <img src="public/blog.svg" alt="Logo" class="w-10 h-10 invert dark:invert-0">
-                    <span class="font-bold font-display text-lg dark:text-white tracking-tight">Editor IT</span>
-                </div>
+        <header class="glass-card sticky top-0 z-50 m-4 rounded-2xl">
+            <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
                 <div class="flex items-center gap-4">
-                    <span id="welcome-msg" class="text-sm font-medium text-slate-500 hidden md:block"></span>
-                    <button onclick="togglePreviewMode()" class="px-4 py-2 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-800">Vista</button>
-                    <button onclick="downloadMarkdown()" class="px-4 py-2 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-800">Descargar</button>
-                    <button id="btn-logout" class="text-red-500 text-xs font-bold transition">Salir</button>
-                    <button id="menu-btn" class="md:hidden text-2xl dark:text-white">☰</button>
+                    <div class="w-12 h-12 bg-gradient-to-br from-orange-400 to-orange-600 rounded-xl flex items-center justify-center text-2xl">✈️</div>
+                    <div>
+                        <span class="font-bold text-xl">Editor V5</span>
+                        <p class="text-xs opacity-50" id="welcome-msg"></p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button onclick="openLoadModal()" class="hidden md:flex items-center gap-2 px-4 py-2 rounded-xl toolbar-btn">📂</button>
+                    <button onclick="togglePreviewMode()" class="hidden md:flex items-center gap-2 px-4 py-2 rounded-xl toolbar-btn">👁️</button>
+                    <button onclick="downloadMarkdown()" class="hidden md:flex items-center gap-2 px-4 py-2 rounded-xl toolbar-btn">💾</button>
+                    <button id="btn-logout" class="hidden md:block text-red-500 text-sm font-bold">Salir</button>
                 </div>
             </div>
         </header>
 
-        <main class="flex-1 max-w-7xl mx-auto w-full p-6 pb-24 grid grid-cols-1 lg:grid-cols-12 gap-8">
-            <div class="flex flex-col gap-6 lg:col-span-7 fade-in">
-                <div class="clean-card p-6">
-                    <div class="flex justify-between items-center mb-5">
-                        <h2 class="text-xs font-bold font-display uppercase tracking-widest text-brand-600 dark:text-brand-500">DATA DEL POST</h2>
-                        <button onclick="clearPostData()" class="flex items-center gap-1.5 text-[10px] font-bold text-red-500 hover:underline">Limpiar todo</button>
-                    </div>
+        <main class="flex-1 max-w-7xl mx-auto w-full p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <div class="flex flex-col gap-6 lg:col-span-7">
+                
+                <div class="glass-card p-6">
+                    <h2 class="text-sm font-bold uppercase mb-6">📝 Datos del Post</h2>
                     <div class="space-y-5">
-                        <input type="text" id="post-title" class="w-full p-3 rounded-lg input-blog font-display font-semibold text-lg" placeholder="Título atractivo..." oninput="updatePreview()">
-                        <textarea id="post-desc" rows="2" class="w-full p-3 rounded-lg input-blog resize-none" placeholder="Resumen SEO..." oninput="updatePreview()"></textarea>
+                        <input type="text" id="post-title" class="w-full p-4 rounded-xl input-modern font-semibold text-lg" placeholder="Título..." oninput="updatePreview()">
+                        <textarea id="post-desc" rows="2" class="w-full p-4 rounded-xl input-modern resize-none" placeholder="Descripción SEO..." oninput="updatePreview()"></textarea>
                         
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <input type="date" id="post-date" class="w-full p-3 rounded-lg input-blog" onchange="updatePreview()">
+                        <div class="grid grid-cols-2 gap-4">
+                            <input type="date" id="post-date" class="w-full p-4 rounded-xl input-modern" onchange="updatePreview()">
                             <div class="flex gap-2">
-                                <select id="post-author" class="flex-1 p-3 rounded-lg input-blog" onchange="updatePreview()">
-                                    <option value="">Cargando autores...</option>
+                                <select id="post-author" class="flex-1 p-4 rounded-xl input-modern" onchange="updatePreview()">
+                                    <option value="">Cargando...</option>
                                 </select>
-                                <button onclick="openAuthorModal()" class="bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 p-3 rounded-lg text-lg font-bold text-brand-600" title="Nuevo Autor">+</button>
+                                <button onclick="openAuthorModal()" class="px-4 rounded-xl toolbar-btn font-bold text-lg">+</button>
                             </div>
                         </div>
 
                         <div>
-                            <label class="block text-xs font-semibold text-slate-500 mb-1.5 uppercase">Imagen de Portada (Hero)</label>
-                            <div class="flex gap-2 items-center">
-                                <input type="url" id="post-hero" class="flex-1 p-3 rounded-lg input-blog" placeholder="URL o sube una imagen" oninput="updatePreview()">
-                                <label class="cursor-pointer bg-blue-50 text-blue-600 px-4 py-3 rounded-lg transition flex items-center gap-2 text-xs font-bold border border-blue-200">
-                                    <span>Subir</span>
+                            <label class="block text-xs font-semibold opacity-70 mb-2">🖼️ Imagen Hero</label>
+                            <div class="flex gap-2">
+                                <input type="url" id="post-hero" class="flex-1 p-4 rounded-xl input-modern" placeholder="URL..." oninput="updatePreview()">
+                                <label class="cursor-pointer bg-blue-500 text-white px-5 py-4 rounded-xl font-bold">
+                                    📤
                                     <input type="file" class="hidden" accept="image/*" onchange="uploadHeroImage(this)">
                                 </label>
                             </div>
                         </div>
+
                         <div>
+                            <label class="block text-xs font-semibold opacity-70 mb-2">🏷️ Etiquetas</label>
                             <div class="flex gap-2 mb-3">
-                                <input type="text" id="tag-input" placeholder="Etiquetas (Enter para agregar)..." class="flex-1 p-3 rounded-lg input-blog">
-                                <button onclick="addTag()" class="bg-brand-600 text-white px-4 rounded-lg font-bold">+</button>
+                                <input type="text" id="tag-input" placeholder="Escribe y presiona Enter..." class="flex-1 p-4 rounded-xl input-modern">
+                                <button onclick="addTag()" class="px-6 rounded-xl btn-gradient font-bold">+</button>
                             </div>
                             <div id="tags-container" class="flex flex-wrap gap-2"></div>
                         </div>
                     </div>
                 </div>
 
-                <div class="clean-card p-6 flex-1">
-                    <div class="flex justify-between items-center mb-5">
-                        <h2 class="text-xs font-bold font-display uppercase tracking-widest text-brand-600">Contenido</h2>
-                        <button onclick="clearBlocks()" class="text-xs font-medium text-red-500">🗑️ Vaciar bloques</button>
+                <div class="glass-card p-6">
+                    <h2 class="text-sm font-bold uppercase mb-6">✏️ Contenido</h2>
+                    <div class="flex flex-wrap gap-2 mb-6 p-3 rounded-xl" style="background: rgba(255,255,255,0.5)">
+                        <button onclick="addBlock('h2')" class="toolbar-btn">H2</button>
+                        <button onclick="addBlock('h3')" class="toolbar-btn">H3</button>
+                        <button onclick="addBlock('p')" class="toolbar-btn">📄 Párrafo</button>
+                        <button onclick="addBlock('img')" class="toolbar-btn">🖼️ Imagen</button>
+                        <button onclick="addBlock('yt')" class="toolbar-btn">🎬 Video</button>
+                        <button onclick="addBlock('list')" class="toolbar-btn">📋 Lista</button>
                     </div>
-                    <div class="flex flex-wrap gap-2 mb-6 p-1.5 bg-slate-100 rounded-xl">
-                        <button onclick="addBlock('h2')" class="btn-tool">H2 Título</button>
-                        <button onclick="addBlock('h3')" class="btn-tool">H3 Sub</button>
-                        <button onclick="addBlock('p')" class="btn-tool !text-blue-600">Párrafo</button>
-                        <button onclick="addBlock('img')" class="btn-tool">Imagen</button>
-                        <button onclick="addBlock('yt')" class="btn-tool">Video</button>
-                        <button onclick="addBlock('list')" class="btn-tool !text-indigo-600">Lista</button>
-                    </div>
-                    <div id="blocks-container" class="space-y-4 min-h-[200px]"></div>
+                    <div id="blocks-container" class="space-y-4 min-h-[300px]"></div>
                 </div>
 
-                <div class="clean-card p-6">
-                    <button id="btn-publish-one" onclick="publishCurrentPost()" class="w-full bg-emerald-600 text-white font-bold py-4 rounded-xl shadow-lg transition active:scale-[0.99] mb-6">📤 Publicar Artículo</button>
-                    <div class="border-t pt-6">
-                        <h3 class="text-sm font-bold mb-3 text-slate-700">Carga Masiva (.md)</h3>
-                        <div class="border-2 border-dashed rounded-xl p-6 text-center cursor-pointer relative group">
-                            <input type="file" id="bulk-files" multiple accept=".md" class="absolute inset-0 w-full h-full opacity-0" onchange="handleBulkFiles(this)">
-                            <p class="text-xs text-slate-500 group-hover:text-brand-500 transition">📂 Arrastra archivos aquí</p>
-                        </div>
-                        <div id="bulk-preview" class="mt-4 space-y-2"></div>
-                        <button id="btn-publish-bulk" onclick="publishBulk()" class="hidden w-full mt-4 bg-purple-600 text-white font-bold py-3 rounded-lg transition">🚀 Publicar Todos</button>
-                    </div>
+                <div class="glass-card p-6">
+                    <button onclick="publishCurrentPost()" class="w-full bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-bold py-5 rounded-xl mb-6">
+                        🚀 Publicar Artículo
+                    </button>
                 </div>
             </div>
 
-            <div class="flex flex-col gap-6 lg:col-span-5 fade-in">
-                <div class="clean-card flex-1 flex flex-col h-[600px] lg:h-auto lg:sticky lg:top-24 overflow-hidden">
-                    <div class="p-4 border-b bg-slate-50 flex justify-between items-center">
-                        <span class="font-bold text-xs uppercase text-brand-600 tracking-widest">Vista Previa</span>
-                        <div class="text-xs font-mono text-slate-400"><span id="word-count">0 palabras</span></div>
+            <div class="flex flex-col gap-6 lg:col-span-5">
+                <div class="glass-card flex-1 flex flex-col overflow-hidden lg:sticky lg:top-28">
+                    <div class="p-5 border-b flex justify-between items-center">
+                        <span class="font-bold text-sm uppercase">👁️ Vista Previa</span>
+                        <span id="word-count" class="text-xs">0 palabras</span>
                     </div>
-                    <div id="preview-md" class="hidden flex-1 p-6 overflow-y-auto font-mono text-xs whitespace-pre-wrap"></div>
-                    <div id="preview-html" class="flex-1 p-8 overflow-y-auto preview-content bg-white"></div>
-                </div>
-                <div class="clean-card p-5">
-                    <button onclick="toggleHistory()" class="flex justify-between w-full text-xs font-bold uppercase text-slate-500 transition"><span>📜 Historial Reciente</span><span id="hist-arrow">▼</span></button>
-                    <div id="history-content" class="hidden mt-4 space-y-3 max-h-60 overflow-y-auto"></div>
+                    <div id="preview-md" class="hidden flex-1 p-6 overflow-y-auto font-mono text-xs whitespace-pre-wrap bg-slate-900 text-green-400"></div>
+                    <div id="preview-html" class="flex-1 p-8 overflow-y-auto"></div>
                 </div>
             </div>
         </main>
     </div>
 
-    <div id="toast-container" class="fixed bottom-6 right-6 z-[70] flex flex-col gap-2"></div>
+    <div id="toast-container" class="fixed bottom-6 right-6 z-[70] flex flex-col gap-3"></div>
 
     <script type="module">
-        /* [ZONA BLINDADA 1] - FIREBASE CORE */
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
@@ -246,29 +289,28 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
         
-        /* [ZONA BLINDADA 2] - ESTADO */
         let githubConfig = null;
         let blocks = [];
         let tags = [];
-        let bulkFilesData = [];
-
-        // CONFIGURACIÓN MARKED (CORRECCIÓN LINKS VISTA PREVIA)
-        const renderer = new marked.Renderer();
-        const linkRenderer = renderer.link;
-        renderer.link = (href, title, text) => {
-            const html = linkRenderer.call(renderer, href, title, text);
-            return html.replace(/^<a /, '<a target="_blank" rel="noopener noreferrer" ');
-        };
-        marked.use({ renderer });
+        let allPosts = [];
+        let currentPostSha = null;
+        let currentPostFilename = null;
 
         // LOGIN
         const loginForm = document.getElementById('login-form');
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = loginForm.querySelector('button');
-            btn.innerText = "Verificando..."; btn.disabled = true;
-            try { await signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('password').value); } 
-            catch (error) { document.getElementById('login-error').classList.remove('hidden'); btn.innerText = "Ingresar"; btn.disabled = false; }
+            btn.innerHTML = '<div class="loader mx-auto"></div>';
+            btn.disabled = true;
+            try {
+                await signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('password').value);
+            } catch (error) {
+                document.getElementById('login-error').classList.remove('hidden');
+                document.getElementById('login-error').textContent = '❌ Error de login';
+                btn.innerHTML = 'Ingresar →';
+                btn.disabled = false;
+            }
         });
 
         window.logout = () => signOut(auth);
@@ -278,50 +320,40 @@
             if (user) {
                 document.getElementById('login-section').classList.add('hidden');
                 document.getElementById('app-section').classList.remove('hidden');
-                document.getElementById('welcome-msg').textContent = `Hola, ${user.email.split('@')[0]}`;
+                document.getElementById('welcome-msg').textContent = user.email.split('@')[0];
                 document.getElementById('post-date').valueAsDate = new Date();
+
                 const docSnap = await getDoc(doc(db, "config", "main"));
-                if (docSnap.exists()) { 
-                    githubConfig = docSnap.data(); 
-                    showToast("GitHub Conectado ✅"); 
-                    loadHistory();
-                    loadAuthorsFromRepo(); // Cargar autores al iniciar
+                if (docSnap.exists()) {
+                    githubConfig = docSnap.data();
+                    if (!githubConfig.postsPath.endsWith('/')) githubConfig.postsPath += '/';
+                    showToast("✅ GitHub Conectado");
+                    loadAuthorsFromRepo();
                 }
-            } else { document.getElementById('login-section').classList.remove('hidden'); document.getElementById('app-section').classList.add('hidden'); }
+            } else {
+                document.getElementById('login-section').classList.remove('hidden');
+                document.getElementById('app-section').classList.add('hidden');
+            }
         });
 
-        // ETIQUETAS Y ENTER
-        document.getElementById('tag-input').addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') { e.preventDefault(); addTag(); }
-        });
-        window.addTag = () => {
-            const input = document.getElementById('tag-input');
-            const val = input.value.trim();
-            if (val && !tags.includes(val)) { tags.push(val); input.value = ''; renderTags(); updatePreview(); }
-        };
-        window.removeTag = (tag) => { tags = tags.filter(t => t !== tag); renderTags(); updatePreview(); };
-        function renderTags() {
-            document.getElementById('tags-container').innerHTML = tags.map(t => `<div class="bg-brand-50 text-brand-600 px-3 py-1.5 rounded-lg text-[10px] font-bold border flex items-center gap-2 animate-[fadeIn_0.2s]">#${t}<button onclick="removeTag('${t}')" class="hover:text-red-500 transition">×</button></div>`).join('');
+        // GITHUB
+        async function ghFetch(ep, m='GET', b=null) {
+            const response = await fetch(`https://api.github.com/repos/${githubConfig.repoOwner}/${githubConfig.repoName}${ep}`, {
+                method: m,
+                headers: { 'Authorization': `token ${githubConfig.githubToken}`, 'Content-Type': 'application/json' },
+                body: b ? JSON.stringify(b) : null
+            });
+            if (!response.ok) throw new Error(`GitHub error: ${response.status}`);
+            return response.json();
         }
 
-        // LIMPIAR
-        window.clearPostData = () => {
-            if(confirm("¿Seguro que quieres limpiar todo el borrador?")) {
-                document.getElementById('post-title').value = ''; document.getElementById('post-desc').value = '';
-                document.getElementById('post-hero').value = ''; document.getElementById('tag-input').value = '';
-                blocks = []; tags = []; renderBlocks(); renderTags(); updatePreview();
-                showToast("Editor reseteado ✨");
-            }
-        };
+        const toBase64 = file => new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+        });
 
-        /* ╔════════════════════════════════════════════════════════════╗
-           ║ ⛔ ZONA BLINDADA: SISTEMA DE AUTORES (NO MODIFICAR)       ║
-           ║ ESTA SECCIÓN CONTIENE LÓGICA CRÍTICA DE LECTURA/ESCRITURA  ║
-           ║ EN EL ARCHIVO 'authors.ts'. CUALQUIER CAMBIO PUEDE ROMPER  ║
-           ║ LA INTEGRIDAD DE LOS DATOS. REQUIERE AUTORIZACIÓN EXPRESA. ║
-           ╚════════════════════════════════════════════════════════════╝
-        */
-        
+        // AUTORES
         window.openAuthorModal = () => document.getElementById('author-modal').classList.add('open');
         window.closeAuthorModal = () => document.getElementById('author-modal').classList.remove('open');
 
@@ -332,36 +364,43 @@
                 const content = decodeURIComponent(escape(atob(file.content)));
                 const regex = /slug:\s*['"]([^'"]+)['"][\s\S]*?name:\s*['"]([^'"]+)['"]/g;
                 let match;
-                select.innerHTML = '<option value="">Selecciona un autor</option>';
+                select.innerHTML = '<option value="">Selecciona autor</option>';
                 while ((match = regex.exec(content)) !== null) {
-                    const slug = match[1];
-                    const name = match[2];
                     const option = document.createElement('option');
-                    option.value = slug;
-                    option.text = name;
+                    option.value = match[1];
+                    option.text = match[2];
                     select.appendChild(option);
                 }
-            } catch (e) { console.error(e); showToast("Error cargando autores", "error"); }
+            } catch (e) {
+                showToast("❌ Error cargando autores", "error");
+            }
         }
 
         window.saveNewAuthor = async () => {
-            const name = document.getElementById('new-auth-name').value;
-            const role = document.getElementById('new-auth-role').value;
-            const bio = document.getElementById('new-auth-bio').value;
+            const name = document.getElementById('new-auth-name').value.trim();
+            const role = document.getElementById('new-auth-role').value.trim();
+            const bio = document.getElementById('new-auth-bio').value.trim();
             const fileInput = document.getElementById('new-auth-file');
             const btn = document.getElementById('btn-save-auth');
 
-            if(!name || !fileInput.files[0]) { alert("Nombre y Foto requeridos"); return; }
-            btn.innerText = "Guardando..."; btn.disabled = true;
+            if(!name || !fileInput.files[0]) {
+                showToast("⚠️ Faltan datos", "error");
+                return;
+            }
+
+            btn.innerHTML = '<div class="loader mx-auto"></div>';
+            btn.disabled = true;
 
             try {
                 const slug = name.toLowerCase().replace(/[^a-z0-9]/g, '-');
                 const file = fileInput.files[0];
-                const cleanFileName = `${slug}.jpg`; 
-                const b64 = await toBase64(file);
+                const options = { maxSizeMB: 0.5, maxWidthOrHeight: 800 };
+                const compressedFile = await imageCompression(file, options);
+                const b64 = await toBase64(compressedFile);
+                const cleanFileName = `${slug}.jpg`;
 
                 await ghFetch(`/contents/public/assets/autores/${cleanFileName}`, 'PUT', {
-                    message: `New Author Pic: ${name}`,
+                    message: `Add author: ${name}`,
                     content: b64.split(',')[1],
                     branch: githubConfig.branch
                 });
@@ -369,17 +408,9 @@
                 const tsFile = await ghFetch(`/contents/src/data/authors.ts`);
                 let content = decodeURIComponent(escape(atob(tsFile.content)));
 
-                const newAuthStr = `
-  '${slug}': {
-    slug: '${slug}',
-    name: '${name}',
-    role: '${role}',
-    bio: '${bio}',
-    image: '/assets/autores/${cleanFileName}',
-  },`;
+                const newAuthStr = `\n  '${slug}': {\n    slug: '${slug}',\n    name: '${name}',\n    role: '${role}',\n    bio: '${bio}',\n    image: '/assets/autores/${cleanFileName}',\n  },`;
 
                 const insertIndex = content.lastIndexOf('}');
-                if (insertIndex === -1) throw new Error("Formato TS inválido");
                 const newContent = content.slice(0, insertIndex) + newAuthStr + content.slice(insertIndex);
 
                 await ghFetch(`/contents/src/data/authors.ts`, 'PUT', {
@@ -389,43 +420,264 @@
                     branch: githubConfig.branch
                 });
 
-                showToast("¡Autor Creado Exitosamente! 🎉");
+                showToast("✅ Autor creado");
                 closeAuthorModal();
-                loadAuthorsFromRepo(); 
+                loadAuthorsFromRepo();
                 document.getElementById('new-auth-name').value = '';
                 document.getElementById('new-auth-role').value = '';
                 document.getElementById('new-auth-bio').value = '';
                 fileInput.value = '';
 
-            } catch(e) { 
-                console.error(e); 
-                showToast("Error creando autor", "error"); 
+            } catch(e) {
+                showToast("❌ Error", "error");
             }
-            btn.innerText = "Guardar Autor"; btn.disabled = false;
-        };
-        /* ╚═════════ FIN ZONA BLINDADA AUTORES ═════════╝ */
-
-        // BLOQUES Y HERRAMIENTAS
-        window.addBlock = (type) => { blocks.push({ id: Date.now().toString(), type, content: '', credits: '', listType: 'ul' }); renderBlocks(); updatePreview(); };
-        window.removeBlock = (id) => { blocks = blocks.filter(b => b.id !== id); renderBlocks(); updatePreview(); };
-        window.updateBlockContent = (id, val, extra = null) => { 
-            const b = blocks.find(b => b.id === id); 
-            if(b) { if(extra === 'credits') b.credits = val; else if(extra === 'listType') b.listType = val; else b.content = val; }
-            updatePreview(); 
+            
+            btn.textContent = "Guardar";
+            btn.disabled = false;
         };
 
-        window.execCmd = (cmd) => { document.execCommand(cmd, false, null); updatePreview(); };
-        
-        // FUNCIÓN LINKS CORREGIDA
+        // CARGAR POSTS
+        window.openLoadModal = async () => {
+            document.getElementById('load-post-modal').classList.add('open');
+            if (allPosts.length === 0) await loadAllPosts();
+        };
+
+        window.closeLoadModal = () => document.getElementById('load-post-modal').classList.remove('open');
+
+        async function loadAllPosts() {
+            const listDiv = document.getElementById('posts-list');
+            try {
+                const files = await ghFetch(`/contents/${githubConfig.postsPath}`);
+                const mdFiles = files.filter(f => f.name.endsWith('.md'));
+                
+                allPosts = await Promise.all(mdFiles.map(async (file) => {
+                    try {
+                        const content = await ghFetch(`/contents/${githubConfig.postsPath}${file.name}`);
+                        const decoded = decodeURIComponent(escape(atob(content.content)));
+                        const titleMatch = decoded.match(/title:\s*["'](.+?)["']/);
+                        const dateMatch = decoded.match(/publishDate:\s*["'](.+?)["']/);
+                        
+                        return {
+                            filename: file.name,
+                            title: titleMatch ? titleMatch[1] : file.name,
+                            date: dateMatch ? dateMatch[1] : 'Sin fecha',
+                            sha: content.sha,
+                            content: decoded
+                        };
+                    } catch (e) {
+                        return null;
+                    }
+                }));
+
+                allPosts = allPosts.filter(p => p !== null).sort((a, b) => b.date.localeCompare(a.date));
+                renderPostsList(allPosts);
+
+            } catch (e) {
+                listDiv.innerHTML = '<p class="text-center text-red-500 text-sm py-4">❌ Error cargando</p>';
+            }
+        }
+
+        function renderPostsList(posts) {
+            const listDiv = document.getElementById('posts-list');
+            if (posts.length === 0) {
+                listDiv.innerHTML = '<p class="text-center opacity-50 text-sm py-8">📭 Sin posts</p>';
+                return;
+            }
+
+            listDiv.innerHTML = posts.map(post => `
+                <div class="p-4 rounded-xl border cursor-pointer hover:bg-orange-50" onclick="loadPostToEditor('${post.filename}')">
+                    <h4 class="font-bold text-sm">${post.title}</h4>
+                    <p class="text-xs opacity-60">${post.date} • ${post.filename}</p>
+                </div>
+            `).join('');
+        }
+
+        window.filterPosts = () => {
+            const search = document.getElementById('search-posts').value.toLowerCase();
+            const filtered = allPosts.filter(p => p.title.toLowerCase().includes(search) || p.filename.toLowerCase().includes(search));
+            renderPostsList(filtered);
+        };
+
+        window.loadPostToEditor = (filename) => {
+            const post = allPosts.find(p => p.filename === filename);
+            if (!post) return;
+            parseMarkdownToEditor(post.content);
+            currentPostSha = post.sha;
+            currentPostFilename = filename;
+            closeLoadModal();
+            showToast(`✅ Post cargado: ${post.title}`);
+        };
+
+        function parseMarkdownToEditor(markdown) {
+            const frontmatterMatch = markdown.match(/^---\n([\s\S]+?)\n---/);
+            if (frontmatterMatch) {
+                const frontmatter = frontmatterMatch[1];
+                const titleMatch = frontmatter.match(/title:\s*["'](.+?)["']/);
+                if (titleMatch) document.getElementById('post-title').value = titleMatch[1];
+                
+                const descMatch = frontmatter.match(/description:\s*["'](.+?)["']/);
+                if (descMatch) document.getElementById('post-desc').value = descMatch[1];
+                
+                const dateMatch = frontmatter.match(/publishDate:\s*["'](.+?)["']/);
+                if (dateMatch) document.getElementById('post-date').value = dateMatch[1];
+                
+                const authorMatch = frontmatter.match(/author:\s*["'](.+?)["']/);
+                if (authorMatch) document.getElementById('post-author').value = authorMatch[1];
+                
+                const heroMatch = frontmatter.match(/heroImage:\s*["'](.+?)["']/);
+                if (heroMatch) document.getElementById('post-hero').value = heroMatch[1];
+                
+                const tagsMatch = frontmatter.match(/tags:\s*\[(.*?)\]/);
+                if (tagsMatch) {
+                    tags = tagsMatch[1].split(',').map(t => t.trim().replace(/["']/g, '')).filter(Boolean);
+                    renderTags();
+                }
+            }
+
+            const contentStart = markdown.indexOf('---', 3) + 4;
+            const content = markdown.slice(contentStart).trim();
+            blocks = [];
+            const lines = content.split('\n');
+            let i = 0;
+            
+            while (i < lines.length) {
+                const line = lines[i].trim();
+                
+                if (line.startsWith('## ')) {
+                    blocks.push({ id: Date.now().toString() + i, type: 'h2', content: line.slice(3) });
+                    i++;
+                } else if (line.startsWith('### ')) {
+                    blocks.push({ id: Date.now().toString() + i, type: 'h3', content: line.slice(4) });
+                    i++;
+                } else if (line.startsWith('![')) {
+                    const imgMatch = line.match(/!\[([^\]]*)\]\(([^)]+)\)/);
+                    if (imgMatch) {
+                        let credits = '';
+                        if (i + 1 < lines.length && lines[i + 1].includes('credit-style')) {
+                            const creditMatch = lines[i + 1].match(/<i>(.+?)<\/i>/);
+                            if (creditMatch) credits = creditMatch[1];
+                            i++;
+                        }
+                        blocks.push({ id: Date.now().toString() + i, type: 'img', content: `${imgMatch[2]} | ${imgMatch[1]}`, credits: credits });
+                    }
+                    i++;
+                } else if (line.startsWith('<iframe')) {
+                    const srcMatch = line.match(/src="([^"]+)"/);
+                    if (srcMatch) {
+                        let credits = '';
+                        if (i + 1 < lines.length && lines[i + 1].includes('credit-style')) {
+                            const creditMatch = lines[i + 1].match(/<i>(.+?)<\/i>/);
+                            if (creditMatch) credits = creditMatch[1];
+                            i++;
+                        }
+                        blocks.push({ id: Date.now().toString() + i, type: 'yt', content: srcMatch[1], credits: credits });
+                    }
+                    i++;
+                } else if (line.startsWith('<ul>') || line.startsWith('<ol>')) {
+                    const listType = line.startsWith('<ul>') ? 'ul' : 'ol';
+                    let listContent = '';
+                    i++;
+                    while (i < lines.length && !lines[i].includes('</ul>') && !lines[i].includes('</ol>')) {
+                        listContent += lines[i] + '\n';
+                        i++;
+                    }
+                    blocks.push({ id: Date.now().toString() + i, type: 'list', content: listContent.trim(), listType: listType });
+                    i++;
+                } else if (line.length > 0 && !line.startsWith('<small')) {
+                    let paragraph = line;
+                    i++;
+                    while (i < lines.length && lines[i].trim() && !lines[i].trim().startsWith('#') && !lines[i].trim().startsWith('!') && !lines[i].trim().startsWith('<')) {
+                        paragraph += '\n' + lines[i];
+                        i++;
+                    }
+                    if (paragraph.trim()) {
+                        blocks.push({ id: Date.now().toString() + i, type: 'p', content: paragraph.trim() });
+                    }
+                } else {
+                    i++;
+                }
+            }
+
+            renderBlocks();
+            updatePreview();
+        }
+
+        // TAGS
+        document.getElementById('tag-input').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                addTag();
+            }
+        });
+
+        window.addTag = () => {
+            const input = document.getElementById('tag-input');
+            const val = input.value.trim();
+            if (val && !tags.includes(val)) {
+                tags.push(val);
+                input.value = '';
+                renderTags();
+                updatePreview();
+            }
+        };
+
+        window.removeTag = (tag) => {
+            tags = tags.filter(t => t !== tag);
+            renderTags();
+            updatePreview();
+        };
+
+        function renderTags() {
+            const container = document.getElementById('tags-container');
+            container.innerHTML = tags.map(t => `
+                <div class="bg-gradient-to-r from-orange-100 to-orange-200 text-orange-700 px-4 py-2 rounded-full text-xs font-bold flex items-center gap-2">
+                    #${t}
+                    <button onclick="removeTag('${t}')" class="hover:text-red-500 font-bold text-base">×</button>
+                </div>
+            `).join('');
+        }
+
+        // BLOQUES
+        window.addBlock = (type) => {
+            blocks.push({ id: Date.now().toString(), type: type, content: '', credits: '', listType: 'ul' });
+            renderBlocks();
+            updatePreview();
+        };
+
+        window.removeBlock = (id) => {
+            blocks = blocks.filter(b => b.id !== id);
+            renderBlocks();
+            updatePreview();
+        };
+
+        window.updateBlockContent = (id, val, extra = null) => {
+            const b = blocks.find(b => b.id === id);
+            if(b) {
+                if(extra === 'credits') b.credits = val;
+                else if(extra === 'listType') b.listType = val;
+                else b.content = val;
+            }
+            updatePreview();
+        };
+
+        window.execCmd = (cmd, value = null) => {
+            document.execCommand(cmd, false, value);
+            updatePreview();
+        };
+
         window.applyLink = () => {
-            let url = prompt("Enlace directo (ej: www.google.com):");
+            let url = prompt("URL:");
             if (url) {
-                if (!/^https?:\/\//i.test(url)) { url = 'https://' + url; }
+                if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
                 const sel = window.getSelection();
-                if(sel.rangeCount > 0) {
-                    const a = `<a href="${url}" target="_blank" rel="noopener noreferrer">${sel}</a>`;
-                    document.execCommand('insertHTML', false, a);
-                    updatePreview();
+                if(sel.rangeCount > 0 && sel.toString()) {
+                    execCmd('createLink', url);
+                    const range = sel.getRangeAt(0);
+                    const parent = range.commonAncestorContainer.parentElement;
+                    if (parent.tagName === 'A') {
+                        parent.setAttribute('target', '_blank');
+                        parent.setAttribute('rel', 'noopener noreferrer');
+                    }
                 }
             }
         };
@@ -433,207 +685,258 @@
         function renderBlocks() {
             const container = document.getElementById('blocks-container');
             container.innerHTML = '';
+
             blocks.forEach((b) => {
                 const el = document.createElement('div');
-                el.className = 'bg-white dark:bg-slate-800 p-5 rounded-lg border border-slate-200 dark:border-slate-700 group relative shadow-sm animate-[fadeIn_0.2s]';
+                el.className = 'glass-card p-5 relative';
+                el.dataset.id = b.id;
+
                 let html = '';
+
                 if (b.type === 'p') {
-                    // BARRA DE HERRAMIENTAS RESTAURADA
                     html = `
-                    <div class="flex flex-col gap-3">
-                        <div class="flex gap-1.5 p-1 bg-slate-50 dark:bg-slate-700/50 rounded-lg border w-fit">
-                            <button onclick="execCmd('bold')" class="px-2.5 py-1 text-[11px] font-black hover:bg-white rounded transition" title="Negrita">B</button>
-                            <div class="w-px h-4 bg-slate-200 mx-1 self-center"></div>
-                            <button onclick="execCmd('justifyLeft')" class="p-1.5 hover:bg-white rounded transition"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M4 6h16M4 12h10M4 18h16"/></svg></button>
-                            <button onclick="execCmd('justifyCenter')" class="p-1.5 hover:bg-white rounded transition"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M4 6h16M7 12h10M4 18h16"/></svg></button>
-                            <button onclick="execCmd('justifyRight')" class="p-1.5 hover:bg-white rounded transition"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M4 6h16M10 12h10M4 18h16"/></svg></button>
-                            <button onclick="execCmd('justifyFull')" class="p-1.5 hover:bg-white rounded transition"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
-                            <div class="w-px h-4 bg-slate-200 mx-1 self-center"></div>
-                            <button onclick="applyLink()" class="px-2.5 py-1 text-[11px] text-blue-600 font-bold hover:bg-white rounded transition">🔗 Link</button>
+                        <div class="flex flex-wrap gap-2 p-2 rounded-lg mb-3" style="background: rgba(255,255,255,0.5)">
+                            <button onclick="execCmd('bold')" class="toolbar-btn text-xs"><b>B</b></button>
+                            <button onclick="execCmd('italic')" class="toolbar-btn text-xs"><i>I</i></button>
+                            <button onclick="applyLink()" class="toolbar-btn text-xs text-orange-600">🔗</button>
                         </div>
-                        <div contenteditable="true" class="rich-editor text-sm font-sans" placeholder="Escribe tu párrafo aquí..." oninput="updateBlockContent('${b.id}', this.innerHTML)">${b.content}</div>
-                    </div>`;
+                        <div contenteditable="true" class="rich-editor" placeholder="Escribe..." oninput="updateBlockContent('${b.id}', this.innerHTML)">${b.content}</div>
+                    `;
                 } else if (b.type === 'img' || b.type === 'yt') {
                     html = `
-                    <div class="space-y-3">
-                        <div class="flex gap-2 items-center">
-                            <input type="text" id="input-${b.id}" class="flex-1 bg-transparent border-b text-sm outline-none" placeholder="Enlace o subida" value="${b.content}" oninput="updateBlockContent('${b.id}', this.value)">
-                            ${b.type === 'img' ? `<label class="bg-blue-50 text-blue-600 px-3 py-1.5 rounded text-[10px] font-bold cursor-pointer flex items-center gap-1">Subir<input type="file" class="hidden" accept="image/*" onchange="uploadImageToRepo('${b.id}', this)"></label>` : ''}
+                        <div class="space-y-3">
+                            <div class="flex gap-2">
+                                <input type="text" class="flex-1 p-3 rounded-xl input-modern text-sm" placeholder="URL..." value="${b.content}" oninput="updateBlockContent('${b.id}', this.value)">
+                                ${b.type === 'img' ? `<label class="cursor-pointer bg-blue-500 text-white px-4 py-3 rounded-xl font-bold">📤<input type="file" class="hidden" accept="image/*" onchange="uploadImageToRepo('${b.id}', this)"></label>` : ''}
+                            </div>
+                            <input type="text" class="w-full p-2 rounded-lg input-modern text-xs italic" placeholder="© Créditos..." value="${b.credits}" oninput="updateBlockContent('${b.id}', this.value, 'credits')">
+                            ${b.type === 'img' && b.content ? `<img src="${b.content.split('|')[0].trim()}" class="max-h-48 rounded-xl">` : ''}
                         </div>
-                        <input type="text" class="w-full bg-transparent text-[10px] italic opacity-60" placeholder="© Créditos (Texto plano)..." value="${b.credits}" oninput="updateBlockContent('${b.id}', this.value, 'credits')">
-                        ${b.type === 'img' && b.content ? `<img src="${b.content.split('|')[0].trim()}" class="h-24 rounded mt-2 shadow-sm">` : ''}
-                    </div>`;
+                    `;
                 } else if (b.type === 'list') {
                     html = `
-                    <div class="flex flex-col gap-3">
-                        <div class="flex gap-1.5 p-1 bg-slate-50 dark:bg-slate-700/50 rounded-lg border w-fit">
-                            <select class="text-[9px] bg-white rounded px-2 outline-none font-bold" onchange="updateBlockContent('${b.id}', this.value, 'listType'); renderBlocks();">
-                                <option value="ul" ${b.listType==='ul'?'selected':''}>• Viñetas</option>
-                                <option value="ol" ${b.listType==='ol'?'selected':''}>1. Números</option>
-                            </select>
-                        </div>
-                        <div contenteditable="true" class="rich-editor text-sm font-sans" placeholder="Puntos de la lista..." oninput="updateBlockContent('${b.id}', this.innerHTML)">${b.content || '<li>Nuevo ítem</li>'}</div>
-                    </div>`;
+                        <select class="p-2 rounded-lg input-modern text-xs font-bold mb-3" onchange="updateBlockContent('${b.id}', this.value, 'listType'); renderBlocks();">
+                            <option value="ul" ${b.listType==='ul'?'selected':''}>• Viñetas</option>
+                            <option value="ol" ${b.listType==='ol'?'selected':''}>1. Números</option>
+                        </select>
+                        <div contenteditable="true" class="rich-editor text-sm" placeholder="Items..." oninput="updateBlockContent('${b.id}', this.innerHTML)">${b.content || '<li>Item</li>'}</div>
+                    `;
                 } else {
-                    html = `<input type="text" class="w-full bg-transparent font-bold font-display outline-none text-brand-600" value="${b.content}" placeholder="TÍTULO SECCIÓN" oninput="updateBlockContent('${b.id}', this.value)">`;
+                    html = `<input type="text" class="w-full p-3 rounded-xl input-modern font-bold ${b.type === 'h2' ? 'text-2xl' : 'text-xl'}" value="${b.content}" placeholder="Título" oninput="updateBlockContent('${b.id}', this.value)">`;
                 }
-                el.innerHTML = `<button onclick="removeBlock('${b.id}')" class="absolute -right-2 -top-2 bg-white text-red-500 rounded-full w-5 h-5 text-[10px] shadow-lg border border-red-100 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">×</button>${html}`;
+
+                html += `<button onclick="removeBlock('${b.id}')" class="absolute -right-2 -top-2 bg-white text-red-500 rounded-full w-7 h-7 text-sm shadow-lg border-2 border-red-200 flex items-center justify-center opacity-0 group-hover:opacity-100 font-bold">×</button>`;
+
+                el.innerHTML = html;
                 container.appendChild(el);
             });
         }
 
-        /* [ZONA BLINDADA 3] - MOTOR GITHUB API */
-        async function ghFetch(ep, m='GET', b=null) {
-            return fetch(`https://api.github.com/repos/${githubConfig.repoOwner}/${githubConfig.repoName}${ep}`, {
-                method: m, headers: { 'Authorization': `token ${githubConfig.githubToken}`, 'Content-Type': 'application/json' },
-                body: b ? JSON.stringify(b) : null
-            }).then(r => r.json());
-        }
-
-        const toBase64 = file => new Promise((resolve) => {
-            const reader = new FileReader(); reader.readAsDataURL(file);
-            reader.onload = () => resolve(reader.result);
-        });
-
+        // IMÁGENES
         window.uploadHeroImage = async (fileInput) => {
-            const file = fileInput.files[0]; if (!file) return;
+            const file = fileInput.files[0];
+            if (!file) return;
+
             const heroInput = document.getElementById('post-hero');
-            heroInput.value = "⌛ Subiendo portada...";
+            heroInput.value = "⌛ Subiendo...";
+
             try {
-                const b64 = await toBase64(file);
+                const options = { maxSizeMB: 1, maxWidthOrHeight: 1920 };
+                const compressedFile = await imageCompression(file, options);
+                const b64 = await toBase64(compressedFile);
                 const filename = `${Date.now()}-hero-${file.name.replace(/[^a-z0-9.]/gi, '-').toLowerCase()}`;
-                await ghFetch(`/contents/public/uploads/${filename}`, 'PUT', { message: `Hero: ${filename}`, content: b64.split(',')[1], branch: githubConfig.branch });
-                heroInput.value = `/uploads/${filename}`; showToast("Portada cargada! 🖼️"); updatePreview();
-            } catch (e) { showToast("Error Hero", "error"); heroInput.value = ''; }
+
+                await ghFetch(`/contents/public/uploads/${filename}`, 'PUT', {
+                    message: `Upload hero: ${filename}`,
+                    content: b64.split(',')[1],
+                    branch: githubConfig.branch
+                });
+
+                heroInput.value = `/uploads/${filename}`;
+                showToast("✅ Portada subida");
+                updatePreview();
+
+            } catch (e) {
+                showToast("❌ Error", "error");
+                heroInput.value = '';
+            }
         };
 
         window.uploadImageToRepo = async (blockId, fileInput) => {
-            const file = fileInput.files[0]; if (!file) return;
+            const file = fileInput.files[0];
+            if (!file) return;
+
             try {
-                const b64 = await toBase64(file);
+                const options = { maxSizeMB: 1, maxWidthOrHeight: 1920 };
+                const compressedFile = await imageCompression(file, options);
+                const b64 = await toBase64(compressedFile);
                 const filename = `${Date.now()}-${file.name.replace(/[^a-z0-9.]/gi, '-').toLowerCase()}`;
-                await ghFetch(`/contents/public/uploads/${filename}`, 'PUT', { message: `Media: ${filename}`, content: b64.split(',')[1], branch: githubConfig.branch });
+
+                await ghFetch(`/contents/public/uploads/${filename}`, 'PUT', {
+                    message: `Upload: ${filename}`,
+                    content: b64.split(',')[1],
+                    branch: githubConfig.branch
+                });
+
                 updateBlockContent(blockId, `/uploads/${filename} | ${file.name}`);
-                showToast("Imagen subida! 🖼️"); renderBlocks();
-            } catch (e) { showToast("Error de subida", "error"); }
+                showToast("✅ Imagen subida");
+                renderBlocks();
+
+            } catch (e) {
+                showToast("❌ Error", "error");
+            }
         };
 
-        /* [ZONA BLINDADA 4] - GENERADOR DE MARKDOWN */
+        // MARKDOWN
         function generateMarkdown() {
             const title = document.getElementById('post-title').value;
             const desc = document.getElementById('post-desc').value;
             const date = document.getElementById('post-date').value;
             const author = document.getElementById('post-author').value;
             const hero = document.getElementById('post-hero').value;
-            let md = `---\ntitle: "${title}"\ndescription: "${desc}"\npublishDate: "${date}"\nauthor: "${author}"\nheroImage: "${hero}"\nlayout: "../../layouts/BlogPost.astro"\ntags: [${tags.map(t=>`"${t}"`).join(', ')}]\n---\n\n`;
-            
+
+            let md = `---\ntitle: "${title}"\ndescription: "${desc}"\npublishDate: "${date}"\nauthor: "${author}"\nheroImage: "${hero}"\nlayout: "../../layouts/BlogPost.astro"\ntags: [${tags.map(t => `"${t}"`).join(', ')}]\n---\n\n`;
+
             blocks.forEach(b => {
-                // CORRECCIÓN VISTA PREVIA: Permitimos bloques vacíos o en edición
-                if(b.type === 'h2') md += `## ${b.content}\n\n`;
-                else if(b.type === 'h3') md += `### ${b.content}\n\n`;
-                else if(b.type === 'p') md += `${b.content}\n\n`; 
-                else if(b.type === 'img') { 
-                    const [u,a] = b.content.split('|'); 
-                    if(u) {
-                        md += `![${a||'Imagen'}](${u.trim()})\n`;
-                        if(b.credits) md += `<small class="credit-style">Créditos: <i>${b.credits}</i></small>\n\n`; else md += `\n`;
+                if (b.type === 'h2') md += `## ${b.content}\n\n`;
+                else if (b.type === 'h3') md += `### ${b.content}\n\n`;
+                else if (b.type === 'p') md += `${b.content}\n\n`;
+                else if (b.type === 'img') {
+                    const [url, alt] = b.content.split('|').map(s => s.trim());
+                    if (url) {
+                        md += `![${alt || 'Imagen'}](${url})\n`;
+                        if (b.credits) md += `<small class="credit-style">Créditos: <i>${b.credits}</i></small>\n\n`;
+                        else md += '\n';
                     }
-                } 
-                else if(b.type === 'yt') {
-                    if(b.content) {
-                        md += `<iframe width="100%" height="400" src="${b.content.replace('watch?v=','embed/')}" frameborder="0" allowfullscreen class="rounded-lg shadow-md"></iframe>\n`;
-                        if(b.credits) md += `<small class="credit-style">Fuente: <i>${b.credits}</i></small>\n\n`; else md += `\n`;
+                } else if (b.type === 'yt') {
+                    if (b.content) {
+                        let embedUrl = b.content;
+                        if (b.content.includes('watch?v=')) embedUrl = b.content.replace('watch?v=', 'embed/');
+                        md += `<iframe width="100%" height="400" src="${embedUrl}" frameborder="0" allowfullscreen class="rounded-lg shadow-md"></iframe>\n`;
+                        if (b.credits) md += `<small class="credit-style">Fuente: <i>${b.credits}</i></small>\n\n`;
+                        else md += '\n';
                     }
-                }
-                else if(b.type === 'list') { 
+                } else if (b.type === 'list') {
                     const tag = b.listType === 'ul' ? 'ul' : 'ol';
                     md += `<${tag}>\n${b.content}\n</${tag}>\n\n`;
-                } 
+                }
             });
+
             return md;
         }
 
+        // PREVIEW
+        let previewTimeout;
+        const renderer = new marked.Renderer();
+        const linkRenderer = renderer.link;
+        renderer.link = (href, title, text) => {
+            const html = linkRenderer.call(renderer, href, title, text);
+            return html.replace(/^<a /, '<a target="_blank" rel="noopener noreferrer" ');
+        };
+        marked.use({ renderer });
+
         window.updatePreview = () => {
-            const md = generateMarkdown();
-            document.getElementById('preview-md').textContent = md;
-            // CORRECCIÓN VISTA PREVIA: Limpiamos la metadata YAML para que solo se vea el contenido
-            const cleanContent = md.replace(/^---[\s\S]*?---\s*/, '');
-            document.getElementById('preview-html').innerHTML = marked.parse(cleanContent);
-            document.getElementById('word-count').textContent = `${cleanContent.split(/\s+/).length} palabras`;
+            clearTimeout(previewTimeout);
+            previewTimeout = setTimeout(() => {
+                const md = generateMarkdown();
+                document.getElementById('preview-md').textContent = md;
+                const cleanContent = md.replace(/^---[\s\S]*?---\s*/, '');
+                document.getElementById('preview-html').innerHTML = marked.parse(cleanContent);
+                const wordCount = cleanContent.split(/\s+/).filter(w => w.length > 0).length;
+                document.getElementById('word-count').textContent = `${wordCount} palabras`;
+            }, 300);
+        };
+
+        window.togglePreviewMode = () => {
+            document.getElementById('preview-md').classList.toggle('hidden');
+            document.getElementById('preview-html').classList.toggle('hidden');
         };
 
         window.downloadMarkdown = () => {
-            const blob = new Blob([generateMarkdown()], {type: 'text/markdown'});
-            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); 
-            a.download = `${document.getElementById('post-title').value.replace(/\s+/g, '-').toLowerCase() || 'borrador'}.md`; a.click();
-        };
-
-        window.publishCurrentPost = async () => {
-            const btn = document.getElementById('btn-publish-one'); btn.disabled = true; btn.innerText = "Publicando...";
             const md = generateMarkdown();
-            const slug = document.getElementById('post-title').value.toLowerCase().replace(/[^a-z0-9]+/g,'-');
-            const filename = `${document.getElementById('post-date').value}-${slug}.md`;
-            try {
-                await ghFetch(`/contents/${githubConfig.postsPath}${filename}`, 'PUT', { message: `Post: ${filename}`, content: btoa(unescape(encodeURIComponent(md))), branch: githubConfig.branch });
-                showToast("¡Artículo publicado! 🚀"); loadHistory();
-            } catch(e) { showToast("Error en GitHub", "error"); }
-            btn.disabled = false; btn.innerText = "📤 Publicar Artículo";
+            const blob = new Blob([md], { type: 'text/markdown' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `${document.getElementById('post-title').value.replace(/\s+/g, '-').toLowerCase() || 'borrador'}.md`;
+            a.click();
+            showToast('💾 Descargado');
         };
 
-        /* [ZONA BLINDADA 5] - LÓGICA DE CARGA MASIVA */
-        window.handleBulkFiles = (input) => {
-            const previewDiv = document.getElementById('bulk-preview');
-            previewDiv.innerHTML = ''; bulkFilesData = [];
-            Array.from(input.files).forEach(file => {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    bulkFilesData.push({ path: `${githubConfig.postsPath}${file.name}`, content: e.target.result });
-                    previewDiv.innerHTML += `<div class="p-2 bg-slate-50 dark:bg-slate-800 text-[10px] flex justify-between rounded"><span>${file.name}</span><span>✓</span></div>`;
-                    document.getElementById('btn-publish-bulk').classList.remove('hidden');
+        // PUBLICAR
+        window.publishCurrentPost = async () => {
+            const btn = document.querySelector('button[onclick="publishCurrentPost()"]');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<div class="loader mx-auto"></div>';
+            btn.disabled = true;
+
+            const md = generateMarkdown();
+            let filename;
+            
+            if (currentPostFilename) {
+                filename = currentPostFilename;
+            } else {
+                const slug = document.getElementById('post-title').value.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+                const date = document.getElementById('post-date').value;
+                filename = `${date}-${slug}.md`;
+            }
+
+            try {
+                const payload = {
+                    message: currentPostFilename ? `Update: ${filename}` : `New: ${filename}`,
+                    content: btoa(unescape(encodeURIComponent(md))),
+                    branch: githubConfig.branch
                 };
-                reader.readAsText(file);
-            });
+
+                if (currentPostSha) payload.sha = currentPostSha;
+
+                await ghFetch(`/contents/${githubConfig.postsPath}${filename}`, 'PUT', payload);
+                
+                showToast(currentPostFilename ? "✅ Actualizado" : "✅ Publicado");
+                currentPostSha = null;
+                currentPostFilename = null;
+
+            } catch (e) {
+                showToast("❌ Error al publicar", "error");
+            }
+
+            btn.innerHTML = originalText;
+            btn.disabled = false;
         };
 
-        window.publishBulk = async () => {
-            const btn = document.getElementById('btn-publish-bulk'); btn.disabled = true; btn.innerText = "Subiendo...";
-            try {
-                const ref = await ghFetch(`/git/refs/heads/${githubConfig.branch}`);
-                const treeItems = [];
-                for (const file of bulkFilesData) {
-                    const blob = await ghFetch(`/git/blobs`, 'POST', { content: file.content, encoding: 'utf-8' });
-                    treeItems.push({ path: file.path, mode: '100644', type: 'blob', sha: blob.sha });
-                }
-                const tree = await ghFetch(`/git/trees`, 'POST', { base_tree: ref.object.sha, tree: treeItems });
-                const commit = await ghFetch(`/git/commits`, 'POST', { message: `Bulk upload`, tree: tree.sha, parents: [ref.object.sha] });
-                await ghFetch(`/git/refs/heads/${githubConfig.branch}`, 'PATCH', { sha: commit.sha });
-                showToast("¡Carga masiva lista! 🚀");
-                bulkFilesData = []; document.getElementById('bulk-preview').innerHTML = '';
-                btn.classList.add('hidden'); loadHistory();
-            } catch (e) { showToast("Error masivo", "error"); }
-            btn.disabled = false; btn.innerText = "🚀 Publicar Todos";
+        // TOAST
+        window.showToast = (msg, type = 'success') => {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            const colors = { success: '#10b981', error: '#ef4444', info: '#3b82f6' };
+            toast.className = 'glass-card px-5 py-4 rounded-xl shadow-2xl text-sm font-bold flex items-center gap-3 min-w-[250px]';
+            toast.style.borderLeft = `4px solid ${colors[type]}`;
+            const icon = type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️';
+            toast.innerHTML = `<span class="text-xl">${icon}</span><span>${msg}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(100%)';
+                setTimeout(() => toast.remove(), 300);
+            }, 4000);
         };
 
-        async function loadHistory() {
-            try {
-                const c = await ghFetch(`/commits?per_page=5`);
-                document.getElementById('history-content').innerHTML = c.map(i => `<div class="text-[10px] border-b dark:border-slate-800 pb-2 mb-2 truncate"><a href="${i.html_url}" target="_blank" class="text-blue-500 font-bold hover:underline">${i.commit.message}</a></div>`).join('');
-            } catch(e) {}
-        }
+        // ATAJOS
+        document.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+                e.preventDefault();
+                showToast('💾 Borrador guardado (local)');
+            }
+            if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
+                e.preventDefault();
+                publishCurrentPost();
+            }
+            if ((e.ctrlKey || e.metaKey) && e.key === 'l') {
+                e.preventDefault();
+                openLoadModal();
+            }
+        });
 
-        window.togglePreviewMode = () => { document.getElementById('preview-md').classList.toggle('hidden'); document.getElementById('preview-html').classList.toggle('hidden'); };
-        window.toggleHistory = () => document.getElementById('history-content').classList.toggle('hidden');
-        window.showToast = (msg, type='success') => {
-            const el = document.createElement('div');
-            el.className = `${type==='success'?'bg-emerald-600':'bg-red-500'} text-white px-4 py-3 rounded-xl shadow-xl text-xs font-bold animate-[fadeIn_0.3s] z-[100]`;
-            el.innerText = msg; document.getElementById('toast-container').appendChild(el);
-            setTimeout(() => el.remove(), 4000);
-        };
-        const mm = document.getElementById('mobile-menu');
-        document.getElementById('menu-btn').addEventListener('click', () => mm.classList.remove('translate-x-full'));
-        document.getElementById('close-menu').addEventListener('click', () => mm.classList.add('translate-x-full'));
-        window.closeMobMenu = () => mm.classList.add('translate-x-full');
-        window.clearBlocks = () => { if(confirm("¿Borrar bloques?")) { blocks = []; renderBlocks(); updatePreview(); }};
+        console.log('%c✈️ Editor V5 Cargado', 'color: #f97316; font-size: 24px; font-weight: bold;');
     </script>
 </body>
 </html>
