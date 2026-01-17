@@ -3,13 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blog Instantetrips - Editor V5.1</title>
+    <title>Blog Instantetrips - Editor V5.2</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <script>
@@ -19,7 +22,7 @@
                 extend: {
                     fontFamily: { sans: ['Inter', 'sans-serif'] },
                     colors: {
-                        slate: { 850: '#1e293b' } // Custom dark
+                        slate: { 850: '#1e293b' }
                     }
                 }
             }
@@ -31,15 +34,9 @@
         body { background-color: #f3f4f6; color: #111; font-family: 'Inter', sans-serif; transition: background 0.3s; }
         body.dark { background-color: #0f172a; color: #e2e8f0; }
 
-        /* --- CORRECCIÓN DE LOGO --- */
-        /* Si el logo original es BLANCO: */
-        .logo-adaptive {
-            filter: invert(1); /* Lo vuelve NEGRO en modo claro */
-            transition: filter 0.3s;
-        }
-        .dark .logo-adaptive {
-            filter: invert(0); /* Lo deja BLANCO en modo oscuro */
-        }
+        /* LOGO ADAPTATIVO */
+        .logo-adaptive { filter: invert(1); transition: filter 0.3s; }
+        .dark .logo-adaptive { filter: invert(0); }
 
         /* TARJETAS DE BLOQUES */
         .block-card {
@@ -56,39 +53,31 @@
         .dark .block-card:hover { border-color: #475569; }
 
         /* EDITOR TEXTO */
-        .rich-editor {
-            min-height: 80px;
-            padding: 1rem;
-            outline: none;
-            line-height: 1.6;
-        }
+        .rich-editor { min-height: 80px; padding: 1rem; outline: none; line-height: 1.6; }
         .rich-editor:empty:before { content: attr(placeholder); color: #9ca3af; pointer-events: none; }
 
         /* TOOLBARS */
         .toolbar-inner {
-            display: flex;
-            gap: 0.25rem;
-            padding: 0.5rem;
-            border-bottom: 1px solid #f1f5f9;
-            background: #f8fafc;
-            border-top-left-radius: 12px;
-            border-top-right-radius: 12px;
-            flex-wrap: wrap;
+            display: flex; gap: 0.25rem; padding: 0.5rem;
+            border-bottom: 1px solid #f1f5f9; background: #f8fafc;
+            border-top-left-radius: 12px; border-top-right-radius: 12px;
+            flex-wrap: wrap; align-items: center;
         }
         .dark .toolbar-inner { background: #0f172a; border-color: #334155; }
 
         .tool-btn {
             width: 28px; height: 28px;
             display: flex; align-items: center; justify-content: center;
-            border-radius: 6px;
-            font-size: 0.85rem;
-            color: #64748b;
-            transition: all 0.1s;
+            border-radius: 6px; font-size: 0.9rem; color: #64748b; transition: all 0.1s;
+            cursor: pointer;
         }
         .tool-btn:hover { background: #e2e8f0; color: #0f172a; }
         .dark .tool-btn:hover { background: #334155; color: #fff; }
         
-        .tool-sep { width: 1px; height: 16px; background: #e2e8f0; margin: 0 4px; align-self: center; }
+        /* Ajuste específico para Ionicons dentro de botones */
+        .tool-btn ion-icon { font-size: 1.1rem; }
+        
+        .tool-sep { width: 1px; height: 16px; background: #e2e8f0; margin: 0 4px; }
         .dark .tool-sep { background: #334155; }
 
         /* UTILS */
@@ -98,7 +87,6 @@
         .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); z-index: 50; display: none; place-items: center; }
         .modal-overlay.open { display: grid; }
         
-        /* SEO DOTS */
         .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
         .dot-green { background: #22c55e; box-shadow: 0 0 5px #22c55e; }
         .dot-yellow { background: #eab308; }
@@ -108,25 +96,16 @@
 
 <body class="antialiased">
 
-    <svg style="display: none;">
-        <symbol id="icon-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></symbol>
-        <symbol id="icon-bold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 4h8a4 4 0 014 4 4 4 0 01-4 4H6z"/><path d="M6 12h9a4 4 0 014 4 4 4 0 01-4 4H6z"/></symbol>
-        <symbol id="icon-italic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="4" x2="10" y2="4"/><line x1="14" y1="20" x2="5" y2="20"/><line x1="15" y1="4" x2="9" y2="20"/></symbol>
-        <symbol id="icon-underline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3v7a6 6 0 006 6 6 6 0 006-6V3"/><line x1="4" y1="21" x2="20" y2="21"/></symbol>
-        <symbol id="icon-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="17" y1="18" x2="3" y2="18"/></symbol>
-        <symbol id="icon-center" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="10" x2="6" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="18" y1="18" x2="6" y2="18"/></symbol>
-        <symbol id="icon-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="21" y1="10" x2="7" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="21" y1="18" x2="7" y2="18"/></symbol>
-        <symbol id="icon-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></symbol>
-        <symbol id="icon-clean" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></symbol>
-    </svg>
-
     <div id="load-post-modal" class="modal-overlay">
         <div class="bg-white dark:bg-slate-900 w-full max-w-2xl rounded-xl shadow-2xl p-6 flex flex-col max-h-[85vh]">
             <div class="flex justify-between items-center mb-4 border-b dark:border-slate-800 pb-3">
-                <h3 class="font-bold text-lg">📂 Explorar Publicaciones</h3>
-                <button onclick="closeLoadModal()" class="text-2xl opacity-50 hover:opacity-100">×</button>
+                <h3 class="font-bold text-lg flex items-center gap-2"><ion-icon name="folder-open-outline"></ion-icon> Explorar Publicaciones</h3>
+                <button onclick="closeLoadModal()" class="text-2xl opacity-50 hover:opacity-100"><ion-icon name="close-outline"></ion-icon></button>
             </div>
-            <input type="text" id="search-posts" placeholder="🔍 Buscar por título..." class="w-full p-3 bg-gray-50 dark:bg-slate-800 rounded-lg outline-none mb-4" oninput="filterPosts()">
+            <div class="relative mb-4">
+                <ion-icon name="search-outline" class="absolute left-3 top-3.5 text-gray-400"></ion-icon>
+                <input type="text" id="search-posts" placeholder="Buscar por título..." class="w-full pl-10 p-3 bg-gray-50 dark:bg-slate-800 rounded-lg outline-none" oninput="filterPosts()">
+            </div>
             <div id="posts-list" class="space-y-2 overflow-y-auto flex-1 pr-2"></div>
         </div>
     </div>
@@ -134,8 +113,8 @@
     <div id="author-modal" class="modal-overlay">
         <div class="bg-white dark:bg-slate-900 w-full max-w-lg rounded-xl shadow-2xl p-6 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center mb-4">
-                <h3 class="font-bold text-lg">👥 Gestión de Autores</h3>
-                <button onclick="closeAuthorModal()" class="text-2xl">×</button>
+                <h3 class="font-bold text-lg flex items-center gap-2"><ion-icon name="people-outline"></ion-icon> Gestión de Autores</h3>
+                <button onclick="closeAuthorModal()" class="text-2xl"><ion-icon name="close-outline"></ion-icon></button>
             </div>
             
             <div class="bg-gray-50 dark:bg-slate-800 p-4 rounded-lg mb-6">
@@ -145,7 +124,9 @@
                     <input type="text" id="new-auth-role" placeholder="Rol" class="w-full p-2 rounded border border-gray-200 dark:border-slate-600 bg-transparent">
                     <textarea id="new-auth-bio" rows="2" placeholder="Bio..." class="w-full p-2 rounded border border-gray-200 dark:border-slate-600 bg-transparent resize-none"></textarea>
                     <input type="file" id="new-auth-file" accept="image/*" class="w-full text-xs">
-                    <button onclick="saveNewAuthor()" id="btn-save-auth" class="w-full bg-black dark:bg-white text-white dark:text-black font-bold py-2 rounded-lg hover:opacity-90">Guardar Autor</button>
+                    <button onclick="saveNewAuthor()" id="btn-save-auth" class="w-full bg-black dark:bg-white text-white dark:text-black font-bold py-2 rounded-lg hover:opacity-90 flex items-center justify-center gap-2">
+                        <ion-icon name="save-outline"></ion-icon> Guardar Autor
+                    </button>
                 </div>
             </div>
 
@@ -156,13 +137,14 @@
     <div id="login-section" class="flex items-center justify-center min-h-screen p-4 bg-white dark:bg-black">
         <div class="w-full max-w-sm text-center">
             <img src="public/blog.svg" alt="Logo" class="h-12 mx-auto mb-6 logo-adaptive">
-            
-            <h1 class="text-2xl font-bold mb-2">Acceso de autor</h1>
+            <h1 class="text-2xl font-bold mb-2">Acceso de Autor</h1>
             <p class="text-sm text-gray-500 mb-8">Gestión de Contenido Instante Trips</p>
             <form id="login-form" class="space-y-4">
                 <input type="email" id="email" placeholder="Email" class="w-full p-4 bg-gray-50 dark:bg-slate-900 rounded-xl outline-none border border-transparent focus:border-black" required>
                 <input type="password" id="password" placeholder="Contraseña" class="w-full p-4 bg-gray-50 dark:bg-slate-900 rounded-xl outline-none border border-transparent focus:border-black" required>
-                <button type="submit" class="w-full bg-black dark:bg-white text-white dark:text-black font-bold py-4 rounded-xl hover:scale-[1.02] transition">Iniciar Sesión</button>
+                <button type="submit" class="w-full bg-black dark:bg-white text-white dark:text-black font-bold py-4 rounded-xl hover:scale-[1.02] transition flex items-center justify-center gap-2">
+                    <ion-icon name="log-in-outline"></ion-icon> Iniciar Sesión
+                </button>
             </form>
             <p id="login-error" class="text-red-500 text-sm mt-4 hidden"></p>
         </div>
@@ -174,7 +156,6 @@
             <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
                 <div class="flex items-center gap-4">
                     <img src="public/blog.svg" alt="Logo" class="h-8 logo-adaptive">
-                    
                     <div class="hidden md:block w-px h-6 bg-gray-300"></div>
                     <div>
                         <h1 class="font-bold text-sm leading-tight">Contenido Instante Trips</h1>
@@ -183,11 +164,19 @@
                 </div>
                 
                 <div class="flex items-center gap-2">
-                    <button onclick="toggleDarkMode()" class="p-2 rounded hover:bg-gray-100 dark:hover:bg-slate-800" title="Modo Oscuro">🌓</button>
+                    <button onclick="toggleDarkMode()" class="p-2 rounded hover:bg-gray-100 dark:hover:bg-slate-800 text-xl" title="Modo Oscuro">
+                        <ion-icon name="moon-outline"></ion-icon>
+                    </button>
                     <div class="w-px h-6 bg-gray-300 mx-1"></div>
-                    <button onclick="openLoadModal()" class="flex items-center gap-2 px-3 py-2 text-sm font-medium hover:bg-gray-100 dark:hover:bg-slate-800 rounded">📂 <span class="hidden sm:inline">Explorar</span></button>
-                    <button onclick="downloadMarkdown()" class="flex items-center gap-2 px-3 py-2 text-sm font-medium hover:bg-gray-100 dark:hover:bg-slate-800 rounded">💾 <span class="hidden sm:inline">MD</span></button>
-                    <button id="btn-logout" class="text-sm font-bold text-red-500 px-3 py-2 hover:bg-red-50 rounded">Salir</button>
+                    <button onclick="openLoadModal()" class="flex items-center gap-2 px-3 py-2 text-sm font-medium hover:bg-gray-100 dark:hover:bg-slate-800 rounded">
+                        <ion-icon name="folder-open-outline"></ion-icon> <span class="hidden sm:inline">Explorar</span>
+                    </button>
+                    <button onclick="downloadMarkdown()" class="flex items-center gap-2 px-3 py-2 text-sm font-medium hover:bg-gray-100 dark:hover:bg-slate-800 rounded">
+                        <ion-icon name="download-outline"></ion-icon> <span class="hidden sm:inline">MD</span>
+                    </button>
+                    <button id="btn-logout" class="text-sm font-bold text-red-500 px-3 py-2 hover:bg-red-50 rounded flex items-center gap-1">
+                        <ion-icon name="log-out-outline"></ion-icon> Salir
+                    </button>
                 </div>
             </div>
         </header>
@@ -196,8 +185,10 @@
             
             <div class="block-card p-6 mb-8">
                 <div class="flex items-center justify-between mb-6">
-                    <h2 class="text-xs font-bold uppercase text-gray-400">Detalles de la Publicación</h2>
-                    <button onclick="clearAll()" class="text-xs text-red-400 hover:text-red-600 hover:underline font-bold">🗑️ Limpiar Todo</button>
+                    <h2 class="text-xs font-bold uppercase text-gray-400 flex items-center gap-1"><ion-icon name="document-text-outline"></ion-icon> Detalles de la Publicación</h2>
+                    <button onclick="clearAll()" class="text-xs text-red-400 hover:text-red-600 hover:underline font-bold flex items-center gap-1">
+                        <ion-icon name="trash-outline"></ion-icon> Limpiar Todo
+                    </button>
                 </div>
 
                 <div class="space-y-6">
@@ -232,8 +223,8 @@
                             <label class="block text-[10px] uppercase font-bold text-gray-400 mb-1">Hero Image</label>
                             <div class="flex">
                                 <input type="text" id="post-hero" class="flex-1 text-sm bg-transparent border-b border-gray-200 py-1 focus:outline-none focus:border-black dark:border-slate-700" placeholder="URL...">
-                                <label class="cursor-pointer ml-2 hover:bg-gray-100 p-1 rounded">
-                                    📁 <input type="file" class="hidden" accept="image/*" onchange="uploadHeroImage(this)">
+                                <label class="cursor-pointer ml-2 hover:bg-gray-100 p-1 rounded text-lg">
+                                    <ion-icon name="cloud-upload-outline"></ion-icon> <input type="file" class="hidden" accept="image/*" onchange="uploadHeroImage(this)">
                                 </label>
                             </div>
                         </div>
@@ -252,22 +243,25 @@
             <div class="sticky top-16 z-30 bg-white/90 dark:bg-slate-900/90 backdrop-blur border border-gray-200 dark:border-slate-700 rounded-xl p-2 mb-8 flex flex-wrap gap-1 shadow-sm justify-center">
                 <button onclick="addBlock('h2')" class="px-3 py-1 text-xs font-bold hover:bg-gray-100 rounded">H2</button>
                 <button onclick="addBlock('h3')" class="px-3 py-1 text-xs font-bold hover:bg-gray-100 rounded">H3</button>
-                <button onclick="addBlock('p')" class="px-3 py-1 text-xs hover:bg-gray-100 rounded flex items-center gap-1">📄 Texto</button>
-                <button onclick="addBlock('quote')" class="px-3 py-1 text-xs hover:bg-gray-100 rounded">❝ Cita</button>
+                <button onclick="addBlock('p')" class="px-3 py-1 text-xs hover:bg-gray-100 rounded flex items-center gap-1"><ion-icon name="text-outline"></ion-icon> Texto</button>
+                <button onclick="addBlock('quote')" class="px-3 py-1 text-xs hover:bg-gray-100 rounded flex items-center gap-1"><ion-icon name="chatbox-ellipses-outline"></ion-icon> Cita</button>
                 <div class="w-px h-4 bg-gray-300 mx-1 self-center"></div>
-                <button onclick="addBlock('img')" class="px-3 py-1 text-xs hover:bg-gray-100 rounded">🖼️ Imagen</button>
-                <button onclick="addBlock('yt')" class="px-3 py-1 text-xs hover:bg-gray-100 rounded">🎬 Video</button>
-                <button onclick="addBlock('list')" class="px-3 py-1 text-xs hover:bg-gray-100 rounded">📋 Lista</button>
-                <button onclick="addBlock('hr')" class="px-3 py-1 text-xs hover:bg-gray-100 rounded">➖ HR</button>
+                <button onclick="addBlock('img')" class="px-3 py-1 text-xs hover:bg-gray-100 rounded flex items-center gap-1"><ion-icon name="image-outline"></ion-icon> Img</button>
+                <button onclick="addBlock('yt')" class="px-3 py-1 text-xs hover:bg-gray-100 rounded flex items-center gap-1"><ion-icon name="logo-youtube"></ion-icon> Video</button>
+                <button onclick="addBlock('list')" class="px-3 py-1 text-xs hover:bg-gray-100 rounded flex items-center gap-1"><ion-icon name="list-outline"></ion-icon> Lista</button>
+                <button onclick="addBlock('hr')" class="px-3 py-1 text-xs hover:bg-gray-100 rounded flex items-center gap-1"><ion-icon name="remove-outline"></ion-icon> HR</button>
             </div>
 
             <div id="blocks-container" class="min-h-[200px]">
-                <div class="text-center py-10 text-gray-300 italic">No hay bloques. Comienza escribiendo...</div>
+                <div class="text-center py-10 text-gray-300 italic flex flex-col items-center gap-2">
+                    <ion-icon name="create-outline" class="text-3xl opacity-20"></ion-icon>
+                    No hay bloques. Comienza escribiendo...
+                </div>
             </div>
 
             <div class="fixed bottom-6 right-6 left-6 md:left-auto md:w-80">
                 <button onclick="publishCurrentPost()" class="w-full bg-black dark:bg-white text-white dark:text-black font-bold py-4 rounded-xl shadow-2xl hover:scale-[1.02] transition flex items-center justify-center gap-2">
-                    🚀 Publicar Cambios
+                    <ion-icon name="rocket-outline" class="text-xl"></ion-icon> Publicar Cambios
                 </button>
             </div>
 
@@ -391,10 +385,13 @@
             
             list.innerHTML = posts.map(p => `
                 <div class="flex items-center justify-between p-3 border-b border-gray-100 hover:bg-gray-50 dark:hover:bg-slate-800 transition">
-                    <span onclick="loadPost('${p.name}')" class="cursor-pointer font-medium text-sm text-gray-700 dark:text-gray-300 hover:text-black">${p.name}</span>
+                    <div class="flex items-center gap-3 overflow-hidden">
+                        <ion-icon name="document-text-outline" class="text-gray-400"></ion-icon>
+                        <span onclick="loadPost('${p.name}')" class="cursor-pointer font-medium text-sm text-gray-700 dark:text-gray-300 hover:text-black truncate">${p.name}</span>
+                    </div>
                     <div class="flex items-center gap-2">
-                         <button onclick="loadPost('${p.name}')" class="text-xs bg-blue-50 text-blue-600 px-2 py-1 rounded font-bold">Editar</button>
-                         ${isAdmin ? `<button onclick="confirmDeletePost('${p.name}', '${p.sha}')" class="text-red-500 hover:bg-red-100 p-1 rounded" title="Borrar"><svg class="w-4 h-4"><use href="#icon-trash"></use></svg></button>` : ''}
+                         <button onclick="loadPost('${p.name}')" class="text-xs bg-blue-50 text-blue-600 px-2 py-1 rounded font-bold flex items-center gap-1"><ion-icon name="create-outline"></ion-icon> Editar</button>
+                         ${isAdmin ? `<button onclick="confirmDeletePost('${p.name}', '${p.sha}')" class="text-red-500 hover:bg-red-100 p-1 rounded text-lg" title="Borrar"><ion-icon name="trash-outline"></ion-icon></button>` : ''}
                     </div>
                 </div>
             `).join('');
@@ -419,8 +416,11 @@
                     select.innerHTML += `<option value="${slug}">${name}</option>`;
                     htmlList += `
                         <div class="flex justify-between items-center p-2 border-b text-sm">
-                            <span>${name}</span>
-                            ${isAdmin ? `<button onclick="confirmDeleteAuthor('${slug}', '${name}')" class="text-red-500 hover:bg-red-100 p-1 rounded"><svg class="w-3 h-3"><use href="#icon-trash"></use></svg></button>` : ''}
+                            <div class="flex items-center gap-2">
+                                <ion-icon name="person-circle-outline" class="text-gray-400 text-lg"></ion-icon>
+                                <span>${name}</span>
+                            </div>
+                            ${isAdmin ? `<button onclick="confirmDeleteAuthor('${slug}', '${name}')" class="text-red-500 hover:bg-red-100 p-1 rounded text-lg"><ion-icon name="trash-outline"></ion-icon></button>` : ''}
                         </div>`;
                 }
                 adminList.innerHTML = htmlList || '<p class="text-xs text-gray-400">No hay autores.</p>';
@@ -479,8 +479,11 @@
                 // HEADER DE TARJETA (Drag & Delete)
                 let header = `
                     <div class="flex justify-between items-center bg-gray-50 dark:bg-slate-800 p-2 rounded-t-lg border-b border-gray-100 dark:border-slate-700">
-                        <div class="drag-handle cursor-grab text-gray-400 hover:text-gray-600 px-2">⋮⋮ <span class="text-[10px] font-bold uppercase ml-2">${b.type}</span></div>
-                        <button onclick="removeBlock('${b.id}')" class="text-gray-400 hover:text-red-500 px-2" title="Eliminar"><svg class="w-4 h-4"><use href="#icon-trash"></use></svg></button>
+                        <div class="drag-handle cursor-grab text-gray-400 hover:text-gray-600 px-2 flex items-center gap-2">
+                            <ion-icon name="reorder-two-outline" class="text-lg"></ion-icon> 
+                            <span class="text-[10px] font-bold uppercase">${b.type}</span>
+                        </div>
+                        <button onclick="removeBlock('${b.id}')" class="text-gray-400 hover:text-red-500 px-2 text-lg" title="Eliminar"><ion-icon name="trash-outline"></ion-icon></button>
                     </div>
                 `;
 
@@ -488,19 +491,19 @@
                 let body = `<div class="p-0">`;
                 
                 if (b.type === 'p' || b.type === 'quote') {
-                    // TOOLBAR VISIBLE RESTAURADA
+                    // TOOLBAR VISIBLE (usando TEXTO para B/I/U)
                     body += `
                         <div class="toolbar-inner">
-                            <button class="tool-btn" onclick="execCmd('bold')" title="Negrita"><svg class="w-4 h-4"><use href="#icon-bold"></use></svg></button>
-                            <button class="tool-btn" onclick="execCmd('italic')" title="Cursiva"><svg class="w-4 h-4"><use href="#icon-italic"></use></svg></button>
-                            <button class="tool-btn" onclick="execCmd('underline')" title="Subrayado"><svg class="w-4 h-4"><use href="#icon-underline"></use></svg></button>
+                            <button class="tool-btn font-serif font-bold" onclick="execCmd('bold')" title="Negrita">B</button>
+                            <button class="tool-btn font-serif italic" onclick="execCmd('italic')" title="Cursiva">I</button>
+                            <button class="tool-btn underline" onclick="execCmd('underline')" title="Subrayado">U</button>
                             <div class="tool-sep"></div>
-                            <button class="tool-btn" onclick="execCmd('justifyLeft')" title="Izq"><svg class="w-4 h-4"><use href="#icon-left"></use></svg></button>
-                            <button class="tool-btn" onclick="execCmd('justifyCenter')" title="Centro"><svg class="w-4 h-4"><use href="#icon-center"></use></svg></button>
-                            <button class="tool-btn" onclick="execCmd('justifyRight')" title="Der"><svg class="w-4 h-4"><use href="#icon-right"></use></svg></button>
+                            <button class="tool-btn" onclick="execCmd('justifyLeft')" title="Izq">⬅</button>
+                            <button class="tool-btn" onclick="execCmd('justifyCenter')" title="Centro">⬌</button>
+                            <button class="tool-btn" onclick="execCmd('justifyRight')" title="Der">➡</button>
                             <div class="tool-sep"></div>
-                            <button class="tool-btn" onclick="applyLink()" title="Link"><svg class="w-4 h-4"><use href="#icon-link"></use></svg></button>
-                            <button class="tool-btn text-red-300 hover:text-red-500" onclick="execCmd('removeFormat')" title="Limpiar"><svg class="w-4 h-4"><use href="#icon-clean"></use></svg></button>
+                            <button class="tool-btn" onclick="applyLink()" title="Link"><ion-icon name="link-outline"></ion-icon></button>
+                            <button class="tool-btn text-red-300 hover:text-red-500" onclick="execCmd('removeFormat')" title="Limpiar"><ion-icon name="remove-circle-outline"></ion-icon></button>
                         </div>
                         <div contenteditable="true" class="rich-editor ${b.type==='quote'?'italic text-gray-600 border-l-4 border-orange-500 pl-4':''}" placeholder="Escribe aquí..." oninput="updateBlockContent('${b.id}', this.innerHTML)">${b.content}</div>
                     `;
@@ -509,7 +512,7 @@
                         <div class="p-4 space-y-3">
                             <div class="flex gap-2">
                                 <input type="text" class="flex-1 text-sm p-2 border rounded bg-gray-50" placeholder="URL del recurso..." value="${b.content}" oninput="updateBlockContent('${b.id}', this.value)">
-                                ${b.type==='img' ? `<label class="cursor-pointer bg-gray-200 hover:bg-gray-300 px-3 py-2 rounded text-xs font-bold">Subir<input type="file" class="hidden" onchange="uploadImg('${b.id}', this)"></label>`:''}
+                                ${b.type==='img' ? `<label class="cursor-pointer bg-gray-200 hover:bg-gray-300 px-3 py-2 rounded text-xs font-bold flex items-center gap-1"><ion-icon name="cloud-upload-outline"></ion-icon> Subir<input type="file" class="hidden" onchange="uploadImg('${b.id}', this)"></label>`:''}
                             </div>
                             ${b.type==='img' && b.content ? `<img src="${b.content.split('|')[0]}" class="h-40 rounded object-cover border mx-auto">` : ''}
                             <input type="text" class="w-full text-xs text-center italic text-gray-400 bg-transparent outline-none" placeholder="Créditos (opcional)" value="${b.credits}" oninput="updateBlockContent('${b.id}', this.value, 'credits')">
@@ -680,7 +683,7 @@
         window.addTag = (e) => { if(e.key==='Enter'){ const v=e.target.value.trim(); if(v && !tags.includes(v)){ tags.push(v); e.target.value=''; renderTags(); }}}
         document.getElementById('tag-input').addEventListener('keydown', window.addTag);
         function renderTags() { document.getElementById('tags-container').innerHTML = tags.map(t=>`<span class="bg-gray-200 px-2 rounded text-xs">#${t} <button onclick="tags=tags.filter(x=>x!=='${t}');renderTags()">×</button></span>`).join(''); }
-        window.showToast = (m,t) => { const d=document.createElement('div'); d.className=`p-3 rounded text-white text-sm font-bold ${t==='error'?'bg-red-500':'bg-black'}`; d.innerText=m; document.getElementById('toast-container').appendChild(d); setTimeout(()=>d.remove(),3000); }
+        window.showToast = (m,t) => { const d=document.createElement('div'); d.className=`p-3 rounded text-white text-sm font-bold flex items-center gap-2 ${t==='error'?'bg-red-500':'bg-black'}`; d.innerHTML=`<ion-icon name="${t==='error'?'alert-circle-outline':'checkmark-circle-outline'}"></ion-icon> ${m}`; document.getElementById('toast-container').appendChild(d); setTimeout(()=>d.remove(),3000); }
         
         new Sortable(document.getElementById('blocks-container'), { animation: 150, handle: '.drag-handle', onEnd: (evt) => {
              const item = blocks.splice(evt.oldIndex, 1)[0]; blocks.splice(evt.newIndex, 0, item);
