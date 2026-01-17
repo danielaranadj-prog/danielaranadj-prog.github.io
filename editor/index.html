@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blog Instantetrips - Editor V5.4 (Split View)</title>
+    <title>Blog Instantetrips - Editor V5.4.1 (Correcciones)</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
@@ -29,13 +29,12 @@
 
     <style>
         /* BASE */
-        body { background-color: #f3f4f6; color: #111; font-family: 'Inter', sans-serif; transition: background 0.3s; overflow: hidden; /* Fijo para split view */ }
+        body { background-color: #f3f4f6; color: #111; font-family: 'Inter', sans-serif; transition: background 0.3s; overflow: hidden; }
         body.dark { background-color: #0f172a; color: #e2e8f0; }
 
         .logo-adaptive { filter: invert(1); transition: filter 0.3s; }
         .dark .logo-adaptive { filter: invert(0); }
 
-        /* SCROLLBARS FINOS */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
@@ -72,10 +71,10 @@
         .dot-yellow { background: #eab308; }
         .dot-red { background: #ef4444; }
 
-        /* PREVIEW STYLES (PROSE) */
+        /* PREVIEW STYLES */
         .prose { font-size: 0.95rem; line-height: 1.7; color: #333; }
         .dark .prose { color: #e2e8f0; }
-        .prose h1 { font-size: 2em; font-weight: 800; margin-bottom: 0.5em; line-height: 1.2; }
+        .prose h1 { font-size: 2.25em; font-weight: 800; margin-bottom: 0.5em; line-height: 1.2; letter-spacing: -0.02em; }
         .prose h2 { font-size: 1.5em; font-weight: 700; margin-top: 1.5em; margin-bottom: 0.5em; color: #111; }
         .dark .prose h2 { color: #fff; }
         .prose h3 { font-size: 1.25em; font-weight: 600; margin-top: 1.2em; margin-bottom: 0.5em; }
@@ -86,7 +85,7 @@
         .prose ul { list-style-type: disc; padding-left: 1.5em; margin-bottom: 1em; }
         .prose ol { list-style-type: decimal; padding-left: 1.5em; margin-bottom: 1em; }
         .prose a { color: #f97316; text-decoration: underline; font-weight: 500; }
-        .prose iframe { width: 100%; aspect-ratio: 16/9; border-radius: 8px; }
+        .prose iframe { width: 100%; aspect-ratio: 16/9; border-radius: 8px; margin: 1em 0; }
     </style>
 </head>
 
@@ -212,7 +211,7 @@
                                 <div><label class="block text-[10px] uppercase font-bold text-gray-400 mb-1">Fecha</label><input type="date" id="post-date" class="w-full text-sm bg-transparent border-b border-gray-200 py-1 focus:outline-none focus:border-black dark:border-slate-700"></div>
                                 <div><label class="block text-[10px] uppercase font-bold text-gray-400 mb-1 flex justify-between">Autor <span class="cursor-pointer text-blue-500" onclick="openAuthorModal()">+</span></label><select id="post-author" class="w-full text-sm bg-transparent border-b border-gray-200 py-1 focus:outline-none focus:border-black dark:border-slate-700"><option>Cargando...</option></select></div>
                             </div>
-                            <div class="flex"><input type="text" id="post-hero" class="flex-1 text-sm bg-transparent border-b border-gray-200 py-1 focus:outline-none focus:border-black dark:border-slate-700" placeholder="Hero Image URL..."><label class="cursor-pointer ml-2 hover:bg-gray-100 p-1 rounded text-lg"><ion-icon name="cloud-upload-outline"></ion-icon> <input type="file" class="hidden" accept="image/*" onchange="uploadHeroImage(this)"></label></div>
+                            <div class="flex"><input type="text" id="post-hero" class="flex-1 text-sm bg-transparent border-b border-gray-200 py-1 focus:outline-none focus:border-black dark:border-slate-700" placeholder="Hero Image URL..." oninput="updateSEO()"><label class="cursor-pointer ml-2 hover:bg-gray-100 p-1 rounded text-lg"><ion-icon name="cloud-upload-outline"></ion-icon> <input type="file" class="hidden" accept="image/*" onchange="uploadHeroImage(this)"></label></div>
                             <div><div class="flex items-center gap-2 mb-2"><span class="text-gray-400 text-sm">#</span><input type="text" id="tag-input" class="flex-1 text-sm outline-none bg-transparent" placeholder="Etiquetas (Enter)"></div><div id="tags-container" class="flex flex-wrap gap-2"></div></div>
                         </div>
                     </div>
@@ -344,31 +343,32 @@
             await ghFetch(`/contents/src/data/authors.ts`, 'PUT', { message: `Del auth ${slug}`, content: btoa(unescape(encodeURIComponent(newContent))), sha: file.sha, branch: githubConfig.branch });
         }
 
-        // --- CORE: REAL TIME PREVIEW LOGIC ---
-        // Esta función se llama cada vez que se actualiza el contenido
+        // --- RENDERIZADO PREVIEW CORREGIDO (TITULO Y VIDEO) ---
         function renderLivePreview() {
             const md = generateMarkdown();
-            // Quitamos el frontmatter para el preview visual
             const cleanContent = md.replace(/^---[\s\S]*?---\s*/, '');
             const html = marked.parse(cleanContent);
             
-            // Inyectar en Escritorio (Columna derecha)
+            // Inyectar Título y Portada en la Vista Previa
+            const title = document.getElementById('post-title').value;
+            const hero = document.getElementById('post-hero').value;
+            let finalHtml = '';
+            
+            if(hero) finalHtml += `<img src="${hero}" class="w-full h-64 object-cover rounded-xl mb-6 shadow-sm">`;
+            if(title) finalHtml += `<h1 class="text-3xl font-bold mb-4">${title}</h1>`;
+            finalHtml += html;
+
+            // Inyectar en Escritorio
             const deskPreview = document.getElementById('live-preview-content');
-            if(deskPreview) deskPreview.innerHTML = html;
+            if(deskPreview) deskPreview.innerHTML = finalHtml;
 
-            // Inyectar en Móvil (Si está abierto)
+            // Inyectar en Móvil
             const mobPreview = document.getElementById('mobile-preview-content');
-            if(mobPreview) mobPreview.innerHTML = html;
+            if(mobPreview) mobPreview.innerHTML = finalHtml;
         }
 
-        // Mobile Preview Controls
-        window.openMobilePreview = () => {
-            renderLivePreview(); // Force update
-            document.getElementById('preview-modal-mobile').classList.add('open');
-        }
+        window.openMobilePreview = () => { renderLivePreview(); document.getElementById('preview-modal-mobile').classList.add('open'); }
         window.closeMobilePreview = () => document.getElementById('preview-modal-mobile').classList.remove('open');
-
-        // -------------------------------------
 
         window.openLoadModal = async () => {
              document.getElementById('load-post-modal').classList.add('open');
@@ -465,6 +465,7 @@
                             <button class="tool-btn" onclick="execCmd('justifyLeft')" title="Izq">⬅</button>
                             <button class="tool-btn" onclick="execCmd('justifyCenter')" title="Centro">⬌</button>
                             <button class="tool-btn" onclick="execCmd('justifyRight')" title="Der">➡</button>
+                            <button class="tool-btn" onclick="execCmd('justifyFull')" title="Justificado"><ion-icon name="reorder-four-outline"></ion-icon></button>
                             <div class="tool-sep"></div>
                             <button class="tool-btn" onclick="applyLink()" title="Link"><ion-icon name="link-outline"></ion-icon></button>
                             <button class="tool-btn text-red-300 hover:text-red-500" onclick="execCmd('removeFormat')" title="Limpiar"><ion-icon name="remove-circle-outline"></ion-icon></button>
@@ -497,13 +498,22 @@
             });
             container.scrollTop = scroll;
             
-            // ACTUALIZAR PREVIEW AL RENDERIZAR BLOQUES
+            // Render Live Preview
             renderLivePreview();
         }
 
         window.updateBlockContent = (id, v, extra) => { const b=blocks.find(x=>x.id===id); if(!b)return; if(extra==='credits')b.credits=v; else if(extra==='listType')b.listType=v; else b.content=v; updateSEO(); renderLivePreview(); }
         window.execCmd = (c, v) => document.execCommand(c, false, v);
-        window.applyLink = () => { const u = prompt("URL:"); if(u) execCmd('createLink', u); }
+        
+        // --- LINK CORREGIDO ---
+        window.applyLink = () => { 
+            let u = prompt("URL:"); 
+            if(u) {
+                if(!/^https?:\/\//i.test(u) && !/^mailto:/i.test(u)) u = 'https://' + u;
+                execCmd('createLink', u);
+            }
+        }
+
         window.clearAll = () => { if(confirm("¿Borrar todo?")) { blocks=[]; tags=[]; ['post-title','post-desc','post-hero'].forEach(id=>document.getElementById(id).value=''); localStorage.removeItem('blog-draft-v5'); renderBlocks(); renderTags(); updateSEO(); currentPostFilename=null; currentPostSha=null; }}
         const toBase64 = file => new Promise(r => { const rd = new FileReader(); rd.readAsDataURL(file); rd.onload = () => r(rd.result); });
         window.uploadImg = async (id, input) => { const f=input.files[0]; if(!f)return; try { const b64=await toBase64(await imageCompression(f, { maxSizeMB: 1 })); const name=`${Date.now()}-${f.name.replace(/[^a-z0-9]/gi,'-')}`; await ghFetch(`/contents/public/uploads/${name}`, 'PUT', { message:'Up', content: b64.split(',')[1], branch: githubConfig.branch }); updateBlockContent(id, `/uploads/${name} | ${f.name}`); renderBlocks(); } catch(e) { showToast("Error subida", "error"); } }
@@ -512,7 +522,15 @@
             const t=document.getElementById('post-title').value; const d=document.getElementById('post-desc').value; const dt=document.getElementById('post-date').value; const a=document.getElementById('post-author').value; const h=document.getElementById('post-hero').value;
             let md=`---\ntitle: "${t}"\ndescription: "${d}"\npublishDate: "${dt}"\nauthor: "${a}"\nheroImage: "${h}"\nlayout: "../../layouts/BlogPost.astro"\ntags: [${tags.map(x=>`"${x}"`).join(', ')}]\n---\n\n`;
             blocks.forEach(b => {
-                if(b.type==='h2') md+=`## ${b.content}\n\n`; else if(b.type==='h3') md+=`### ${b.content}\n\n`; else if(b.type==='p') md+=`${b.content}\n\n`; else if(b.type==='quote') md+=`> ${b.content}\n\n`; else if(b.type==='hr') md+=`***\n\n`; else if(b.type==='list') md+=`<${b.listType}>\n${b.content}\n</${b.listType}>\n\n`; else if(b.type==='img') { const [u, alt]=b.content.split('|'); if(u) md+=`![${alt||'img'}](${u.trim()})\n${b.credits?`<small class="credit-style"><i>${b.credits}</i></small>`:''}\n\n`; }
+                if(b.type==='h2') md+=`## ${b.content}\n\n`; else if(b.type==='h3') md+=`### ${b.content}\n\n`; else if(b.type==='p') md+=`${b.content}\n\n`; else if(b.type==='quote') md+=`> ${b.content}\n\n`; else if(b.type==='hr') md+=`***\n\n`; else if(b.type==='list') md+=`<${b.listType}>\n${b.content}\n</${b.listType}>\n\n`; 
+                else if(b.type==='img') { const [u, alt]=b.content.split('|'); if(u) md+=`![${alt||'img'}](${u.trim()})\n${b.credits?`<small class="credit-style"><i>${b.credits}</i></small>`:''}\n\n`; }
+                // --- VIDEO CORREGIDO ---
+                else if(b.type==='yt') {
+                    let src = b.content;
+                    if(src.includes('watch?v=')) src = src.replace('watch?v=', 'embed/');
+                    else if(src.includes('youtu.be/')) src = src.replace('youtu.be/', 'youtube.com/embed/');
+                    md += `<iframe width="100%" height="400" src="${src}" frameborder="0" allowfullscreen></iframe>\n\n`;
+                }
             });
             return md;
         }
@@ -541,6 +559,10 @@
                      const m = chunk.match(/!\[(.*?)\]\((.*?)\)/);
                      if(m) blocks.push({id:Date.now()+i, type:'img', content:`${m[2]} | ${m[1]}`, credits:''});
                  }
+                 else if(chunk.startsWith('<iframe')) { // DETECTAR VIDEO
+                     const m = chunk.match(/src="([^"]+)"/);
+                     if(m) blocks.push({id:Date.now()+i, type:'yt', content:m[1]});
+                 }
                  else blocks.push({id:Date.now()+i, type:'p', content:chunk});
             });
             renderBlocks();
@@ -553,10 +575,14 @@
 
         function startAutosave() { autosaveInterval=setInterval(()=>{ if(!blocks.length)return; const d={ title:document.getElementById('post-title').value, desc:document.getElementById('post-desc').value, date:document.getElementById('post-date').value, hero:document.getElementById('post-hero').value, author:document.getElementById('post-author').value, tags, blocks, filename:currentPostFilename, sha:currentPostSha }; localStorage.setItem('blog-draft-v5', JSON.stringify(d)); document.getElementById('save-status').innerText="Guardado auto."; }, 10000); }
         function checkDraft() { const d=localStorage.getItem('blog-draft-v5'); if(d && confirm("¿Restaurar borrador?")) { const data=JSON.parse(d); document.getElementById('post-title').value=data.title; document.getElementById('post-desc').value=data.desc; document.getElementById('post-date').value=data.date; document.getElementById('post-hero').value=data.hero; tags=data.tags||[]; blocks=data.blocks||[]; currentPostFilename=data.filename; currentPostSha=data.sha; renderTags(); renderBlocks(); } }
+        
         window.updateSEO = () => { 
-            const t=document.getElementById('post-title').value.length; document.getElementById('title-seo').className=`dot ${t>=50&&t<=65?'dot-green':t>10?'dot-yellow':'dot-red'}`; document.getElementById('title-count').innerText=t; 
-            renderLivePreview(); // Update preview on SEO (Title/Desc) change too
+            const t=document.getElementById('post-title').value.length; 
+            document.getElementById('title-seo').className=`dot ${t>=50&&t<=65?'dot-green':t>10?'dot-yellow':'dot-red'}`; 
+            document.getElementById('title-count').innerText=t; 
+            renderLivePreview(); // UPDATE LIVE PREVIEW
         };
+        
         window.uploadHeroImage = async (input) => { const f=input.files[0]; if(!f)return; try { const b64=await toBase64(await imageCompression(f, { maxSizeMB: 1 })); const name=`${Date.now()}-hero-${f.name.replace(/[^a-z0-9]/gi,'-')}`; await ghFetch(`/contents/public/uploads/${name}`, 'PUT', { message:'Up', content: b64.split(',')[1], branch: githubConfig.branch }); document.getElementById('post-hero').value=`/uploads/${name}`; updateSEO(); } catch(e) { showToast("Error subida", "error"); } };
         window.toggleDarkMode = () => document.body.classList.toggle('dark');
         window.closeLoadModal = () => document.getElementById('load-post-modal').classList.remove('open');
