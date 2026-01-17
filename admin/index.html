@@ -3,11 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>God Mode - Instantetrips</title>
+    <title>Panel Admin - Instantetrips</title>
+    
     <link rel="apple-touch-icon" href="admin/logo-ios.png">
     <link rel="icon" type="image/png" href="admin/logo-ios.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.js"></script>
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
@@ -17,23 +19,55 @@
     <script>
         tailwind.config = {
             darkMode: 'class',
-            theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'] }, colors: { slate: { 850: '#1e293b' } } } }
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: { slate: { 850: '#1e293b' } }
+                }
+            }
         }
     </script>
 
     <style>
-        body { background-color: #f3f4f6; color: #111; font-family: 'Inter', sans-serif; transition: background 0.3s; }
+        /* ESTILOS BASE (Intactos) */
+        body { background-color: #f3f4f6; color: #111; font-family: 'Inter', sans-serif; transition: background 0.3s, color 0.3s; }
         body.dark { background-color: #0f172a; color: #e2e8f0; }
-        .glass-card { background: rgba(255,255,255,0.85); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.4); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15); }
-        .dark .glass-card { background: rgba(15,23,42,0.9); border: 1px solid rgba(255,255,255,0.1); }
-        .gradient-bg { background: linear-gradient(-45deg, #f3f4f6, #dbeafe, #fce7f3, #ffedd5); background-size: 400% 400%; animation: grad 20s ease infinite; }
-        .dark .gradient-bg { background: linear-gradient(-45deg, #0f172a, #1e1b4b, #1e293b); }
-        @keyframes grad { 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
-        .btn-primary { background: linear-gradient(135deg, #171717 0%, #262626 100%); transition: all 0.3s; }
+        
+        /* UTILIDADES VISUALES */
+        .glass-card { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.4); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15); }
+        .dark .glass-card { background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(255, 255, 255, 0.1); }
+
+        .gradient-bg { background: linear-gradient(-45deg, #f3f4f6, #dbeafe, #fce7f3, #ffedd5, #f3f4f6); background-size: 400% 400%; animation: gradientShift 20s ease infinite; }
+        .dark .gradient-bg { background: linear-gradient(-45deg, #0f172a, #1e1b4b, #1e293b, #0f172a); background-size: 400% 400%; }
+        @keyframes gradientShift { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+
+        .btn-primary { background: linear-gradient(135deg, #171717 0%, #262626 100%); transition: all 0.3s; position: relative; overflow: hidden; }
         .dark .btn-primary { background: linear-gradient(135deg, #f97316 0%, #ea580c 100%); }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+
+        .accent-input { transition: all 0.2s ease; border: 1px solid transparent; }
+        .accent-input:focus { border-color: #f97316; box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.15); outline: none; }
+
+        /* MODALES */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(8px); z-index: 50; display: none; place-items: center; }
+        .modal-overlay.open { display: grid; }
+        .modal-content { animation: modalSlideUp 0.35s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        @keyframes modalSlideUp { from { opacity: 0; transform: translateY(30px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+        
+        /* LOADER */
+        .loader { width: 48px; height: 48px; border: 5px solid #FFF; border-bottom-color: #f97316; border-radius: 50%; display: inline-block; box-sizing: border-box; animation: rotation 1s linear infinite; }
+        @keyframes rotation { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
         .hide-scroll::-webkit-scrollbar { display: none; }
-        .loader { width: 30px; height: 30px; border: 3px solid #FFF; border-bottom-color: #f97316; border-radius: 50%; display: inline-block; animation: rot 1s linear infinite; }
-        @keyframes rot { 0%{transform: rotate(0deg)} 100%{transform: rotate(360deg)} }
+
+        /* NUEVO: CLASES PARA EL GRID DASHBOARD */
+        .dash-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .dash-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
     </style>
 </head>
 
@@ -41,133 +75,206 @@
 
     <div id="login-section" class="flex items-center justify-center min-h-screen p-4 gradient-bg fixed inset-0 z-50">
         <div class="w-full max-w-sm text-center glass-card rounded-3xl p-8">
-            <div class="mb-8 flex flex-col items-center">
-                <img src="/admin/admin.svg" alt="Admin" class="w-24 h-24 mb-4 object-contain drop-shadow-lg">
+            <div class="mb-8 flex flex-col items-center justify-center">
+                <div class="w-24 h-24 mb-4 flex items-center justify-center">
+                    <img src="admin/admin.svg" alt="Admin Logo" class="w-full h-full object-contain drop-shadow-lg">
+                </div>
                 <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-orange-500 to-red-600">GOD MODE</h1>
-                <p class="text-xs text-gray-400">Acceso Restringido - Solo SEO</p>
+                <p class="text-xs text-gray-400 mt-1">Acceso Restringido - Solo SEO</p>
             </div>
             <form id="login-form" class="space-y-4">
-                <input type="email" id="email" placeholder="Email" class="w-full p-4 rounded-xl border dark:border-slate-700 bg-white/50 dark:bg-slate-800/50" required>
-                <input type="password" id="password" placeholder="Pass" class="w-full p-4 rounded-xl border dark:border-slate-700 bg-white/50 dark:bg-slate-800/50" required>
-                <button type="submit" class="w-full btn-primary text-white font-bold py-4 rounded-xl">Entrar</button>
+                <input type="email" id="email" placeholder="Email Admin" class="w-full p-4 bg-white/50 dark:bg-slate-800/50 rounded-xl accent-input border border-gray-200 dark:border-slate-700" required>
+                <input type="password" id="password" placeholder="Contraseña" class="w-full p-4 bg-white/50 dark:bg-slate-800/50 rounded-xl accent-input border border-gray-200 dark:border-slate-700" required>
+                <button type="submit" class="w-full btn-primary text-white font-bold py-4 rounded-xl">Acceder al Panel</button>
             </form>
             <p id="login-error" class="text-red-500 text-sm mt-4 hidden"></p>
         </div>
     </div>
 
     <div id="dashboard-section" class="hidden flex-1 flex flex-col bg-gray-50 dark:bg-slate-900">
+        
         <header class="h-16 bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 flex items-center justify-between px-6 sticky top-0 z-40 shadow-sm">
-            <div class="flex items-center gap-3">
-                <div class="bg-red-500 text-white text-[10px] px-2 py-0.5 rounded font-bold uppercase">SEO</div>
-                <h1 class="font-bold text-gray-700 dark:text-gray-200">Panel Maestro</h1>
+            <div class="flex items-center gap-3 cursor-pointer" onclick="switchTab('home')">
+                <div class="bg-red-500 text-white text-[10px] px-2 py-0.5 rounded font-bold uppercase tracking-wider">SEO</div>
+                <h1 class="font-bold text-gray-700 dark:text-gray-200 text-sm md:text-base">Admin Panel</h1>
             </div>
             <div class="flex items-center gap-4">
+                <button onclick="switchTab('home')" class="p-2 text-gray-500 hover:text-orange-500 transition-colors" title="Inicio"><ion-icon name="grid-outline" class="text-xl"></ion-icon></button>
                 <span id="admin-user-display" class="text-xs text-gray-400 hidden md:block"></span>
-                <button onclick="toggleDarkMode()" class="text-xl"><ion-icon name="moon-outline"></ion-icon></button>
-                <button onclick="logout()" class="text-red-500 text-xl"><ion-icon name="log-out-outline"></ion-icon></button>
+                <button onclick="toggleDarkMode()" class="p-2 rounded hover:bg-gray-100 dark:hover:bg-slate-700 text-xl"><ion-icon name="moon-outline"></ion-icon></button>
+                <button onclick="logout()" class="text-red-500 hover:text-red-700 text-xl"><ion-icon name="log-out-outline"></ion-icon></button>
             </div>
         </header>
 
-        <div class="flex justify-center mt-6 px-4">
-            <div class="bg-white dark:bg-slate-800 p-1.5 rounded-full shadow-sm border border-gray-200 dark:border-slate-700 flex gap-1 overflow-x-auto hide-scroll max-w-full">
-                <button onclick="switchTab('home')" id="tab-home" class="tab-btn active">Inicio</button>
-                <button onclick="switchTab('posts')" id="tab-posts" class="tab-btn">Artículos</button>
-                <button onclick="switchTab('seo')" id="tab-seo" class="tab-btn">Auditoría SEO</button>
-                <button onclick="switchTab('media')" id="tab-media" class="tab-btn">Media</button>
-                <button onclick="switchTab('integrations')" id="tab-integrations" class="tab-btn">APIs</button>
-                <button onclick="switchTab('authors')" id="tab-authors" class="tab-btn">Autores</button>
-                <button onclick="switchTab('destinations')" id="tab-destinations" class="tab-btn">Destinos</button>
-            </div>
-        </div>
+        <main class="flex-1 p-6 max-w-7xl mx-auto w-full overflow-y-auto">
+            
+            <div id="view-home" class="animate-fade-in">
+                <div class="mb-8">
+                    <h2 class="text-2xl font-bold text-gray-800 dark:text-white">Bienvenido, SEO</h2>
+                    <p class="text-gray-500 text-sm">Selecciona un módulo para comenzar a trabajar.</p>
+                </div>
 
-        <style>
-            .tab-btn { px-4 py-2 rounded-full font-bold text-xs transition-all whitespace-nowrap text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-slate-700; }
-            .tab-btn.active { background-color: #f97316; color: white; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
-        </style>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    
+                    <div class="space-y-4">
+                        <h3 class="text-xs font-bold uppercase text-gray-400 tracking-wider flex items-center gap-2">
+                            <ion-icon name="document-text-outline"></ion-icon> Gestión de Contenido
+                        </h3>
+                        
+                        <div onclick="switchTab('posts')" class="dash-card cursor-pointer bg-white dark:bg-slate-800 p-6 rounded-2xl border border-gray-200 dark:border-slate-700 relative overflow-hidden group">
+                            <div class="absolute right-0 top-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                                <ion-icon name="newspaper-outline" class="text-8xl text-orange-500"></ion-icon>
+                            </div>
+                            <div class="relative z-10">
+                                <div class="w-12 h-12 rounded-xl bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center text-orange-600 mb-4">
+                                    <ion-icon name="library-outline" class="text-2xl"></ion-icon>
+                                </div>
+                                <h4 class="text-lg font-bold mb-1">Artículos</h4>
+                                <p class="text-xs text-gray-500">Editar, publicar y eliminar posts del blog.</p>
+                            </div>
+                        </div>
 
-        <main class="flex-1 p-4 md:p-6 max-w-7xl mx-auto w-full">
+                        <div onclick="switchTab('authors')" class="dash-card cursor-pointer bg-white dark:bg-slate-800 p-6 rounded-2xl border border-gray-200 dark:border-slate-700 relative overflow-hidden group">
+                            <div class="absolute right-0 top-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                                <ion-icon name="people-outline" class="text-8xl text-blue-500"></ion-icon>
+                            </div>
+                            <div class="relative z-10">
+                                <div class="w-12 h-12 rounded-xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 mb-4">
+                                    <ion-icon name="person-circle-outline" class="text-2xl"></ion-icon>
+                                </div>
+                                <h4 class="text-lg font-bold mb-1">Autores</h4>
+                                <p class="text-xs text-gray-500">Gestionar perfiles, roles y fotos del equipo.</p>
+                            </div>
+                        </div>
+                    </div>
 
-            <div id="view-home" class="space-y-6 animate-fade-in">
-                <h2 class="text-2xl font-bold">Resumen General</h2>
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border dark:border-slate-700 shadow-sm">
-                        <div class="text-4xl font-bold text-orange-500 mb-1" id="stat-posts">-</div>
-                        <div class="text-xs text-gray-400 uppercase font-bold">Artículos</div>
+                    <div class="space-y-4">
+                        <h3 class="text-xs font-bold uppercase text-gray-400 tracking-wider flex items-center gap-2">
+                            <ion-icon name="airplane-outline"></ion-icon> Destinos
+                        </h3>
+                        
+                        <div onclick="switchTab('destinations')" class="dash-card cursor-pointer bg-white dark:bg-slate-800 p-6 rounded-2xl border border-gray-200 dark:border-slate-700 relative overflow-hidden group h-full">
+                            <div class="absolute right-0 top-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                                <ion-icon name="map-outline" class="text-8xl text-green-500"></ion-icon>
+                            </div>
+                            <div class="relative z-10">
+                                <div class="w-12 h-12 rounded-xl bg-green-100 dark:bg-green-900/30 flex items-center justify-center text-green-600 mb-4">
+                                    <ion-icon name="earth-outline" class="text-2xl"></ion-icon>
+                                </div>
+                                <h4 class="text-lg font-bold mb-1 flex items-center gap-2">Países y Ciudades <span class="text-[10px] bg-green-100 text-green-700 px-2 py-0.5 rounded-full">BETA</span></h4>
+                                <p class="text-xs text-gray-500 mb-4">Arquitectura de silos. Organiza el contenido por geografía.</p>
+                                
+                                <div class="space-y-2 mt-4 opacity-60 pointer-events-none">
+                                    <div class="h-2 w-3/4 bg-gray-200 dark:bg-slate-700 rounded-full"></div>
+                                    <div class="h-2 w-1/2 bg-gray-200 dark:bg-slate-700 rounded-full"></div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border dark:border-slate-700 shadow-sm">
-                        <div class="text-4xl font-bold text-blue-500 mb-1" id="stat-authors">-</div>
-                        <div class="text-xs text-gray-400 uppercase font-bold">Autores</div>
+
+                    <div class="space-y-4">
+                        <h3 class="text-xs font-bold uppercase text-gray-400 tracking-wider flex items-center gap-2">
+                            <ion-icon name="stats-chart-outline"></ion-icon> Data & Ads
+                        </h3>
+                        
+                        <div class="bg-gray-100 dark:bg-slate-800/50 p-6 rounded-2xl border border-dashed border-gray-300 dark:border-slate-700 relative">
+                            <div class="w-10 h-10 rounded-lg bg-gray-200 dark:bg-slate-700 flex items-center justify-center text-gray-400 mb-3">
+                                <ion-icon name="key-outline" class="text-xl"></ion-icon>
+                            </div>
+                            <h4 class="font-bold text-gray-500 dark:text-gray-400">APIs & Keys</h4>
+                            <p class="text-[10px] text-gray-400 mt-1">Configuración de Civitatis, Adsense y Analytics.</p>
+                            <span class="absolute top-4 right-4 text-[9px] font-bold text-gray-400 border border-gray-300 px-2 rounded">PRÓXIMAMENTE</span>
+                        </div>
+
+                        <div class="bg-gray-100 dark:bg-slate-800/50 p-6 rounded-2xl border border-dashed border-gray-300 dark:border-slate-700 relative">
+                            <div class="w-10 h-10 rounded-lg bg-gray-200 dark:bg-slate-700 flex items-center justify-center text-gray-400 mb-3">
+                                <ion-icon name="images-outline" class="text-xl"></ion-icon>
+                            </div>
+                            <h4 class="font-bold text-gray-500 dark:text-gray-400">Media Manager</h4>
+                            <p class="text-[10px] text-gray-400 mt-1">Limpieza de imágenes huérfanas.</p>
+                             <span class="absolute top-4 right-4 text-[9px] font-bold text-gray-400 border border-gray-300 px-2 rounded">PRÓXIMAMENTE</span>
+                        </div>
                     </div>
-                    <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border dark:border-slate-700 shadow-sm">
-                        <div class="text-4xl font-bold text-purple-500 mb-1" id="stat-img">-</div>
-                        <div class="text-xs text-gray-400 uppercase font-bold">Imágenes</div>
-                    </div>
-                    <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border dark:border-slate-700 shadow-sm flex flex-col justify-center items-center gap-2 cursor-pointer hover:bg-gray-50" onclick="window.open('https://analytics.google.com', '_blank')">
-                        <ion-icon name="bar-chart-outline" class="text-3xl text-gray-400"></ion-icon>
-                        <div class="text-xs text-center font-bold">Ir a Analytics</div>
-                    </div>
+
                 </div>
             </div>
-
+            
             <div id="view-posts" class="hidden space-y-6">
-                <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-                    <div class="flex-1 w-full relative">
-                        <ion-icon name="search-outline" class="absolute left-3 top-3 text-gray-400"></ion-icon>
-                        <input type="text" placeholder="Buscar..." class="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white dark:bg-slate-800 border dark:border-slate-700 outline-none" oninput="filterPosts(this.value)">
-                    </div>
-                    <button onclick="loadPosts()" class="text-sm text-blue-500 hover:underline"><ion-icon name="refresh-outline"></ion-icon> Recargar</button>
+                <div class="flex items-center gap-2 mb-4">
+                    <button onclick="switchTab('home')" class="text-gray-400 hover:text-orange-500"><ion-icon name="arrow-back-outline"></ion-icon></button>
+                    <h2 class="text-xl font-bold">Gestión de Artículos</h2>
                 </div>
+                
+                <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                    <div class="flex-1 w-full md:max-w-md relative group">
+                        <ion-icon name="search-outline" class="absolute left-3 top-3 text-gray-400 group-focus-within:text-orange-500"></ion-icon>
+                        <input type="text" id="search-input" placeholder="Buscar título, autor..." 
+                            class="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 focus:ring-2 focus:ring-orange-500 outline-none transition-all shadow-sm accent-input"
+                            oninput="filterPosts(this.value)">
+                    </div>
+                    <button onclick="loadPosts()" class="text-sm text-blue-500 hover:underline flex items-center gap-1 whitespace-nowrap">
+                        <ion-icon name="refresh-outline"></ion-icon> <span class="hidden md:inline">Recargar</span>
+                    </button>
+                </div>
+
                 <div id="posts-loader" class="text-center py-20 hidden"><span class="loader"></span></div>
                 <div id="posts-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
-            </div>
-
-            <div id="view-seo" class="hidden space-y-6">
-                <div class="flex justify-between items-center">
-                    <h2 class="text-xl font-bold flex items-center gap-2"><ion-icon name="pulse-outline" class="text-red-500"></ion-icon> Auditoría Técnica</h2>
-                    <button onclick="runSEOAudit()" class="btn-primary text-white px-4 py-2 rounded-lg text-xs font-bold">Escanear Ahora</button>
-                </div>
-                <div id="seo-results" class="space-y-3">
-                    <div class="text-center py-10 text-gray-400 bg-white dark:bg-slate-800 rounded-xl border border-dashed dark:border-slate-700">Presiona "Escanear Ahora" para analizar metadata.</div>
-                </div>
-            </div>
-
-            <div id="view-media" class="hidden space-y-6">
-                <div class="flex justify-between items-center">
-                    <div>
-                        <h2 class="text-xl font-bold">Gestor de Multimedia</h2>
-                        <p class="text-xs text-gray-400">Detecta imágenes que subiste pero ya no usas.</p>
-                    </div>
-                    <button onclick="loadMediaManager()" class="bg-gray-200 dark:bg-slate-700 px-4 py-2 rounded-lg text-xs font-bold">Analizar</button>
-                </div>
-                <div id="media-loader" class="hidden text-center py-10"><span class="loader"></span></div>
-                <div id="media-stats" class="hidden grid grid-cols-3 gap-4 mb-4 text-center text-xs font-bold"></div>
-                <div id="media-list" class="grid grid-cols-2 md:grid-cols-4 gap-4"></div>
-            </div>
-
-            <div id="view-integrations" class="hidden space-y-6">
-                <h2 class="text-xl font-bold">Integraciones & APIs</h2>
-                <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border dark:border-slate-700 shadow-sm">
-                    <p class="text-sm text-gray-500 mb-4">Gestiona las llaves de tus servicios externos (Civitatis, Analytics, etc) sin tocar el código fuente.</p>
-                    <div id="api-form-container" class="space-y-4">
-                        <div class="text-center py-10"><span class="loader"></span> Cargando configuración...</div>
-                    </div>
-                    <button onclick="saveIntegrations()" class="mt-6 w-full btn-primary text-white py-3 rounded-xl font-bold">Guardar Cambios</button>
+                <div id="no-results" class="hidden text-center py-10 text-gray-400">
+                    <ion-icon name="search-outline" class="text-4xl mb-2 opacity-50"></ion-icon>
+                    <p>No se encontraron resultados.</p>
                 </div>
             </div>
 
             <div id="view-authors" class="hidden space-y-6">
-                <div class="flex justify-between items-center">
-                    <h2 class="text-xl font-bold">Autores</h2>
-                    <button onclick="openAuthorModal()" class="btn-primary text-white px-4 py-2 rounded-lg text-xs font-bold">Nuevo</button>
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center gap-2">
+                        <button onclick="switchTab('home')" class="text-gray-400 hover:text-orange-500"><ion-icon name="arrow-back-outline"></ion-icon></button>
+                        <h2 class="text-xl font-bold">Gestión de Autores</h2>
+                    </div>
+                    <button onclick="openAuthorModal()" class="btn-primary text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2">
+                        <ion-icon name="person-add-outline"></ion-icon> Crear
+                    </button>
                 </div>
+                <div id="authors-loader" class="text-center py-20 hidden"><span class="loader"></span></div>
                 <div id="authors-list" class="space-y-4"></div>
             </div>
 
             <div id="view-destinations" class="hidden space-y-6">
-                <h2 class="text-xl font-bold">Gestor de Destinos <span class="text-[10px] bg-orange-100 text-orange-600 px-2 rounded-full">BETA</span></h2>
-                <div class="bg-white dark:bg-slate-800 p-8 text-center rounded-2xl border dark:border-slate-700">
-                    <ion-icon name="construct-outline" class="text-4xl text-gray-300 mb-2"></ion-icon>
-                    <p class="text-gray-500">Módulo en construcción visual. Listo para lógica.</p>
+                <div class="flex justify-between items-center border-b pb-4 dark:border-slate-700 mb-6">
+                    <div class="flex items-center gap-2">
+                        <button onclick="switchTab('home')" class="text-gray-400 hover:text-orange-500"><ion-icon name="arrow-back-outline"></ion-icon></button>
+                        <div>
+                            <h2 class="text-xl font-bold flex items-center gap-2">Gestor de Destinos <span class="text-[10px] bg-orange-100 text-orange-600 px-2 rounded-full border border-orange-200">BETA</span></h2>
+                            <p class="text-xs text-gray-400 mt-1">Administra Países y Ciudades</p>
+                        </div>
+                    </div>
+                    <button onclick="alert('Próximamente: Crear Destino')" class="bg-gray-200 dark:bg-slate-700 text-gray-500 px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 hover:bg-gray-300 dark:hover:bg-slate-600 transition-colors">
+                        <ion-icon name="add-circle-outline" class="text-lg"></ion-icon> Nuevo Destino
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="bg-white dark:bg-slate-800 rounded-2xl border border-gray-200 dark:border-slate-700 p-6 shadow-sm relative overflow-hidden group">
+                        <div class="absolute top-0 right-0 p-4 opacity-50"><ion-icon name="map-outline" class="text-6xl text-gray-100 dark:text-slate-700"></ion-icon></div>
+                        <div class="relative z-10">
+                            <h3 class="text-2xl font-bold mb-1">Japón</h3>
+                            <span class="text-xs text-gray-400 uppercase tracking-widest">Asia</span>
+                            <div class="mt-6 space-y-2">
+                                <p class="text-xs font-bold text-gray-500 mb-2">CIUDADES REGISTRADAS</p>
+                                <div class="flex justify-between items-center bg-gray-50 dark:bg-slate-700/50 p-3 rounded-lg border border-transparent hover:border-orange-200 transition-colors">
+                                    <span class="text-sm font-medium">Tokio</span>
+                                    <button class="text-gray-400 hover:text-red-500"><ion-icon name="trash-outline"></ion-icon></button>
+                                </div>
+                                <div class="flex justify-between items-center bg-gray-50 dark:bg-slate-700/50 p-3 rounded-lg border border-transparent hover:border-orange-200 transition-colors">
+                                    <span class="text-sm font-medium">Kyoto</span>
+                                    <button class="text-gray-400 hover:text-red-500"><ion-icon name="trash-outline"></ion-icon></button>
+                                </div>
+                                <button class="w-full py-2 border border-dashed border-gray-300 dark:border-slate-600 rounded-lg text-xs text-gray-400 hover:text-orange-500 hover:border-orange-500 transition-colors flex justify-center gap-1 items-center mt-2">
+                                    <ion-icon name="add-outline"></ion-icon> Agregar Ciudad
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -175,25 +282,31 @@
     </div>
 
     <div id="author-modal" class="modal-overlay">
-        <div class="modal-content bg-white dark:bg-slate-900 w-full max-w-lg rounded-2xl p-6 relative m-4">
-            <button onclick="closeAuthorModal()" class="absolute top-4 right-4 text-2xl"><ion-icon name="close-outline"></ion-icon></button>
-            <h3 class="text-lg font-bold mb-4 text-orange-500">Editor Autor</h3>
-            <form id="author-form" class="space-y-3">
+        <div class="modal-content bg-white dark:bg-slate-900 w-full max-w-lg rounded-2xl shadow-2xl p-6 relative m-4">
+            <button onclick="closeAuthorModal()" class="absolute top-4 right-4 text-2xl text-gray-400 hover:text-red-500"><ion-icon name="close-outline"></ion-icon></button>
+            <h3 class="text-xl font-bold mb-6 text-orange-500" id="modal-title">Gestión de Autor</h3>
+            <form id="author-form" class="space-y-4">
                 <input type="hidden" id="auth-slug-orig">
-                <div class="grid grid-cols-2 gap-3">
-                    <input type="text" id="auth-name" placeholder="Nombre" class="w-full p-2 rounded border dark:bg-slate-800 dark:border-slate-700" required oninput="genSlug()">
-                    <input type="text" id="auth-slug" placeholder="Slug" class="w-full p-2 rounded border dark:bg-slate-800 dark:border-slate-700 bg-gray-100" readonly>
+                <div class="grid grid-cols-2 gap-4">
+                    <div><label class="text-[10px] text-gray-400 uppercase font-bold">Nombre</label><input type="text" id="auth-name" class="w-full p-2.5 rounded-lg bg-gray-50 dark:bg-slate-800 border dark:border-slate-700 accent-input" required oninput="generateSlug()"></div>
+                    <div><label class="text-[10px] text-gray-400 uppercase font-bold">Slug</label><input type="text" id="auth-slug" class="w-full p-2.5 rounded-lg bg-gray-50 dark:bg-slate-800 border dark:border-slate-700 accent-input text-gray-500" readonly></div>
                 </div>
-                <input type="text" id="auth-role" placeholder="Rol" class="w-full p-2 rounded border dark:bg-slate-800 dark:border-slate-700" required>
-                <input type="email" id="auth-email" placeholder="Email (Login)" class="w-full p-2 rounded border dark:bg-slate-800 dark:border-slate-700">
-                <textarea id="auth-bio" placeholder="Bio..." class="w-full p-2 rounded border dark:bg-slate-800 dark:border-slate-700"></textarea>
-                <input type="file" id="auth-file" class="text-xs">
-                <input type="hidden" id="auth-current-img">
-                <button type="submit" class="w-full btn-primary text-white py-3 rounded-lg font-bold text-sm">Guardar</button>
+                <div><label class="text-[10px] text-gray-400 uppercase font-bold">Rol</label><input type="text" id="auth-role" class="w-full p-2.5 rounded-lg bg-gray-50 dark:bg-slate-800 border dark:border-slate-700 accent-input" required></div>
+                <div><label class="text-[10px] text-gray-400 uppercase font-bold">Email</label><input type="email" id="auth-email" class="w-full p-2.5 rounded-lg bg-gray-50 dark:bg-slate-800 border dark:border-slate-700 accent-input"></div>
+                <div><label class="text-[10px] text-gray-400 uppercase font-bold">Bio</label><textarea id="auth-bio" rows="3" class="w-full p-2.5 rounded-lg bg-gray-50 dark:bg-slate-800 border dark:border-slate-700 accent-input resize-none"></textarea></div>
+                <div>
+                    <label class="text-[10px] text-gray-400 uppercase font-bold">Foto</label>
+                    <div class="flex items-center gap-4 mt-1">
+                        <img id="auth-preview" src="" class="w-12 h-12 rounded-full object-cover bg-gray-200">
+                        <input type="file" id="auth-file" class="text-xs text-gray-500" accept="image/*" onchange="previewImage(this)">
+                        <input type="hidden" id="auth-current-img">
+                    </div>
+                </div>
+                <div class="pt-2"><button type="submit" class="w-full btn-primary text-white py-3 rounded-xl font-bold shadow-lg text-sm">Guardar Autor</button></div>
             </form>
         </div>
     </div>
-    
+
     <div id="toast-container" class="fixed bottom-6 right-6 z-[80] flex flex-col gap-2 pointer-events-none"></div>
 
     <script type="module">
@@ -201,32 +314,56 @@
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        const ADMIN_EMAIL = "danielaranadj@gmail.com"; 
-        const firebaseConfig = { apiKey: "AIzaSyBdsu65Voj8en9u_7eL5q0YRFuCC7fUYWA", authDomain: "instantetrips-editor.firebaseapp.com", projectId: "instantetrips-editor", storageBucket: "instantetrips-editor.firebasestorage.app", messagingSenderId: "281917140804", appId: "1:281917140804:web:ed712e65c9c4b77dd3b111" };
-        const app = initializeApp(firebaseConfig); const auth = getAuth(app); const db = getFirestore(app);
+        const ADMIN_EMAIL = "danielaranadj@gmail.com";
+        
+        const firebaseConfig = {
+            apiKey: "AIzaSyBdsu65Voj8en9u_7eL5q0YRFuCC7fUYWA",
+            authDomain: "instantetrips-editor.firebaseapp.com",
+            projectId: "instantetrips-editor",
+            storageBucket: "instantetrips-editor.firebasestorage.app",
+            messagingSenderId: "281917140804",
+            appId: "1:281917140804:web:ed712e65c9c4b77dd3b111"
+        };
 
-        let ghCfg = null;
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let githubConfig = null;
+        let authorsData = {}; 
+        let authorsSha = null; 
         let cachedPosts = [];
-        let cachedAuthors = {};
-        let cachedIntegrations = {};
-        let integrationSha = null;
 
         // AUTH
         document.getElementById('login-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const em = document.getElementById('email').value, pw = document.getElementById('password').value;
-            if(em.toLowerCase() !== ADMIN_EMAIL.toLowerCase()) return showToast("No eres SEO", "error");
-            try { await signInWithEmailAndPassword(auth, em, pw); } catch(e){ showToast("Error Login", "error"); }
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            if(email.toLowerCase() !== ADMIN_EMAIL.toLowerCase()) {
+                 showError("ACCESO DENEGADO: No tienes permisos."); return;
+            }
+            try { await signInWithEmailAndPassword(auth, email, password); } 
+            catch (error) { showError("Credenciales incorrectas."); }
         });
+
+        function showError(msg) {
+            const err = document.getElementById('login-error');
+            err.classList.remove('hidden'); err.textContent = msg;
+        }
+
         window.logout = () => signOut(auth);
-        
+
         onAuthStateChanged(auth, async (user) => {
-            if(user && user.email.toLowerCase() === ADMIN_EMAIL.toLowerCase()){
+            if (user && user.email.toLowerCase() === ADMIN_EMAIL.toLowerCase()) {
                 document.getElementById('login-section').classList.add('hidden');
                 document.getElementById('dashboard-section').classList.remove('hidden');
                 document.getElementById('admin-user-display').textContent = user.email;
-                const d = await getDoc(doc(db, "config", "main"));
-                if(d.exists()) { ghCfg = d.data(); if(!ghCfg.postsPath.endsWith('/')) ghCfg.postsPath+='/'; loadHomeStats(); }
+                const docSnap = await getDoc(doc(db, "config", "main"));
+                if (docSnap.exists()) {
+                    githubConfig = docSnap.data();
+                    if (!githubConfig.postsPath.endsWith('/')) githubConfig.postsPath += '/';
+                    // No cargamos posts automáticamente al inicio para aligerar la carga del Dashboard
+                }
             } else {
                 document.getElementById('login-section').classList.remove('hidden');
                 document.getElementById('dashboard-section').classList.add('hidden');
@@ -234,263 +371,184 @@
             }
         });
 
-        // GH API
-        async function ghFetch(ep, m='GET', b=null) {
-            const o = { method:m, headers:{'Authorization':`token ${ghCfg.githubToken}`,'Content-Type':'application/json'}};
-            if(b) o.body = JSON.stringify(b);
-            const r = await fetch(`https://api.github.com/repos/${ghCfg.repoOwner}/${ghCfg.repoName}${ep}`, o);
-            if(!r.ok && r.status !== 404) throw new Error(r.status);
-            return r.status === 404 ? null : r.json();
+        async function ghFetch(ep, m = 'GET', b = null) {
+            const opts = { method: m, headers: { 'Authorization': `token ${githubConfig.githubToken}`, 'Content-Type': 'application/json' } };
+            if (b) opts.body = JSON.stringify(b);
+            const res = await fetch(`https://api.github.com/repos/${githubConfig.repoOwner}/${githubConfig.repoName}${ep}`, opts);
+            if (!res.ok) throw new Error(`GitHub: ${res.status}`);
+            return res.json();
         }
 
-        // TABS
-        window.switchTab = (t) => {
-            document.querySelectorAll('.tab-btn').forEach(b => {
-                b.classList.remove('active', 'bg-orange-500', 'text-white');
-                if(b.id===`tab-${t}`) b.classList.add('active');
+        // --- NAVIGATION LOGIC (MODIFICADO PARA EL GRID) ---
+        window.switchTab = (tab) => {
+            // Ocultar todas las vistas
+            ['home', 'posts', 'authors', 'destinations'].forEach(t => {
+                const view = document.getElementById(`view-${t}`);
+                if(view) view.classList.add('hidden');
             });
-            document.querySelectorAll('[id^="view-"]').forEach(v => v.classList.add('hidden'));
-            document.getElementById(`view-${t}`).classList.remove('hidden');
-            
-            if(t === 'posts' && cachedPosts.length === 0) loadPosts();
-            if(t === 'authors') loadAuthors();
-            if(t === 'integrations') loadIntegrations();
+
+            // Mostrar la seleccionada
+            document.getElementById(`view-${tab}`).classList.remove('hidden');
+
+            // Lógica de carga diferida
+            if(tab === 'posts' && cachedPosts.length === 0) loadPosts();
+            if(tab === 'authors' && Object.keys(authorsData).length === 0) fetchAuthors();
         };
 
-        // 1. HOME STATS
-        async function loadHomeStats() {
-            // Carga silenciosa de posts y autores para contar
-            if(cachedPosts.length === 0) await loadPosts(true);
-            document.getElementById('stat-posts').innerText = cachedPosts.length;
+        // --- POSTS ---
+        window.loadPosts = async () => {
+            document.getElementById('posts-loader').classList.remove('hidden');
+            document.getElementById('posts-grid').innerHTML = '';
+            document.getElementById('no-results').classList.add('hidden');
             
-            const authFile = await ghFetch('/contents/src/data/authors.ts');
-            if(authFile) {
-                 const c = decodeURIComponent(escape(atob(authFile.content)));
-                 const m = c.match(/slug:/g);
-                 document.getElementById('stat-authors').innerText = m ? m.length : 0;
-            }
-
-            // Estimado de imágenes (solo lista el directorio)
-            const imgs = await ghFetch('/contents/public/uploads');
-            document.getElementById('stat-img').innerText = Array.isArray(imgs) ? imgs.length : 0;
-        }
-
-        // 2. POSTS
-        window.loadPosts = async (silent = false) => {
-            if(!silent) document.getElementById('posts-loader').classList.remove('hidden');
             try {
-                const f = await ghFetch(`/contents/${ghCfg.postsPath}`);
-                const md = f.filter(x => x.name.endsWith('.md'));
-                const all = await Promise.all(md.map(async x => {
-                    const d = await ghFetch(`/contents/${x.path}`);
-                    const c = decodeURIComponent(escape(atob(d.content)));
-                    const get = k => { const m = c.match(new RegExp(`${k}:\\s*["'](.+?)["']`)); return m ? m[1] : ''; };
-                    return { name: x.name, path: x.path, sha: x.sha, title: get('title'), img: get('heroImage'), date: get('publishDate'), author: get('author') };
-                }));
-                cachedPosts = all.sort((a,b) => new Date(b.date) - new Date(a.date));
-                if(!silent) renderPosts(cachedPosts);
-            } catch(e){ console.log(e); }
-            if(!silent) document.getElementById('posts-loader').classList.add('hidden');
-        }
-        
-        function renderPosts(list) {
-            document.getElementById('posts-grid').innerHTML = list.map(p => `
-                <div class="bg-white dark:bg-slate-800 rounded-xl overflow-hidden border dark:border-slate-700 shadow-sm group">
-                    <div class="h-32 bg-gray-200 relative">
-                        ${p.img ? `<img src="${p.img}" class="w-full h-full object-cover">` : ''}
-                        <div class="absolute top-2 right-2 bg-black/60 text-white text-[10px] px-2 rounded">${p.date}</div>
+                const files = await ghFetch(`/contents/${githubConfig.postsPath}`);
+                const mdFiles = files.filter(f => f.name.endsWith('.md'));
+                const promises = mdFiles.map(async (file) => {
+                    const data = await ghFetch(`/contents/${file.path}`);
+                    const content = decodeURIComponent(escape(atob(data.content)));
+                    const get = (k) => { const m = content.match(new RegExp(`${k}:\\s*["'](.+?)["']`)); return m ? m[1] : 'Unknown'; };
+                    return {
+                        name: file.name, path: file.path, sha: file.sha,
+                        title: get('title'), image: get('heroImage'),
+                        date: get('publishDate'), author: get('author')
+                    };
+                });
+                cachedPosts = await Promise.all(promises);
+                cachedPosts.sort((a, b) => new Date(b.date) - new Date(a.date));
+                renderGrid(cachedPosts);
+            } catch (e) { showToast("Error cargando posts", "error"); } 
+            finally { document.getElementById('posts-loader').classList.add('hidden'); }
+        };
+
+        function renderGrid(posts) {
+            const grid = document.getElementById('posts-grid');
+            if (posts.length === 0) { document.getElementById('no-results').classList.remove('hidden'); return; }
+            else { document.getElementById('no-results').classList.add('hidden'); }
+
+            grid.innerHTML = posts.map(p => `
+                <div class="bg-white dark:bg-slate-800 rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-gray-200 dark:border-slate-700 flex flex-col h-full group">
+                    <div class="h-40 overflow-hidden relative bg-gray-200">
+                        ${p.image && p.image !== 'Unknown' ? `<img src="${p.image}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">` : '<div class="flex items-center justify-center h-full text-gray-400"><ion-icon name="image-outline" class="text-4xl"></ion-icon></div>'}
+                        <div class="absolute top-2 right-2 bg-black/50 text-white text-[10px] px-2 py-1 rounded backdrop-blur-md">${p.date}</div>
                     </div>
-                    <div class="p-3">
-                        <h3 class="font-bold text-sm line-clamp-2 h-10">${p.title}</h3>
-                        <p class="text-[10px] text-gray-500 mb-2">${p.author}</p>
-                        <div class="flex gap-2">
-                             <a href="https://github.com/${ghCfg.repoOwner}/${ghCfg.repoName}/blob/${ghCfg.branch}/${p.path}" target="_blank" class="flex-1 text-center bg-gray-100 dark:bg-slate-700 rounded text-xs py-1">Code</a>
-                             <button onclick="delPost('${p.path}','${p.sha}')" class="text-red-500 px-2"><ion-icon name="trash"></ion-icon></button>
+                    <div class="p-4 flex-1 flex flex-col">
+                        <h3 class="font-bold text-gray-800 dark:text-white mb-2 leading-tight line-clamp-2 text-sm">${p.title}</h3>
+                        <p class="text-[10px] text-gray-500 mb-4 flex items-center gap-1"><ion-icon name="person-outline"></ion-icon> ${p.author}</p>
+                        <div class="mt-auto flex gap-2">
+                            <a href="https://github.com/${githubConfig.repoOwner}/${githubConfig.repoName}/blob/${githubConfig.branch}/${p.path}" target="_blank" class="flex-1 text-center py-2 bg-gray-100 dark:bg-slate-700 rounded text-xs font-bold hover:bg-gray-200 dark:hover:bg-slate-600">Ver Código</a>
+                            <button onclick="deletePost('${p.path}', '${p.sha}')" class="px-3 py-2 bg-red-50 text-red-500 rounded hover:bg-red-500 hover:text-white transition-colors"><ion-icon name="trash-outline"></ion-icon></button>
                         </div>
                     </div>
                 </div>
             `).join('');
         }
+
         window.filterPosts = (q) => {
-            const l = q.toLowerCase();
-            renderPosts(cachedPosts.filter(p => p.title.toLowerCase().includes(l) || p.author.toLowerCase().includes(l)));
+            if (!q) { renderGrid(cachedPosts); return; }
+            const low = q.toLowerCase();
+            renderGrid(cachedPosts.filter(p => p.title.toLowerCase().includes(low) || p.author.toLowerCase().includes(low)));
+        };
+
+        window.deletePost = async (path, sha) => {
+            if(!confirm("¿Eliminar permanentemente?")) return;
+            try { await ghFetch(`/contents/${path}`, 'DELETE', { message: `[ADMIN] Del ${path}`, sha, branch: githubConfig.branch }); showToast("Post eliminado"); loadPosts(); } 
+            catch (e) { showToast("Error: " + e.message, "error"); }
+        };
+
+        // --- AUTHORS ---
+        async function fetchAuthors() {
+            document.getElementById('authors-loader').classList.remove('hidden');
+            try {
+                const f = await ghFetch(`/contents/src/data/authors.ts`);
+                authorsSha = f.sha;
+                const content = decodeURIComponent(escape(atob(f.content)));
+                const jsonMatch = content.match(/export const AUTHORS: Record<string, Author> = ({[\s\S]*?});/);
+                if (jsonMatch) {
+                    authorsData = new Function(`return ${jsonMatch[1]}`)();
+                    renderAuthors();
+                }
+            } catch (e) { showToast("Error autores", "error"); } 
+            finally { document.getElementById('authors-loader').classList.add('hidden'); }
         }
 
-        // 3. SEO AUDIT
-        window.runSEOAudit = () => {
-            const res = document.getElementById('seo-results');
-            res.innerHTML = '';
-            let issues = 0;
-
-            if(cachedPosts.length === 0) { showToast("Carga los artículos primero", "error"); loadPosts(); return; }
-
-            cachedPosts.forEach(p => {
-                let errs = [];
-                if(!p.title || p.title.length < 30) errs.push('Título muy corto (<30 chars)');
-                if(!p.title || p.title.length > 65) errs.push('Título muy largo (>65 chars)');
-                if(!p.img) errs.push('Falta Hero Image');
-                // En una implementación real, analizaríamos la descripción también
-                
-                if(errs.length > 0) {
-                    issues++;
-                    res.innerHTML += `
-                        <div class="bg-red-50 dark:bg-red-900/20 p-4 rounded-xl border border-red-100 dark:border-red-800 flex items-start gap-3">
-                            <ion-icon name="warning" class="text-red-500 mt-1"></ion-icon>
-                            <div>
-                                <h4 class="font-bold text-sm text-red-700 dark:text-red-400">${p.title}</h4>
-                                <ul class="list-disc list-inside text-xs text-red-600 dark:text-red-300 mt-1">
-                                    ${errs.map(e => `<li>${e}</li>`).join('')}
-                                </ul>
-                            </div>
-                        </div>
-                    `;
-                }
-            });
-
-            if(issues === 0) {
-                res.innerHTML = `<div class="bg-green-50 dark:bg-green-900/20 p-6 rounded-xl text-center text-green-600 font-bold"><ion-icon name="checkmark-circle" class="text-3xl mb-2"></ion-icon><br>¡Todo perfecto! SEO Saludable.</div>`;
-            }
-        };
-
-        // 4. MEDIA MANAGER (Detectar Huérfanos)
-        window.loadMediaManager = async () => {
-            document.getElementById('media-loader').classList.remove('hidden');
-            document.getElementById('media-list').innerHTML = '';
-            
-            try {
-                // 1. Traer todos los archivos de uploads
-                const serverFiles = await ghFetch('/contents/public/uploads');
-                if(!Array.isArray(serverFiles)) throw new Error("No uploads folder");
-
-                // 2. Escanear uso en posts (cachedPosts ya tiene el hero, pero necesitamos escanear el body tambien idealmente. Por ahora escaneamos heroImage)
-                // Para ser precisos, bajemos contenido crudo de posts si no lo tenemos, pero por eficiencia usaremos cachedPosts
-                const usedImages = new Set();
-                cachedPosts.forEach(p => {
-                    if(p.img) {
-                        const name = p.img.split('/').pop();
-                        usedImages.add(name);
-                    }
-                });
-
-                // 3. Comparar
-                const orphans = serverFiles.filter(f => !usedImages.has(f.name));
-                
-                document.getElementById('media-stats').classList.remove('hidden');
-                document.getElementById('media-stats').innerHTML = `
-                    <div class="bg-blue-100 text-blue-600 p-2 rounded">Total: ${serverFiles.length}</div>
-                    <div class="bg-green-100 text-green-600 p-2 rounded">En uso: ${usedImages.size}</div>
-                    <div class="bg-red-100 text-red-600 p-2 rounded">Sin uso: ${orphans.length}</div>
-                `;
-
-                document.getElementById('media-list').innerHTML = orphans.map(f => `
-                    <div class="relative group rounded-lg overflow-hidden border bg-gray-100 aspect-square">
-                        <img src="${f.download_url}" class="w-full h-full object-cover opacity-60">
-                        <div class="absolute inset-0 flex items-center justify-center">
-                            <button onclick="deleteFile('${f.path}','${f.sha}')" class="bg-red-500 text-white px-3 py-1 rounded text-xs shadow-lg hover:scale-110 transition-transform">Eliminar</button>
-                        </div>
-                        <span class="absolute bottom-0 left-0 bg-black/50 text-white text-[9px] p-1 w-full truncate">${f.name}</span>
-                    </div>
-                `).join('');
-
-                if(orphans.length === 0) document.getElementById('media-list').innerHTML = '<p class="col-span-4 text-center text-gray-400">¡Limpio! No hay imágenes basura.</p>';
-
-            } catch(e) { showToast("Error analizando media", "error"); }
-            document.getElementById('media-loader').classList.add('hidden');
-        };
-
-        window.deleteFile = async (path, sha) => {
-            if(!confirm("¿Borrar archivo permanentemente?")) return;
-            try {
-                await ghFetch(`/contents/${path}`, 'DELETE', { message: `Clean media ${path}`, sha, branch: ghCfg.branch });
-                loadMediaManager(); // Reload
-                showToast("Archivo eliminado");
-            } catch(e) { showToast("Error borrando", "error"); }
-        };
-
-        // 5. INTEGRATIONS (JSON Editor)
-        window.loadIntegrations = async () => {
-            const container = document.getElementById('api-form-container');
-            container.innerHTML = '<span class="loader"></span>';
-            
-            try {
-                const f = await ghFetch('/contents/src/data/integrations.json');
-                cachedIntegrations = {}; // Default empty
-                
-                if(f) {
-                    integrationSha = f.sha;
-                    cachedIntegrations = JSON.parse(decodeURIComponent(escape(atob(f.content))));
-                }
-
-                // Generar formulario dinámico basado en keys conocidas o permitir agregar nuevas
-                // Por simplicidad, definimos campos fijos que pidió el usuario
-                const fields = [
-                    {key: 'civitatisId', label: 'Civitatis Affiliate ID'},
-                    {key: 'googleAnalyticsId', label: 'Google Analytics ID (G-XXX)'},
-                    {key: 'googleAdsId', label: 'Google Ads ID'},
-                    {key: 'facebookPixelId', label: 'Meta Pixel ID'}
-                ];
-
-                container.innerHTML = fields.map(field => `
-                    <div>
-                        <label class="text-xs font-bold text-gray-500 uppercase block mb-1">${field.label}</label>
-                        <input type="text" id="api-${field.key}" value="${cachedIntegrations[field.key] || ''}" 
-                        class="w-full p-3 rounded-lg bg-gray-50 dark:bg-slate-900 border dark:border-slate-600 font-mono text-sm text-blue-600">
-                    </div>
-                `).join('');
-
-            } catch(e) {
-                container.innerHTML = `<div class="text-red-500">Error cargando config. Se creará una nueva al guardar.</div>`;
-            }
-        };
-
-        window.saveIntegrations = async () => {
-            const data = {
-                civitatisId: document.getElementById('api-civitatisId').value,
-                googleAnalyticsId: document.getElementById('api-googleAnalyticsId').value,
-                googleAdsId: document.getElementById('api-googleAdsId').value,
-                facebookPixelId: document.getElementById('api-facebookPixelId').value
-            };
-            
-            const content = btoa(JSON.stringify(data, null, 2));
-            const payload = { message: 'Update integrations', content, branch: ghCfg.branch };
-            if(integrationSha) payload.sha = integrationSha;
-
-            try {
-                const res = await ghFetch('/contents/src/data/integrations.json', 'PUT', payload);
-                integrationSha = res.content.sha;
-                showToast("Integraciones actualizadas");
-            } catch(e) { showToast("Error guardando", "error"); }
-        };
-
-        // 6. AUTHORS & UTILS (Misma lógica previa reducida para espacio)
-        window.loadAuthors = async () => {
+        function renderAuthors() {
             const list = document.getElementById('authors-list');
-            try {
-                const f = await ghFetch('/contents/src/data/authors.ts');
-                cachedAuthors = {}; // Reset
-                if(f) {
-                    const c = decodeURIComponent(escape(atob(f.content)));
-                    const m = c.match(/export const AUTHORS: Record<string, Author> = ({[\s\S]*?});/);
-                    if(m) cachedAuthors = new Function(`return ${m[1]}`)();
-                }
-                list.innerHTML = Object.values(cachedAuthors).map(a => `
-                    <div class="flex items-center gap-4 bg-white dark:bg-slate-800 p-3 rounded-xl border dark:border-slate-700">
-                        <img src="${a.image}" class="w-10 h-10 rounded-full object-cover">
-                        <div class="flex-1"><h4 class="font-bold text-sm">${a.name}</h4><span class="text-[10px] text-gray-500">${a.role}</span></div>
-                        <button onclick="editAuth('${a.slug}')" class="text-blue-500 p-2"><ion-icon name="create"></ion-icon></button>
+            list.innerHTML = Object.values(authorsData).map(a => `
+                <div class="flex items-center gap-4 bg-white dark:bg-slate-800 p-4 rounded-xl border border-gray-200 dark:border-slate-700 shadow-sm relative group">
+                    <img src="${a.image}" class="w-14 h-14 rounded-full object-cover border border-gray-200">
+                    <div class="flex-1">
+                        <h3 class="font-bold text-sm">${a.name}</h3>
+                        <p class="text-[10px] text-gray-500 uppercase">${a.role}</p>
+                        ${a.email ? `<span class="text-[9px] bg-blue-50 text-blue-500 px-1.5 rounded">${a.email}</span>` : ''}
                     </div>
-                `).join('');
-            } catch(e){}
+                    <div class="flex gap-2">
+                        <button onclick="editAuthor('${a.slug}')" class="p-2 bg-gray-100 dark:bg-slate-700 rounded text-blue-500"><ion-icon name="create-outline"></ion-icon></button>
+                        <button onclick="deleteAuthor('${a.slug}')" class="p-2 bg-gray-100 dark:bg-slate-700 rounded text-red-500"><ion-icon name="trash-outline"></ion-icon></button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        document.getElementById('author-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button[type="submit"]');
+            btn.innerText = "Guardando..."; btn.disabled = true;
+            try {
+                const slug = document.getElementById('auth-slug').value;
+                const fileInput = document.getElementById('auth-file');
+                let imageUrl = document.getElementById('auth-current-img').value;
+
+                if (fileInput.files[0]) {
+                    const f = fileInput.files[0];
+                    const comp = await imageCompression(f, { maxSizeMB: 0.5, maxWidthOrHeight: 800 });
+                    const r = await new Promise(res => { const rd = new FileReader(); rd.onload=()=>res(rd.result); rd.readAsDataURL(comp); });
+                    const fname = `${slug}-${Date.now()}.jpg`;
+                    await ghFetch(`/contents/public/assets/autores/${fname}`, 'PUT', { message: 'Up img', content: r.split(',')[1], branch: githubConfig.branch });
+                    imageUrl = `/assets/autores/${fname}`;
+                }
+
+                authorsData[slug] = {
+                    slug, name: document.getElementById('auth-name').value,
+                    role: document.getElementById('auth-role').value,
+                    bio: document.getElementById('auth-bio').value,
+                    email: document.getElementById('auth-email').value,
+                    image: imageUrl
+                };
+
+                const ts = `export type Author = {\n  slug: string;\n  name: string;\n  role: string;\n  bio: string;\n  image: string;\n  email?: string;\n};\n\nexport const AUTHORS: Record<string, Author> = {\n${Object.values(authorsData).map(a => `  '${a.slug}': {\n    slug: '${a.slug}',\n    name: '${a.name}',\n    role: '${a.role}',\n    bio: '${a.bio.replace(/'/g, "\\'")}',\n    image: '${a.image}',\n    ${a.email ? `email: '${a.email}',` : ''}\n  },`).join('\n')}\n};\n\nexport const DEFAULT_AUTHOR = AUTHORS['daniel-arana'] || Object.values(AUTHORS)[0];`;
+
+                const res = await ghFetch(`/contents/src/data/authors.ts`, 'PUT', { message: `Up auth ${slug}`, content: btoa(unescape(encodeURIComponent(ts))), sha: authorsSha, branch: githubConfig.branch });
+                authorsSha = res.content.sha;
+                closeAuthorModal(); fetchAuthors(); showToast("Autor Guardado");
+            } catch (err) { showToast("Error: " + err.message, "error"); }
+            btn.innerText = "Guardar Autor"; btn.disabled = false;
+        });
+
+        window.deleteAuthor = async (slug) => {
+            if(!confirm("¿Borrar autor y su foto?")) return;
+            try {
+                const img = authorsData[slug].image;
+                if(img.startsWith('/assets/')) {
+                   try { const iData = await ghFetch(`/contents/public${img}`); await ghFetch(`/contents/public${img}`, 'DELETE', { message: 'del img', sha: iData.sha, branch: githubConfig.branch }); } catch(e){}
+                }
+                delete authorsData[slug];
+                 const ts = `export type Author = {\n  slug: string;\n  name: string;\n  role: string;\n  bio: string;\n  image: string;\n  email?: string;\n};\n\nexport const AUTHORS: Record<string, Author> = {\n${Object.values(authorsData).map(a => `  '${a.slug}': {\n    slug: '${a.slug}',\n    name: '${a.name}',\n    role: '${a.role}',\n    bio: '${a.bio.replace(/'/g, "\\'")}',\n    image: '${a.image}',\n    ${a.email ? `email: '${a.email}',` : ''}\n  },`).join('\n')}\n};\n\nexport const DEFAULT_AUTHOR = AUTHORS['daniel-arana'] || Object.values(AUTHORS)[0];`;
+                
+                const res = await ghFetch(`/contents/src/data/authors.ts`, 'PUT', { message: `Del auth ${slug}`, content: btoa(unescape(encodeURIComponent(ts))), sha: authorsSha, branch: githubConfig.branch });
+                authorsSha = res.content.sha;
+                fetchAuthors(); showToast("Autor eliminado");
+            } catch (e) { showToast("Error: " + e.message, "error"); }
         };
 
-        // --- CORE UTILS ---
+        // --- UTILS ---
         window.toggleDarkMode = () => document.body.classList.toggle('dark');
-        window.showToast = (m,t) => { const d=document.createElement('div'); d.className=`p-3 rounded-lg text-white text-xs font-bold shadow-lg flex items-center gap-2 ${t==='error'?'bg-red-500':'bg-gray-900'}`; d.innerText=m; document.getElementById('toast-container').appendChild(d); setTimeout(()=>d.remove(),3000); };
-        window.genSlug = () => document.getElementById('auth-slug').value = document.getElementById('auth-name').value.toLowerCase().replace(/[^a-z0-9]/g,'-');
-        window.openAuthorModal = () => document.getElementById('author-modal').classList.add('open');
+        window.openAuthorModal = () => { document.getElementById('author-form').reset(); document.getElementById('auth-slug-orig').value=''; document.getElementById('auth-preview').src=''; document.getElementById('auth-slug').readOnly=true; document.getElementById('author-modal').classList.add('open'); };
         window.closeAuthorModal = () => document.getElementById('author-modal').classList.remove('open');
-        window.delPost = async (p,s) => { if(confirm('¿Borrar?')) { await ghFetch(`/contents/${p}`,'DELETE',{message:`Del ${p}`,sha:s,branch:ghCfg.branch}); loadPosts(); }};
-
+        window.editAuthor = (s) => { const d=authorsData[s]; document.getElementById('auth-slug-orig').value=s; document.getElementById('auth-slug').value=d.slug; document.getElementById('auth-name').value=d.name; document.getElementById('auth-role').value=d.role; document.getElementById('auth-bio').value=d.bio; document.getElementById('auth-email').value=d.email||''; document.getElementById('auth-current-img').value=d.image; document.getElementById('auth-preview').src=d.image; document.getElementById('author-modal').classList.add('open'); };
+        window.generateSlug = () => { if(!document.getElementById('auth-slug-orig').value) document.getElementById('auth-slug').value = document.getElementById('auth-name').value.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-'); };
+        window.previewImage = (i) => { if(i.files[0]) { const r=new FileReader(); r.onload=(e)=>document.getElementById('auth-preview').src=e.target.result; r.readAsDataURL(i.files[0]); }};
+        window.showToast = (m,t) => { const d=document.createElement('div'); d.className=`p-3 rounded-lg text-white text-sm font-bold shadow-lg flex items-center gap-2 animate-bounce ${t==='error'?'bg-red-500':'bg-gray-900'}`; d.innerHTML=t==='error'?`<ion-icon name="alert-circle"></ion-icon> ${m}`:`<ion-icon name="checkmark-circle"></ion-icon> ${m}`; document.getElementById('toast-container').appendChild(d); setTimeout(()=>d.remove(),3000); };
     </script>
 </body>
 </html>
