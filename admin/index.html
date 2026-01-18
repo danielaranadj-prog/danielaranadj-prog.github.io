@@ -31,150 +31,7 @@
         }
     </script>
 
-    <style>
-        /* ESTILOS BASE */
-        body {
-            background-color: #f3f4f6;
-            color: #111;
-            font-family: 'Inter', sans-serif;
-            transition: background 0.3s, color 0.3s;
-        }
-
-        body.dark {
-            background-color: #0f172a;
-            color: #e2e8f0;
-        }
-
-        /* UTILIDADES VISUALES */
-        .glass-card {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.4);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
-        }
-
-        .dark .glass-card {
-            background: rgba(15, 23, 42, 0.9);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .gradient-bg {
-            background: linear-gradient(-45deg, #f3f4f6, #dbeafe, #fce7f3, #ffedd5, #f3f4f6);
-            background-size: 400% 400%;
-            animation: gradientShift 20s ease infinite;
-        }
-
-        .dark .gradient-bg {
-            background: linear-gradient(-45deg, #0f172a, #1e1b4b, #1e293b, #0f172a);
-            background-size: 400% 400%;
-        }
-
-        @keyframes gradientShift {
-
-            0%,
-            100% {
-                background-position: 0% 50%;
-            }
-
-            50% {
-                background-position: 100% 50%;
-            }
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #171717 0%, #262626 100%);
-            transition: all 0.3s;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .dark .btn-primary {
-            background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-        }
-
-        .accent-input {
-            transition: all 0.2s ease;
-            border: 1px solid transparent;
-        }
-
-        .accent-input:focus {
-            border-color: #f97316;
-            box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.15);
-            outline: none;
-        }
-
-        /* MODALES */
-        .modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(8px);
-            z-index: 50;
-            display: none;
-            place-items: center;
-        }
-
-        .modal-overlay.open {
-            display: grid;
-        }
-
-        .modal-content {
-            animation: modalSlideUp 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-
-        @keyframes modalSlideUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px) scale(0.95);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-        }
-
-        /* LOADER */
-        .loader {
-            width: 48px;
-            height: 48px;
-            border: 5px solid #FFF;
-            border-bottom-color: #f97316;
-            border-radius: 50%;
-            display: inline-block;
-            box-sizing: border-box;
-            animation: rotation 1s linear infinite;
-        }
-
-        @keyframes rotation {
-            0% {
-                transform: rotate(0deg);
-            }
-
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-
-        .hide-scroll::-webkit-scrollbar {
-            display: none;
-        }
-
-        /* CLASES PARA EL GRID DASHBOARD */
-        .dash-card {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .dash-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        }
-    </style>
+    <link rel="stylesheet" href="css/admin.css">
 </head>
 
 <body class="antialiased min-h-screen flex flex-col">
@@ -248,11 +105,22 @@
                             </div>
                             <div class="relative z-10">
                                 <div
-                                    class="w-12 h-12 rounded-xl bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center text-orange-600 mb-4">
-                                    <ion-icon name="library-outline" class="text-2xl"></ion-icon>
+                                    class="w-14 h-14 rounded-xl bg-gradient-to-br from-orange-100 to-amber-100 dark:from-orange-900/30 dark:to-amber-900/30 flex items-center justify-center mb-4">
+                                    <ion-icon name="newspaper-outline" class="text-2xl text-orange-600"></ion-icon>
                                 </div>
-                                <h4 class="text-lg font-bold mb-1">Artículos</h4>
-                                <p class="text-xs text-gray-500">Editar, publicar y eliminar posts del blog.</p>
+                                <h4 class="text-lg font-bold mb-2">Blog</h4>
+                                <p class="text-xs text-gray-500 mb-3">Gestionar publicaciones del blog.</p>
+                                <div class="flex items-center justify-between">
+                                    <span id="posts-count-badge"
+                                        class="inline-flex items-center gap-1 text-[10px] bg-orange-100 text-orange-700 px-2 py-1 rounded-full font-semibold">
+                                        <ion-icon name="document-text-outline" class="text-xs"></ion-icon>
+                                        <span id="posts-count">--</span> publicaciones
+                                    </span>
+                                    <span
+                                        class="text-[10px] text-orange-500 font-semibold group-hover:translate-x-1 transition-transform flex items-center gap-1">
+                                        Ver posts <ion-icon name="arrow-forward-outline"></ion-icon>
+                                    </span>
+                                </div>
                             </div>
                         </div>
 
@@ -275,29 +143,50 @@
 
                     <div class="space-y-4">
                         <h3 class="text-xs font-bold uppercase text-gray-400 tracking-wider flex items-center gap-2">
-                            <ion-icon name="airplane-outline"></ion-icon> Destinos
+                            <ion-icon name="airplane-outline"></ion-icon> Gestión de Destinos
                         </h3>
 
-                        <div onclick="switchTab('destinations')"
-                            class="dash-card cursor-pointer bg-white dark:bg-slate-800 p-6 rounded-2xl border border-gray-200 dark:border-slate-700 relative overflow-hidden group h-full">
-                            <div
-                                class="absolute right-0 top-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                                <ion-icon name="map-outline" class="text-8xl text-green-500"></ion-icon>
-                            </div>
-                            <div class="relative z-10">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <!-- Argentina Card -->
+                            <div onclick="switchTab('destinations')"
+                                class="dash-card cursor-pointer bg-white dark:bg-slate-800 p-6 rounded-2xl border border-gray-200 dark:border-slate-700 relative overflow-hidden group">
                                 <div
-                                    class="w-12 h-12 rounded-xl bg-green-100 dark:bg-green-900/30 flex items-center justify-center text-green-600 mb-4">
-                                    <ion-icon name="earth-outline" class="text-2xl"></ion-icon>
+                                    class="absolute right-0 top-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                                    <ion-icon name="map-outline" class="text-8xl text-sky-500"></ion-icon>
                                 </div>
-                                <h4 class="text-lg font-bold mb-1 flex items-center gap-2">Países y Ciudades <span
-                                        class="text-[10px] bg-green-100 text-green-700 px-2 py-0.5 rounded-full">BETA</span>
-                                </h4>
-                                <p class="text-xs text-gray-500 mb-4">Arquitectura de silos. Organiza el contenido por
-                                    geografía.</p>
+                                <div class="relative z-10">
+                                    <div
+                                        class="w-14 h-14 rounded-xl bg-sky-100 dark:bg-sky-900/30 flex items-center justify-center mb-4">
+                                        <span class="text-3xl">🇦🇷</span>
+                                    </div>
+                                    <h4 class="text-lg font-bold mb-2">Destinos Argentina</h4>
+                                    <p class="text-xs text-gray-500 mb-3">Gestionar destinos turísticos de Argentina.
+                                    </p>
+                                    <span
+                                        class="inline-flex items-center gap-1 text-[10px] bg-green-100 text-green-700 px-2 py-1 rounded-full font-semibold">
+                                        <ion-icon name="checkmark-circle" class="text-xs"></ion-icon> ACTIVO
+                                    </span>
+                                </div>
+                            </div>
 
-                                <div class="space-y-2 mt-4 opacity-60 pointer-events-none">
-                                    <div class="h-2 w-3/4 bg-gray-200 dark:bg-slate-700 rounded-full"></div>
-                                    <div class="h-2 w-1/2 bg-gray-200 dark:bg-slate-700 rounded-full"></div>
+                            <!-- España Card (En Construcción) -->
+                            <div onclick="switchTab('destinations-espana')"
+                                class="dash-card cursor-pointer bg-white dark:bg-slate-800 p-6 rounded-2xl border border-gray-200 dark:border-slate-700 relative overflow-hidden group hover:border-amber-300 transition-colors">
+                                <div
+                                    class="absolute right-0 top-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                                    <ion-icon name="map-outline" class="text-8xl text-red-500"></ion-icon>
+                                </div>
+                                <div class="relative z-10">
+                                    <div
+                                        class="w-14 h-14 rounded-xl bg-red-100 dark:bg-red-900/30 flex items-center justify-center mb-4">
+                                        <span class="text-3xl">🇪🇸</span>
+                                    </div>
+                                    <h4 class="text-lg font-bold mb-2">Destinos España</h4>
+                                    <p class="text-xs text-gray-500 mb-3">Gestionar destinos turísticos de España.</p>
+                                    <span
+                                        class="inline-flex items-center gap-1 text-[10px] bg-amber-100 text-amber-700 px-2 py-1 rounded-full font-semibold">
+                                        <ion-icon name="construct-outline" class="text-xs"></ion-icon> EN CONSTRUCCIÓN
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -342,24 +231,46 @@
             </div>
 
             <div id="view-posts" class="hidden space-y-6">
-                <div class="flex items-center gap-2 mb-4">
-                    <button onclick="switchTab('home')" class="text-gray-400 hover:text-orange-500"><ion-icon
-                            name="arrow-back-outline"></ion-icon></button>
-                    <h2 class="text-xl font-bold">Gestión de Artículos</h2>
+                <!-- Header -->
+                <div class="flex justify-between items-center border-b pb-4 dark:border-slate-700 mb-6">
+                    <div class="flex items-center gap-2">
+                        <button onclick="switchTab('home')" class="text-gray-400 hover:text-orange-500">
+                            <ion-icon name="arrow-back-outline"></ion-icon>
+                        </button>
+                        <div>
+                            <h2 class="text-xl font-bold flex items-center gap-2">
+                                <ion-icon name="newspaper-outline" class="text-orange-500"></ion-icon>
+                                Publicaciones del Blog
+                            </h2>
+                            <p class="text-xs text-gray-400 mt-1">Gestiona los artículos publicados en el blog</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <a href="../editor/" target="_blank"
+                            class="btn-primary text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2">
+                            <ion-icon name="add-outline"></ion-icon>
+                            <span class="hidden md:inline">Nuevo Post</span>
+                        </a>
+                        <button onclick="loadPosts()" class="text-gray-400 hover:text-orange-500 p-2" title="Recargar">
+                            <ion-icon name="refresh-outline" class="text-xl"></ion-icon>
+                        </button>
+                    </div>
                 </div>
 
-                <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                <!-- Stats Bar -->
+                <div class="flex flex-wrap gap-4 mb-4">
+                    <div
+                        class="flex items-center gap-2 bg-white dark:bg-slate-800 px-4 py-2 rounded-xl border border-gray-200 dark:border-slate-700">
+                        <ion-icon name="document-text-outline" class="text-orange-500"></ion-icon>
+                        <span class="text-sm"><strong id="stats-total-posts">--</strong> publicaciones</span>
+                    </div>
                     <div class="flex-1 w-full md:max-w-md relative group">
                         <ion-icon name="search-outline"
                             class="absolute left-3 top-3 text-gray-400 group-focus-within:text-orange-500"></ion-icon>
-                        <input type="text" id="search-input" placeholder="Buscar título, autor..."
+                        <input type="text" id="search-input" placeholder="Buscar por título o autor..."
                             class="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 focus:ring-2 focus:ring-orange-500 outline-none transition-all shadow-sm accent-input"
                             oninput="filterPosts(this.value)">
                     </div>
-                    <button onclick="loadPosts()"
-                        class="text-sm text-blue-500 hover:underline flex items-center gap-1 whitespace-nowrap">
-                        <ion-icon name="refresh-outline"></ion-icon> <span class="hidden md:inline">Recargar</span>
-                    </button>
                 </div>
 
                 <div id="posts-loader" class="text-center py-20 hidden"><span class="loader"></span></div>
@@ -395,12 +306,10 @@
                         </button>
                         <div>
                             <h2 class="text-xl font-bold flex items-center gap-2">
-                                Gestor de Destinos
-                                <span
-                                    class="text-[10px] bg-blue-100 text-blue-600 px-2 rounded-full border border-blue-200">🇦🇷
-                                    Argentina</span>
+                                <span class="text-2xl">🇦🇷</span> Destinos Argentina
                             </h2>
-                            <p class="text-xs text-gray-400 mt-1">Edita información de destinos existentes</p>
+                            <p class="text-xs text-gray-400 mt-1">Edita información de destinos turísticos de Argentina
+                            </p>
                         </div>
                     </div>
                     <button onclick="loadDestinations()" class="text-gray-400 hover:text-orange-500 p-2"
@@ -422,6 +331,67 @@
                 <div id="destinations-empty" class="hidden text-center py-20">
                     <ion-icon name="map-outline" class="text-6xl text-gray-300 dark:text-slate-600"></ion-icon>
                     <p class="text-gray-400 mt-4">No se encontraron destinos</p>
+                </div>
+            </div>
+
+            <!-- VISTA ESPAÑA (EN CONSTRUCCIÓN) -->
+            <div id="view-destinations-espana" class="hidden space-y-6">
+                <!-- Header -->
+                <div class="flex justify-between items-center border-b pb-4 dark:border-slate-700 mb-6">
+                    <div class="flex items-center gap-2">
+                        <button onclick="switchTab('home')" class="text-gray-400 hover:text-orange-500">
+                            <ion-icon name="arrow-back-outline"></ion-icon>
+                        </button>
+                        <div>
+                            <h2 class="text-xl font-bold flex items-center gap-2">
+                                <span class="text-2xl">🇪🇸</span> Destinos España
+                                <span class="text-[10px] bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full">🚧 EN
+                                    CONSTRUCCIÓN</span>
+                            </h2>
+                            <p class="text-xs text-gray-400 mt-1">Próximamente: Gestión de destinos turísticos de España
+                            </p>
+                        </div>
+                    </div>
+                    <button onclick="loadDestinationsEspana()"
+                        class="text-gray-400 hover:text-orange-500 p-2 opacity-50 cursor-not-allowed" disabled
+                        title="Próximamente">
+                        <ion-icon name="refresh-outline" class="text-xl"></ion-icon>
+                    </button>
+                </div>
+
+                <!-- Under Construction Message -->
+                <div class="text-center py-20">
+                    <div
+                        class="inline-flex items-center justify-center w-24 h-24 rounded-full bg-amber-100 dark:bg-amber-900/30 mb-6">
+                        <span class="text-5xl">🚧</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-700 dark:text-gray-300 mb-2">Módulo en Construcción</h3>
+                    <p class="text-gray-500 max-w-md mx-auto mb-6">
+                        Este módulo estará disponible próximamente. Permitirá gestionar los destinos turísticos de
+                        España
+                        conectándose al repositorio <code
+                            class="bg-gray-100 dark:bg-slate-700 px-2 py-1 rounded text-sm">destinos_espana</code>.
+                    </p>
+                    <div class="flex flex-col items-center gap-3">
+                        <div class="flex items-center gap-2 text-sm text-gray-400">
+                            <ion-icon name="git-branch-outline"></ion-icon>
+                            <span>Repo: destinos_espana</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-sm text-gray-400">
+                            <ion-icon name="folder-outline"></ion-icon>
+                            <span>Path: src/content/destinos</span>
+                        </div>
+                    </div>
+
+                    <div
+                        class="mt-8 p-4 bg-gray-50 dark:bg-slate-800/50 rounded-xl border border-dashed border-gray-300 dark:border-slate-600 max-w-md mx-auto">
+                        <p class="text-xs text-gray-500">
+                            <strong>Próximos pasos:</strong><br>
+                            1. Crear repositorio <code>destinos_espana</code><br>
+                            2. Clonar estructura desde Argentina<br>
+                            3. Habilitar este módulo
+                        </p>
+                    </div>
                 </div>
             </div>
 
@@ -819,7 +789,7 @@
         // --- NAVIGATION LOGIC (MODIFICADO PARA EL GRID) ---
         window.switchTab = (tab) => {
             // Ocultar todas las vistas
-            ['home', 'posts', 'authors', 'destinations', 'affiliates'].forEach(t => {
+            ['home', 'posts', 'authors', 'destinations', 'destinations-espana', 'affiliates'].forEach(t => {
                 const view = document.getElementById(`view-${t}`);
                 if (view) view.classList.add('hidden');
             });
@@ -832,6 +802,8 @@
             if (tab === 'authors' && Object.keys(authorsData).length === 0) fetchAuthors();
             if (tab === 'affiliates' && !affiliatesLoaded) loadAffiliates();
             if (tab === 'destinations' && destinationsCache.length === 0) loadDestinations();
+            // España: cuando esté listo, descomentar:
+            // if (tab === 'destinations-espana' && destinationsEspanaCache.length === 0) loadDestinationsEspana();
         };
 
         // --- POSTS ---
@@ -855,10 +827,20 @@
                 });
                 cachedPosts = await Promise.all(promises);
                 cachedPosts.sort((a, b) => new Date(b.date) - new Date(a.date));
+                updatePostsCount(cachedPosts.length);
                 renderGrid(cachedPosts);
             } catch (e) { showToast("Error cargando posts", "error"); }
             finally { document.getElementById('posts-loader').classList.add('hidden'); }
         };
+
+        function updatePostsCount(count) {
+            // Update dashboard badge
+            const dashCount = document.getElementById('posts-count');
+            if (dashCount) dashCount.textContent = count;
+            // Update stats in view-posts
+            const statsCount = document.getElementById('stats-total-posts');
+            if (statsCount) statsCount.textContent = count;
+        }
 
         function renderGrid(posts) {
             const grid = document.getElementById('posts-grid');

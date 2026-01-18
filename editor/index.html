@@ -403,8 +403,24 @@
                             <p class="text-[10px] text-gray-500" id="save-status"></p>
                         </div>
                     </div>
+                    <!-- Greeting Message (shown after login) -->
+                    <div id="greeting-container"
+                        class="hidden md:flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-orange-50 to-amber-50 dark:from-orange-900/20 dark:to-amber-900/20 rounded-xl border border-orange-100 dark:border-orange-800/30">
+                        <span id="greeting-emoji" class="text-lg"></span>
+                        <div>
+                            <p id="greeting-text" class="text-xs font-semibold text-gray-700 dark:text-gray-200"></p>
+                            <p id="author-role-text" class="text-[10px] text-gray-500"></p>
+                        </div>
+                    </div>
                 </div>
                 <div class="flex items-center gap-1">
+                    <!-- Admin Button (hidden by default, shown only for admin) -->
+                    <a id="admin-link" href="../admin/"
+                        class="hidden btn-icon flex items-center gap-2 px-3 py-2.5 text-sm font-medium bg-purple-50 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 rounded-xl"
+                        title="Panel de Administración">
+                        <ion-icon name="settings-outline"></ion-icon>
+                        <span class="hidden md:inline">Admin</span>
+                    </a>
                     <button onclick="toggleDarkMode()" class="btn-icon p-2.5"><ion-icon name="moon-outline"
                             class="text-lg"></ion-icon></button>
                     <button onclick="openMobilePreview()" class="lg:hidden btn-icon p-2.5 text-accent"><ion-icon
@@ -521,8 +537,48 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        const MASTER_ADMIN_EMAIL = "daniearanadj@gmail.com";
-        const canDelete = () => auth.currentUser && auth.currentUser.email.toLowerCase() === MASTER_ADMIN_EMAIL.toLowerCase();
+        const MASTER_ADMIN_EMAIL = "danielaranadj@gmail.com";
+        const isAdmin = () => auth.currentUser && auth.currentUser.email.toLowerCase() === MASTER_ADMIN_EMAIL.toLowerCase();
+        const canDelete = isAdmin;  // Alias for backwards compatibility
+
+        // Email → Author mapping (add new authors here)
+        const EMAIL_TO_AUTHOR = {
+            'danielaranadj@gmail.com': { slug: 'daniel-arana', name: 'Daniel', role: 'Administrador' },
+            // Add more authors: 'email@example.com': { slug: 'author-slug', name: 'Display Name', role: 'Role' }
+        };
+
+        // Get current author info based on logged-in email
+        function getCurrentAuthorInfo() {
+            if (!auth.currentUser) return null;
+            const email = auth.currentUser.email.toLowerCase();
+            return EMAIL_TO_AUTHOR[email] || { slug: null, name: auth.currentUser.email.split('@')[0], role: 'Autor' };
+        }
+
+        // Time-based greeting
+        function getGreeting() {
+            const hour = new Date().getHours();
+            if (hour >= 5 && hour < 12) return { text: 'Buenos días', emoji: '☀️' };
+            if (hour >= 12 && hour < 19) return { text: 'Buenas tardes', emoji: '🌤️' };
+            return { text: 'Buenas noches', emoji: '🌙' };
+        }
+
+        // Show personalized greeting
+        function showGreeting() {
+            const authorInfo = getCurrentAuthorInfo();
+            if (!authorInfo) return;
+
+            const greeting = getGreeting();
+            const container = document.getElementById('greeting-container');
+            const emojiEl = document.getElementById('greeting-emoji');
+            const textEl = document.getElementById('greeting-text');
+            const roleEl = document.getElementById('author-role-text');
+
+            emojiEl.textContent = greeting.emoji;
+            textEl.textContent = `${greeting.text}, ${authorInfo.name}`;
+            roleEl.textContent = authorInfo.role;
+            container.classList.remove('hidden');
+            container.classList.add('flex');
+        }
 
         let githubConfig = null;
         let tags = [];
@@ -589,6 +645,18 @@
                 document.getElementById('login-section').classList.add('hidden');
                 document.getElementById('app-section').classList.remove('hidden');
                 document.getElementById('post-date').valueAsDate = new Date();
+
+                // Show admin button only for master admin
+                const adminLink = document.getElementById('admin-link');
+                if (isAdmin()) {
+                    adminLink.classList.remove('hidden');
+                } else {
+                    adminLink.classList.add('hidden');
+                }
+
+                // Show personalized greeting
+                showGreeting();
+
                 const docSnap = await getDoc(doc(db, "config", "main"));
                 if (docSnap.exists()) {
                     githubConfig = docSnap.data();
@@ -599,6 +667,7 @@
             } else {
                 document.getElementById('login-section').classList.remove('hidden');
                 document.getElementById('app-section').classList.add('hidden');
+                document.getElementById('admin-link').classList.add('hidden');
             }
         });
 
@@ -686,6 +755,19 @@
                 let m; const sel = document.getElementById('post-author');
                 sel.innerHTML = '<option>Selecciona...</option>';
                 while ((m = r.exec(c)) !== null) { sel.innerHTML += `<option value="${m[1]}">${m[2]}</option>`; }
+
+                // Auto-select author for non-admin users
+                const authorInfo = getCurrentAuthorInfo();
+                if (authorInfo && authorInfo.slug) {
+                    sel.value = authorInfo.slug;
+
+                    // Disable selector for non-admins (they can only post as themselves)
+                    if (!isAdmin()) {
+                        sel.disabled = true;
+                        sel.classList.add('opacity-60', 'cursor-not-allowed');
+                        sel.title = 'Tu autor está seleccionado automáticamente';
+                    }
+                }
             } catch (e) { }
         }
 

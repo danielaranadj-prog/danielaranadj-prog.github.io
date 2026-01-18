@@ -1,0 +1,162 @@
+/* ============================================
+   ADMIN PANEL - INSTANTETRIPS
+   Styles extracted from index.html
+   ============================================ */
+
+/* ===========================================
+   BASE STYLES
+   =========================================== */
+body {
+    background-color: #f3f4f6;
+    color: #111;
+    font-family: 'Inter', sans-serif;
+    transition: background 0.3s, color 0.3s;
+}
+
+body.dark {
+    background-color: #0f172a;
+    color: #e2e8f0;
+}
+
+/* ===========================================
+   GLASS / VISUAL UTILITIES
+   =========================================== */
+.glass-card {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+}
+
+.dark .glass-card {
+    background: rgba(15, 23, 42, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.gradient-bg {
+    background: linear-gradient(-45deg, #f3f4f6, #dbeafe, #fce7f3, #ffedd5, #f3f4f6);
+    background-size: 400% 400%;
+    animation: gradientShift 20s ease infinite;
+}
+
+.dark .gradient-bg {
+    background: linear-gradient(-45deg, #0f172a, #1e1b4b, #1e293b, #0f172a);
+    background-size: 400% 400%;
+}
+
+@keyframes gradientShift {
+    0%,
+    100% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+}
+
+/* ===========================================
+   BUTTONS
+   =========================================== */
+.btn-primary {
+    background: linear-gradient(135deg, #171717 0%, #262626 100%);
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+}
+
+.dark .btn-primary {
+    background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* ===========================================
+   FORM INPUTS
+   =========================================== */
+.accent-input {
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+}
+
+.accent-input:focus {
+    border-color: #f97316;
+    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.15);
+    outline: none;
+}
+
+/* ===========================================
+   MODALS
+   =========================================== */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(8px);
+    z-index: 50;
+    display: none;
+    place-items: center;
+}
+
+.modal-overlay.open {
+    display: grid;
+}
+
+.modal-content {
+    animation: modalSlideUp 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes modalSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* ===========================================
+   LOADER
+   =========================================== */
+.loader {
+    width: 48px;
+    height: 48px;
+    border: 5px solid #FFF;
+    border-bottom-color: #f97316;
+    border-radius: 50%;
+    display: inline-block;
+    box-sizing: border-box;
+    animation: rotation 1s linear infinite;
+}
+
+@keyframes rotation {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* ===========================================
+   SCROLLBAR
+   =========================================== */
+.hide-scroll::-webkit-scrollbar {
+    display: none;
+}
+
+/* ===========================================
+   DASHBOARD CARDS
+   =========================================== */
+.dash-card {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dash-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
