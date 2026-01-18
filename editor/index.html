@@ -344,6 +344,41 @@
         </div>
     </div>
 
+    <div id="cta-modal" class="modal-overlay">
+        <div class="modal-content bg-white dark:bg-slate-900 w-full max-w-lg rounded-2xl shadow-2xl p-6">
+            <div class="flex justify-between items-center mb-4 border-b dark:border-slate-800 pb-3">
+                <h3 class="font-bold text-lg text-accent flex items-center gap-2">
+                    <ion-icon name="map-outline"></ion-icon> Insertar Destino
+                </h3>
+                <button onclick="closeCTAModal()" class="btn-icon p-2">
+                    <ion-icon name="close-outline" class="text-2xl"></ion-icon>
+                </button>
+            </div>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="text-xs font-bold text-gray-400 mb-1 block">País</label>
+                    <select id="cta-country" class="w-full p-3 bg-gray-50 dark:bg-slate-800 rounded-xl accent-input border border-gray-200 dark:border-slate-700">
+                        <option value="argentina">🇦🇷 Argentina</option>
+                        <option value="mexico">🇲🇽 México</option>
+                        <option value="espana">🇪🇸 España</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="text-xs font-bold text-gray-400 mb-1 block">Destino (Slug)</label>
+                    <input type="text" id="search-cta" placeholder="Buscar destino..." 
+                        class="w-full p-3 bg-gray-50 dark:bg-slate-800 rounded-xl accent-input border border-gray-200 dark:border-slate-700 mb-2"
+                        oninput="filterCTAs()">
+                    
+                    <div id="cta-list-container" class="h-60 overflow-y-auto border border-gray-100 dark:border-slate-800 rounded-xl p-2 space-y-1">
+                        <div class="text-center text-gray-400 text-sm py-4">Cargando destinos desde GitHub...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div id="author-modal" class="modal-overlay">
         <div class="modal-content bg-white dark:bg-slate-900 w-full max-w-lg rounded-2xl shadow-2xl p-6">
             <div class="flex justify-between items-center mb-4">
@@ -464,6 +499,11 @@
                                     type="text" id="tag-input" class="flex-1 text-sm bg-transparent outline-none"
                                     placeholder="Tags (Enter)"></div>
                             <div id="tags-container" class="flex flex-wrap gap-2"></div>
+
+                            <button onclick="openCTAModal()" class="w-full mt-2 p-3 rounded-xl border border-dashed border-orange-300 dark:border-orange-900 text-orange-500 hover:bg-orange-50 dark:hover:bg-slate-800 transition flex items-center justify-center gap-2 text-sm font-bold">
+                                <ion-icon name="location-outline"></ion-icon> Insertar CTA de Destino
+                            </button>
+
                         </div>
                     </div>
 
@@ -614,12 +654,95 @@
 
         const toBase64 = file => new Promise(r => { const rd = new FileReader(); rd.readAsDataURL(file); rd.onload = () => r(rd.result); });
 
+        // --- NUEVA LOGICA CTA ---
+        let availableCTAs = [];
+
+        window.openCTAModal = async () => {
+            document.getElementById('cta-modal').classList.add('open');
+            if (availableCTAs.length === 0) {
+                await loadCTAsFromRepo();
+            } else {
+                renderCTAList(availableCTAs);
+            }
+        };
+
+        window.closeCTAModal = () => document.getElementById('cta-modal').classList.remove('open');
+
+        async function loadCTAsFromRepo() {
+            try {
+                // Se asume que el componente está en src/components/DestinationCTA.astro
+                const f = await ghFetch(`/contents/src/components/DestinationCTA.astro`);
+                const content = decodeURIComponent(escape(atob(f.content)));
+                
+                // Regex para extraer el objeto destinosTitulos del código fuente
+                const regexObj = /destinosTitulos[^\{]*\{([\s\S]*?)\};/;
+                const match = content.match(regexObj);
+                
+                if (match && match[1]) {
+                    const lines = match[1].split('\n');
+                    availableCTAs = lines
+                        .map(line => {
+                            const m = line.match(/["']([\w-]+)["']:\s*["'](.+)["']/);
+                            return m ? { slug: m[1], name: m[2] } : null;
+                        })
+                        .filter(Boolean);
+                    
+                    renderCTAList(availableCTAs);
+                }
+            } catch (e) {
+                document.getElementById('cta-list-container').innerHTML = `<p class="text-red-500 text-xs p-2">Error cargando destinos: ${e.message}</p>`;
+            }
+        }
+
+        function renderCTAList(list) {
+            const container = document.getElementById('cta-list-container');
+            if (list.length === 0) {
+                container.innerHTML = '<p class="text-gray-400 text-xs p-2">No se encontraron destinos.</p>';
+                return;
+            }
+            container.innerHTML = list.map(item => `
+                <div onclick="insertCTA('${item.slug}')" 
+                     class="p-2 hover:bg-orange-50 dark:hover:bg-slate-700 rounded-lg cursor-pointer flex justify-between items-center group transition">
+                    <span class="font-medium text-sm text-gray-700 dark:text-gray-300">${item.name}</span>
+                    <span class="text-xs text-gray-400 font-mono bg-gray-100 dark:bg-slate-800 px-2 py-1 rounded group-hover:bg-white">${item.slug}</span>
+                </div>
+            `).join('');
+        }
+
+        window.filterCTAs = () => {
+            const term = document.getElementById('search-cta').value.toLowerCase();
+            const filtered = availableCTAs.filter(c => c.name.toLowerCase().includes(term) || c.slug.includes(term));
+            renderCTAList(filtered);
+        };
+
+        window.insertCTA = (slug) => {
+            const pais = document.getElementById('cta-country').value;
+            const ctaString = `<DestinationCTA destino="${slug}" pais="${pais}" />`;
+            tinymce.activeEditor.insertContent(`<p>${ctaString}</p>`);
+            closeCTAModal();
+            showToast(`CTA de ${slug} agregado`);
+            renderLivePreview();
+        };
+
+        // --- PUBLICAR (MODIFICADA PARA INCLUIR IMPORT) ---
         window.publishCurrentPost = async () => {
             const btn = document.querySelector('button[onclick="publishCurrentPost()"]');
             const orig = btn.innerText; btn.innerText = "Publicando..."; btn.disabled = true;
             try {
                 const rawContent = tinymce.activeEditor.getContent();
                 let mdContent = turndownService.turndown(rawContent);
+                
+                // Corrección: Desescapar tags de componentes si Turndown los rompió
+                mdContent = mdContent.replace(/\\<DestinationCTA/g, '<DestinationCTA');
+
+                // Inyección Automática del Import
+                if (mdContent.includes('<DestinationCTA')) {
+                    const importStatement = "import DestinationCTA from '../../components/DestinationCTA.astro';";
+                    if (!mdContent.includes('import DestinationCTA')) {
+                        mdContent = importStatement + '\n\n' + mdContent;
+                    }
+                }
+
                 const t = document.getElementById('post-title').value;
                 const d = document.getElementById('post-desc').value;
                 const dt = document.getElementById('post-date').value;
