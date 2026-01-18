@@ -387,54 +387,151 @@
             </div>
 
             <div id="view-destinations" class="hidden space-y-6">
+                <!-- Header -->
                 <div class="flex justify-between items-center border-b pb-4 dark:border-slate-700 mb-6">
                     <div class="flex items-center gap-2">
-                        <button onclick="switchTab('home')" class="text-gray-400 hover:text-orange-500"><ion-icon
-                                name="arrow-back-outline"></ion-icon></button>
+                        <button onclick="switchTab('home')" class="text-gray-400 hover:text-orange-500">
+                            <ion-icon name="arrow-back-outline"></ion-icon>
+                        </button>
                         <div>
-                            <h2 class="text-xl font-bold flex items-center gap-2">Gestor de Destinos <span
-                                    class="text-[10px] bg-orange-100 text-orange-600 px-2 rounded-full border border-orange-200">BETA</span>
+                            <h2 class="text-xl font-bold flex items-center gap-2">
+                                Gestor de Destinos
+                                <span
+                                    class="text-[10px] bg-blue-100 text-blue-600 px-2 rounded-full border border-blue-200">🇦🇷
+                                    Argentina</span>
                             </h2>
-                            <p class="text-xs text-gray-400 mt-1">Administra Países y Ciudades</p>
+                            <p class="text-xs text-gray-400 mt-1">Edita información de destinos existentes</p>
                         </div>
                     </div>
-                    <button onclick="alert('Próximamente: Crear Destino')"
-                        class="bg-gray-200 dark:bg-slate-700 text-gray-500 px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 hover:bg-gray-300 dark:hover:bg-slate-600 transition-colors">
-                        <ion-icon name="add-circle-outline" class="text-lg"></ion-icon> Nuevo Destino
+                    <button onclick="loadDestinations()" class="text-gray-400 hover:text-orange-500 p-2"
+                        title="Recargar">
+                        <ion-icon name="refresh-outline" class="text-xl"></ion-icon>
                     </button>
                 </div>
 
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Loader -->
+                <div id="destinations-loader" class="text-center py-20 hidden">
+                    <span class="loader"></span>
+                    <p class="text-gray-400 text-sm mt-4">Cargando destinos...</p>
+                </div>
+
+                <!-- Grid de Destinos -->
+                <div id="destinations-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+
+                <!-- Empty State -->
+                <div id="destinations-empty" class="hidden text-center py-20">
+                    <ion-icon name="map-outline" class="text-6xl text-gray-300 dark:text-slate-600"></ion-icon>
+                    <p class="text-gray-400 mt-4">No se encontraron destinos</p>
+                </div>
+            </div>
+
+            <!-- Modal de Edición de Destino -->
+            <div id="destination-modal" class="modal-overlay fixed inset-0 bg-black/60 backdrop-blur-sm z-50">
+                <div
+                    class="modal-content bg-white dark:bg-slate-800 rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden shadow-2xl mx-4">
+                    <!-- Modal Header -->
                     <div
-                        class="bg-white dark:bg-slate-800 rounded-2xl border border-gray-200 dark:border-slate-700 p-6 shadow-sm relative overflow-hidden group">
-                        <div class="absolute top-0 right-0 p-4 opacity-50"><ion-icon name="map-outline"
-                                class="text-6xl text-gray-100 dark:text-slate-700"></ion-icon></div>
-                        <div class="relative z-10">
-                            <h3 class="text-2xl font-bold mb-1">Japón</h3>
-                            <span class="text-xs text-gray-400 uppercase tracking-widest">Asia</span>
-                            <div class="mt-6 space-y-2">
-                                <p class="text-xs font-bold text-gray-500 mb-2">CIUDADES REGISTRADAS</p>
-                                <div
-                                    class="flex justify-between items-center bg-gray-50 dark:bg-slate-700/50 p-3 rounded-lg border border-transparent hover:border-orange-200 transition-colors">
-                                    <span class="text-sm font-medium">Tokio</span>
-                                    <button class="text-gray-400 hover:text-red-500"><ion-icon
-                                            name="trash-outline"></ion-icon></button>
+                        class="flex items-center justify-between p-4 border-b dark:border-slate-700 bg-gray-50 dark:bg-slate-900/50">
+                        <div class="flex items-center gap-3">
+                            <div
+                                class="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-400 to-pink-500 flex items-center justify-center text-white">
+                                <ion-icon name="location-outline" class="text-xl"></ion-icon>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-lg" id="dest-modal-title">Editando Destino</h3>
+                                <p class="text-xs text-gray-400" id="dest-modal-slug">slug-destino</p>
+                            </div>
+                        </div>
+                        <button onclick="closeDestinationModal()" class="text-gray-400 hover:text-red-500 p-2">
+                            <ion-icon name="close-outline" class="text-2xl"></ion-icon>
+                        </button>
+                    </div>
+
+                    <!-- Modal Body -->
+                    <div class="p-6 overflow-y-auto max-h-[calc(90vh-140px)] space-y-6">
+                        <!-- Campos Básicos -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 mb-2 uppercase">Título *</label>
+                                <input type="text" id="dest-title"
+                                    class="accent-input w-full px-4 py-3 rounded-xl border dark:bg-slate-700 dark:border-slate-600 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                                    placeholder="Buenos Aires">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 mb-2 uppercase">Imagen Hero</label>
+                                <div class="flex gap-2">
+                                    <input type="text" id="dest-img"
+                                        class="accent-input flex-1 px-4 py-3 rounded-xl border dark:bg-slate-700 dark:border-slate-600 focus:ring-2 focus:ring-orange-500"
+                                        placeholder="/destinos_argentina/ciudad.jpg">
+                                    <button onclick="uploadDestinationImage()"
+                                        class="px-4 py-3 bg-gray-100 dark:bg-slate-600 rounded-xl hover:bg-gray-200 dark:hover:bg-slate-500 transition-colors">
+                                        <ion-icon name="cloud-upload-outline"></ion-icon>
+                                    </button>
                                 </div>
-                                <div
-                                    class="flex justify-between items-center bg-gray-50 dark:bg-slate-700/50 p-3 rounded-lg border border-transparent hover:border-orange-200 transition-colors">
-                                    <span class="text-sm font-medium">Kyoto</span>
-                                    <button class="text-gray-400 hover:text-red-500"><ion-icon
-                                            name="trash-outline"></ion-icon></button>
-                                </div>
-                                <button
-                                    class="w-full py-2 border border-dashed border-gray-300 dark:border-slate-600 rounded-lg text-xs text-gray-400 hover:text-orange-500 hover:border-orange-500 transition-colors flex justify-center gap-1 items-center mt-2">
-                                    <ion-icon name="add-outline"></ion-icon> Agregar Ciudad
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 mb-2 uppercase">Descripción
+                                Corta</label>
+                            <input type="text" id="dest-desc"
+                                class="accent-input w-full px-4 py-3 rounded-xl border dark:bg-slate-700 dark:border-slate-600 focus:ring-2 focus:ring-orange-500"
+                                placeholder="La París de Sudamérica...">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 mb-2 uppercase">Historia /
+                                Bienvenida</label>
+                            <textarea id="dest-historia" rows="4"
+                                class="accent-input w-full px-4 py-3 rounded-xl border dark:bg-slate-700 dark:border-slate-600 focus:ring-2 focus:ring-orange-500 resize-none"
+                                placeholder="Texto de bienvenida al destino..."></textarea>
+                        </div>
+
+                        <!-- Secciones -->
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <label class="text-xs font-bold text-gray-500 uppercase">Secciones Informativas</label>
+                                <button onclick="addSection()"
+                                    class="text-xs text-orange-500 hover:text-orange-600 font-bold flex items-center gap-1">
+                                    <ion-icon name="add-circle-outline"></ion-icon> Agregar
                                 </button>
+                            </div>
+                            <div id="dest-secciones" class="space-y-3"></div>
+                        </div>
+
+                        <!-- Tours Placeholder -->
+                        <div
+                            class="bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-purple-900/20 dark:to-indigo-900/20 rounded-xl p-4 border border-purple-200 dark:border-purple-800">
+                            <div class="flex items-center gap-3">
+                                <div
+                                    class="w-10 h-10 rounded-lg bg-purple-100 dark:bg-purple-900/50 flex items-center justify-center">
+                                    <ion-icon name="ticket-outline" class="text-purple-600 text-xl"></ion-icon>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-sm text-purple-800 dark:text-purple-300">Tours &
+                                        Experiencias</h4>
+                                    <p class="text-xs text-purple-600 dark:text-purple-400">Widget de
+                                        Civitatis/GetYourGuide (Próximamente)</p>
+                                </div>
                             </div>
                         </div>
                     </div>
+
+                    <!-- Modal Footer -->
+                    <div
+                        class="flex justify-end gap-3 p-4 border-t dark:border-slate-700 bg-gray-50 dark:bg-slate-900/50">
+                        <button onclick="closeDestinationModal()"
+                            class="px-6 py-2.5 rounded-xl text-gray-500 hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors font-medium">
+                            Cancelar
+                        </button>
+                        <button onclick="saveDestination()"
+                            class="btn-primary text-white px-6 py-2.5 rounded-xl font-bold flex items-center gap-2">
+                            <ion-icon name="save-outline"></ion-icon> Guardar Cambios
+                        </button>
+                    </div>
                 </div>
             </div>
+
 
             <div id="view-affiliates" class="hidden space-y-6">
                 <div class="flex items-center justify-between mb-4">
@@ -734,6 +831,7 @@
             if (tab === 'posts' && cachedPosts.length === 0) loadPosts();
             if (tab === 'authors' && Object.keys(authorsData).length === 0) fetchAuthors();
             if (tab === 'affiliates' && !affiliatesLoaded) loadAffiliates();
+            if (tab === 'destinations' && destinationsCache.length === 0) loadDestinations();
         };
 
         // --- POSTS ---
@@ -978,6 +1076,330 @@
         window.generateSlug = () => { if (!document.getElementById('auth-slug-orig').value) document.getElementById('auth-slug').value = document.getElementById('auth-name').value.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-'); };
         window.previewImage = (i) => { if (i.files[0]) { const r = new FileReader(); r.onload = (e) => document.getElementById('auth-preview').src = e.target.result; r.readAsDataURL(i.files[0]); } };
         window.showToast = (m, t) => { const d = document.createElement('div'); d.className = `p-3 rounded-lg text-white text-sm font-bold shadow-lg flex items-center gap-2 animate-bounce ${t === 'error' ? 'bg-red-500' : 'bg-gray-900'}`; d.innerHTML = t === 'error' ? `<ion-icon name="alert-circle"></ion-icon> ${m}` : `<ion-icon name="checkmark-circle"></ion-icon> ${m}`; document.getElementById('toast-container').appendChild(d); setTimeout(() => d.remove(), 3000); };
+
+        // ==================================================
+        // DESTINATIONS MANAGER
+        // ==================================================
+        const DESTINATIONS_REPO = 'destinos_argentina';
+        const DESTINATIONS_PATH = 'src/content/destinos';
+        let currentDestination = null;
+        let destinationsCache = [];
+
+        // Fetch específico para destinos (repo diferente al de posts)
+        async function ghFetchDestinos(ep, m = 'GET', b = null) {
+            const opts = { method: m, headers: { 'Authorization': `token ${githubConfig.githubToken}`, 'Content-Type': 'application/json' } };
+            if (b) opts.body = JSON.stringify(b);
+            const res = await fetch(`https://api.github.com/repos/${githubConfig.repoOwner}/${DESTINATIONS_REPO}${ep}`, opts);
+            if (!res.ok) throw new Error(`GitHub: ${res.status}`);
+            return res.json();
+        }
+
+
+        window.loadDestinations = async () => {
+            const loader = document.getElementById('destinations-loader');
+            const grid = document.getElementById('destinations-grid');
+            const empty = document.getElementById('destinations-empty');
+
+            loader.classList.remove('hidden');
+            grid.innerHTML = '';
+            empty.classList.add('hidden');
+
+            try {
+                const files = await ghFetchDestinos(`/contents/${DESTINATIONS_PATH}`);
+                const mdFiles = files.filter(f => f.name.endsWith('.md'));
+
+                if (mdFiles.length === 0) {
+                    empty.classList.remove('hidden');
+                    return;
+                }
+
+                destinationsCache = [];
+
+                for (const file of mdFiles) {
+                    const data = await ghFetchDestinos(`/contents/${file.path}`);
+                    const content = decodeURIComponent(escape(atob(data.content)));
+                    const parsed = parseDestinationMD(content);
+                    parsed.slug = file.name.replace('.md', '');
+                    parsed.sha = data.sha;
+                    parsed.path = file.path;
+                    parsed._rawContent = content;
+                    destinationsCache.push(parsed);
+                }
+
+                renderDestinationsGrid();
+
+            } catch (e) {
+                showToast("Error cargando destinos: " + e.message, "error");
+            } finally {
+                loader.classList.add('hidden');
+            }
+        };
+
+        function parseDestinationMD(content) {
+            const parts = content.split('---');
+            if (parts.length < 3) return { title: 'Error', secciones: [], tours: [] };
+
+            const frontmatter = parts[1];
+            const body = parts.slice(2).join('---').trim();
+
+            const result = {
+                title: extractYAMLValue(frontmatter, 'title'),
+                img: extractYAMLValue(frontmatter, 'img'),
+                desc: extractYAMLValue(frontmatter, 'desc'),
+                historia: extractYAMLValue(frontmatter, 'historia'),
+                secciones: extractYAMLArray(frontmatter, 'secciones'),
+                tours: extractYAMLArray(frontmatter, 'tours'),
+                body: body
+            };
+
+            return result;
+        }
+
+        function extractYAMLValue(yaml, key) {
+            const regex = new RegExp(`^${key}:\\s*["']?(.+?)["']?\\s*$`, 'm');
+            const match = yaml.match(regex);
+            return match ? match[1].replace(/^["']|["']$/g, '') : '';
+        }
+
+        function extractYAMLArray(yaml, key) {
+            const lines = yaml.split('\n');
+            const result = [];
+            let inArray = false;
+            let currentItem = null;
+
+            for (const line of lines) {
+                if (line.match(new RegExp(`^${key}:`))) {
+                    inArray = true;
+                    continue;
+                }
+
+                if (inArray) {
+                    if (line.match(/^\w+:/) && !line.match(/^\s+-/)) {
+                        break;
+                    }
+
+                    if (line.match(/^\s+-\s+\w+:/)) {
+                        if (currentItem) result.push(currentItem);
+                        currentItem = {};
+                    }
+
+                    const keyVal = line.match(/^\s+-?\s*(\w+):\s*["']?(.+?)["']?\s*$/);
+                    if (keyVal && currentItem) {
+                        currentItem[keyVal[1]] = keyVal[2].replace(/^["']|["']$/g, '');
+                    }
+                }
+            }
+
+            if (currentItem && Object.keys(currentItem).length > 0) {
+                result.push(currentItem);
+            }
+
+            return result;
+        }
+
+        function renderDestinationsGrid() {
+            const grid = document.getElementById('destinations-grid');
+            grid.innerHTML = destinationsCache.map(dest => `
+                <div class="bg-white dark:bg-slate-800 rounded-2xl border border-gray-200 dark:border-slate-700 overflow-hidden shadow-sm hover:shadow-lg transition-shadow group cursor-pointer" onclick="openDestinationEditor('${dest.slug}')">
+                    <div class="h-32 bg-gradient-to-br from-orange-400 to-pink-500 relative overflow-hidden">
+                        ${dest.img ? `<img src="${dest.img.startsWith('/') ? 'https://danielaranadj-prog.github.io' + dest.img : dest.img}" class="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform" onerror="this.style.display='none'">` : ''}
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+                        <div class="absolute bottom-3 left-4">
+                            <h3 class="text-white font-bold text-lg">${dest.title}</h3>
+                            <p class="text-white/80 text-xs">${dest.slug}.md</p>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <p class="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">${dest.desc || 'Sin descripción'}</p>
+                        <div class="flex items-center gap-2 mt-3 text-xs text-gray-400">
+                            <span class="flex items-center gap-1"><ion-icon name="list-outline"></ion-icon> ${dest.secciones.length} secciones</span>
+                            <span class="flex items-center gap-1"><ion-icon name="ticket-outline"></ion-icon> ${dest.tours.length} tours</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        window.openDestinationEditor = (slug) => {
+            currentDestination = destinationsCache.find(d => d.slug === slug);
+            if (!currentDestination) return;
+
+            document.getElementById('dest-modal-title').textContent = `Editando: ${currentDestination.title}`;
+            document.getElementById('dest-modal-slug').textContent = currentDestination.slug + '.md';
+            document.getElementById('dest-title').value = currentDestination.title;
+            document.getElementById('dest-img').value = currentDestination.img;
+            document.getElementById('dest-desc').value = currentDestination.desc;
+            document.getElementById('dest-historia').value = currentDestination.historia;
+
+            renderSectionsEditor(currentDestination.secciones);
+
+            document.getElementById('destination-modal').classList.add('open');
+        };
+
+        window.closeDestinationModal = () => {
+            document.getElementById('destination-modal').classList.remove('open');
+            currentDestination = null;
+        };
+
+        function renderSectionsEditor(secciones) {
+            const container = document.getElementById('dest-secciones');
+            container.innerHTML = secciones.map((sec, idx) => `
+                <div class="bg-gray-50 dark:bg-slate-700/50 rounded-xl p-4 border border-gray-200 dark:border-slate-600" data-section-idx="${idx}">
+                    <div class="flex justify-between items-start mb-3">
+                        <span class="text-xs font-bold text-gray-400">Sección ${idx + 1}</span>
+                        <button onclick="removeSection(${idx})" class="text-gray-400 hover:text-red-500">
+                            <ion-icon name="trash-outline"></ion-icon>
+                        </button>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3 mb-3">
+                        <input type="text" class="section-icon px-3 py-2 rounded-lg border dark:bg-slate-600 dark:border-slate-500 text-sm" placeholder="fa-icon" value="${sec.icon || ''}">
+                        <input type="text" class="section-label px-3 py-2 rounded-lg border dark:bg-slate-600 dark:border-slate-500 text-sm" placeholder="Label" value="${sec.label || ''}">
+                    </div>
+                    <textarea class="section-text w-full px-3 py-2 rounded-lg border dark:bg-slate-600 dark:border-slate-500 text-sm resize-none" rows="2" placeholder="Contenido...">${sec.text || ''}</textarea>
+                </div>
+            `).join('');
+        }
+
+        window.addSection = () => {
+            const container = document.getElementById('dest-secciones');
+            const idx = container.children.length;
+            const html = `
+                <div class="bg-gray-50 dark:bg-slate-700/50 rounded-xl p-4 border border-gray-200 dark:border-slate-600" data-section-idx="${idx}">
+                    <div class="flex justify-between items-start mb-3">
+                        <span class="text-xs font-bold text-gray-400">Sección ${idx + 1}</span>
+                        <button onclick="removeSection(${idx})" class="text-gray-400 hover:text-red-500">
+                            <ion-icon name="trash-outline"></ion-icon>
+                        </button>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3 mb-3">
+                        <input type="text" class="section-icon px-3 py-2 rounded-lg border dark:bg-slate-600 dark:border-slate-500 text-sm" placeholder="fa-icon" value="">
+                        <input type="text" class="section-label px-3 py-2 rounded-lg border dark:bg-slate-600 dark:border-slate-500 text-sm" placeholder="Label" value="">
+                    </div>
+                    <textarea class="section-text w-full px-3 py-2 rounded-lg border dark:bg-slate-600 dark:border-slate-500 text-sm resize-none" rows="2" placeholder="Contenido..."></textarea>
+                </div>
+            `;
+            container.insertAdjacentHTML('beforeend', html);
+        };
+
+        window.removeSection = (idx) => {
+            const sections = document.querySelectorAll('#dest-secciones > div');
+            if (sections[idx]) sections[idx].remove();
+            // Reindex
+            document.querySelectorAll('#dest-secciones > div').forEach((el, i) => {
+                el.querySelector('span').textContent = `Sección ${i + 1}`;
+                el.dataset.sectionIdx = i;
+            });
+        };
+
+        window.uploadDestinationImage = async () => {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.onchange = async (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                try {
+                    const compressed = await imageCompression(file, { maxSizeMB: 0.5, maxWidthOrHeight: 1920 });
+                    const reader = new FileReader();
+                    reader.onload = async (ev) => {
+                        const base64 = ev.target.result.split(',')[1];
+                        const filename = file.name.toLowerCase().replace(/[^a-z0-9.]/g, '-');
+                        const path = `public/uploads/${filename}`;
+
+                        await ghFetchDestinos(`/contents/${path}`, 'PUT', {
+                            message: `Upload: ${filename}`,
+                            content: base64
+                        });
+
+                        document.getElementById('dest-img').value = `/uploads/${filename}`;
+                        showToast('Imagen subida correctamente');
+                    };
+                    reader.readAsDataURL(compressed);
+                } catch (err) {
+                    showToast('Error subiendo imagen: ' + err.message, 'error');
+                }
+            };
+            input.click();
+        };
+
+        window.saveDestination = async () => {
+            if (!currentDestination) return;
+
+            const btn = document.querySelector('#destination-modal button[onclick="saveDestination()"]');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<ion-icon name="hourglass-outline" class="animate-spin"></ion-icon> Guardando...';
+            btn.disabled = true;
+
+            try {
+                const title = document.getElementById('dest-title').value.trim();
+                const img = document.getElementById('dest-img').value.trim();
+                const desc = document.getElementById('dest-desc').value.trim();
+                const historia = document.getElementById('dest-historia').value.trim();
+
+                const secciones = [];
+                document.querySelectorAll('#dest-secciones > div').forEach(el => {
+                    secciones.push({
+                        icon: el.querySelector('.section-icon').value.trim(),
+                        label: el.querySelector('.section-label').value.trim(),
+                        text: el.querySelector('.section-text').value.trim()
+                    });
+                });
+
+                // Generate new YAML content
+                const yamlContent = generateDestinationYAML({
+                    title, img, desc, historia, secciones,
+                    tours: currentDestination.tours,
+                    body: currentDestination.body
+                });
+
+                // PUT to GitHub
+                await ghFetchDestinos(`/contents/${currentDestination.path}`, 'PUT', {
+                    message: `Update: ${currentDestination.slug}`,
+                    content: btoa(unescape(encodeURIComponent(yamlContent))),
+                    sha: currentDestination.sha
+                });
+
+                showToast('Destino guardado correctamente');
+                closeDestinationModal();
+                loadDestinations();
+
+            } catch (e) {
+                showToast('Error guardando: ' + e.message, 'error');
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        };
+
+        function generateDestinationYAML(data) {
+            let yaml = '---\n';
+            yaml += `title: "${data.title}"\n`;
+            yaml += `img: "${data.img}"\n`;
+            yaml += `desc: "${data.desc}"\n`;
+            yaml += `historia: "${data.historia.replace(/"/g, '\\"')}"\n`;
+
+            yaml += 'secciones:\n';
+            data.secciones.forEach(sec => {
+                yaml += `  - icon: "${sec.icon}"\n`;
+                yaml += `    label: "${sec.label}"\n`;
+                yaml += `    text: "${sec.text.replace(/"/g, '\\"')}"\n`;
+            });
+
+            yaml += 'tours:\n';
+            data.tours.forEach(tour => {
+                yaml += `  - titulo: "${tour.titulo || ''}"\n`;
+                yaml += `    precio: "${tour.precio || ''}"\n`;
+                yaml += `    duracion: "${tour.duracion || ''}"\n`;
+                yaml += `    link: "${tour.link || ''}"\n`;
+                yaml += `    imagen: "${tour.imagen || ''}"\n`;
+            });
+
+            yaml += '---\n';
+            if (data.body) yaml += data.body;
+
+            return yaml;
+        }
     </script>
 </body>
 

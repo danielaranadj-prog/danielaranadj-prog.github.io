@@ -1,0 +1,32 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // ==========================================
+    // CONFIG PRINCIPAL (contiene GitHub Token)
+    // Solo el admin puede leer/escribir
+    // ==========================================
+    match /config/main {
+      allow read, write: if request.auth != null 
+        && request.auth.token.email == 'danielaranadj@gmail.com';
+    }
+    
+    // ==========================================
+    // AFFILIATES (Booking, Skyscanner, etc.)
+    // Lectura pública (para build de Astro)
+    // Escritura solo admin
+    // ==========================================
+    match /config/affiliates {
+      allow read: if true;
+      allow write: if request.auth != null 
+        && request.auth.token.email == 'danielaranadj@gmail.com';
+    }
+    
+    // ==========================================
+    // BLOQUEAR TODO LO DEMÁS
+    // ==========================================
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

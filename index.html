@@ -191,6 +191,10 @@
             position: relative;
             z-index: 1;
             max-width: 700px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             animation: fadeInUp 1s ease-out;
         }
 
@@ -393,6 +397,42 @@
             background: linear-gradient(135deg, rgba(244, 185, 66, 0.15), rgba(117, 170, 219, 0.15));
             border-radius: 12px;
             font-size: 1.2rem;
+        }
+
+        .manifesto-quote {
+            margin-top: 50px;
+            text-align: center;
+            max-width: 500px;
+            animation: fadeInUp 1s ease-out 0.5s backwards;
+        }
+
+        .manifesto-quote p {
+            font-family: 'IBM Plex Serif', Georgia, serif;
+            font-size: 1rem;
+            font-style: italic;
+            color: var(--text-secondary);
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+
+        .manifesto-quote strong {
+            color: var(--gold);
+            font-weight: 500;
+        }
+
+        .manifesto-link {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--gold);
+            text-decoration: none;
+            transition: opacity 0.3s;
+        }
+
+        .manifesto-link:hover {
+            opacity: 0.7;
         }
 
         .footer {
