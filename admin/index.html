@@ -312,10 +312,16 @@
                             </p>
                         </div>
                     </div>
-                    <button onclick="loadDestinations()" class="text-gray-400 hover:text-orange-500 p-2"
-                        title="Recargar">
-                        <ion-icon name="refresh-outline" class="text-xl"></ion-icon>
-                    </button>
+                    <div class="flex items-center gap-2">
+                        <button onclick="openNewDestinationModal()"
+                            class="btn-primary text-white px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2">
+                            <ion-icon name="add-outline"></ion-icon> Nuevo Destino
+                        </button>
+                        <button onclick="loadDestinations()" class="text-gray-400 hover:text-orange-500 p-2"
+                            title="Recargar">
+                            <ion-icon name="refresh-outline" class="text-xl"></ion-icon>
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Loader -->
@@ -419,6 +425,22 @@
 
                     <!-- Modal Body -->
                     <div class="p-6 overflow-y-auto max-h-[calc(90vh-140px)] space-y-6">
+                        <!-- Slug field (only for new destinations) -->
+                        <div id="dest-slug-container" class="hidden">
+                            <label class="block text-xs font-bold text-gray-500 mb-2 uppercase">
+                                Slug (nombre del archivo) *
+                            </label>
+                            <div class="flex items-center gap-2">
+                                <input type="text" id="dest-slug-input"
+                                    class="accent-input flex-1 px-4 py-3 rounded-xl border dark:bg-slate-700 dark:border-slate-600 focus:ring-2 focus:ring-orange-500"
+                                    placeholder="cordoba"
+                                    oninput="this.value = this.value.toLowerCase().replace(/[^a-z0-9-]/g, '-')">
+                                <span class="text-gray-400 text-sm">.md</span>
+                            </div>
+                            <p class="text-xs text-gray-400 mt-1">Solo letras minúsculas, números y guiones. Ej:
+                                san-carlos-de-bariloche</p>
+                        </div>
+
                         <!-- Campos Básicos -->
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
@@ -549,9 +571,9 @@
                             class="px-6 py-2.5 rounded-xl text-gray-500 hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors font-medium">
                             Cancelar
                         </button>
-                        <button onclick="saveDestination()"
+                        <button id="dest-save-btn" onclick="saveDestination()"
                             class="btn-primary text-white px-6 py-2.5 rounded-xl font-bold flex items-center gap-2">
-                            <ion-icon name="save-outline"></ion-icon> Guardar Cambios
+                            <ion-icon name="save-outline"></ion-icon> <span id="dest-save-text">Guardar Cambios</span>
                         </button>
                     </div>
                 </div>
@@ -1289,8 +1311,14 @@
             currentDestination = destinationsCache.find(d => d.slug === slug);
             if (!currentDestination) return;
 
+            // Set to edit mode
+            isCreatingNewDestination = false;
+            document.getElementById('dest-slug-container').classList.add('hidden');
+            document.getElementById('dest-save-text').textContent = 'Guardar Cambios';
             document.getElementById('dest-modal-title').textContent = `Editando: ${currentDestination.title}`;
             document.getElementById('dest-modal-slug').textContent = currentDestination.slug + '.md';
+
+            // Fill form fields
             document.getElementById('dest-title').value = currentDestination.title;
             document.getElementById('dest-img').value = currentDestination.img;
             document.getElementById('dest-desc').value = currentDestination.desc;
@@ -1309,9 +1337,50 @@
             document.getElementById('destination-modal').classList.add('open');
         };
 
+        let isCreatingNewDestination = false;
+
+        window.openNewDestinationModal = () => {
+            // Set to create mode
+            isCreatingNewDestination = true;
+            currentDestination = null;
+
+            // Show slug field and update UI
+            document.getElementById('dest-slug-container').classList.remove('hidden');
+            document.getElementById('dest-save-text').textContent = 'Crear Destino';
+            document.getElementById('dest-modal-title').textContent = 'Nuevo Destino';
+            document.getElementById('dest-modal-slug').textContent = 'Ingresa un slug abajo';
+
+            // Clear all form fields
+            document.getElementById('dest-slug-input').value = '';
+            document.getElementById('dest-title').value = '';
+            document.getElementById('dest-img').value = '/destinos_argentina/placeholder.jpg';
+            document.getElementById('dest-desc').value = '';
+            document.getElementById('dest-historia').value = '';
+
+            // Clear sections and FAQs
+            document.getElementById('dest-secciones').innerHTML = '';
+            document.getElementById('dest-faqs').innerHTML = '';
+
+            // Clear Lead Magnet
+            document.getElementById('dest-leadmagnet-titulo').value = '';
+            document.getElementById('dest-leadmagnet-archivo').value = '';
+            document.getElementById('dest-leadmagnet-descripcion').value = '';
+            document.getElementById('dest-leadmagnet-imagen').value = '';
+
+            // Add default sections
+            addSection();
+            addSection();
+            addSection();
+            addSection();
+
+            document.getElementById('destination-modal').classList.add('open');
+        };
+
         window.closeDestinationModal = () => {
             document.getElementById('destination-modal').classList.remove('open');
+            document.getElementById('dest-slug-container').classList.add('hidden');
             currentDestination = null;
+            isCreatingNewDestination = false;
         };
 
         // Iconos disponibles para secciones
@@ -1504,11 +1573,26 @@
         };
 
         window.saveDestination = async () => {
-            if (!currentDestination) return;
+            // Validation for create mode
+            if (isCreatingNewDestination) {
+                const slug = document.getElementById('dest-slug-input').value.trim();
+                if (!slug) {
+                    showToast('El slug es obligatorio', 'error');
+                    return;
+                }
+                // Check if slug already exists
+                if (destinationsCache.some(d => d.slug === slug)) {
+                    showToast('Ya existe un destino con ese slug', 'error');
+                    return;
+                }
+            } else if (!currentDestination) {
+                return;
+            }
 
-            const btn = document.querySelector('#destination-modal button[onclick="saveDestination()"]');
+            const btn = document.getElementById('dest-save-btn');
             const originalText = btn.innerHTML;
-            btn.innerHTML = '<ion-icon name="hourglass-outline" class="animate-spin"></ion-icon> Guardando...';
+            btn.innerHTML = '<ion-icon name="hourglass-outline" class="animate-spin"></ion-icon> ' +
+                (isCreatingNewDestination ? 'Creando...' : 'Guardando...');
             btn.disabled = true;
 
             try {
@@ -1517,13 +1601,21 @@
                 const desc = document.getElementById('dest-desc').value.trim();
                 const historia = document.getElementById('dest-historia').value.trim();
 
+                if (!title) {
+                    showToast('El título es obligatorio', 'error');
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                    return;
+                }
+
                 const secciones = [];
                 document.querySelectorAll('#dest-secciones > div').forEach(el => {
-                    secciones.push({
-                        icon: el.querySelector('.section-icon').value.trim(),
-                        label: el.querySelector('.section-label').value.trim(),
-                        text: el.querySelector('.section-text').value.trim()
-                    });
+                    const icon = el.querySelector('.section-icon').value.trim();
+                    const label = el.querySelector('.section-label').value.trim();
+                    const text = el.querySelector('.section-text').value.trim();
+                    if (label) {
+                        secciones.push({ icon, label, text });
+                    }
                 });
 
                 // Collect FAQs
@@ -1544,28 +1636,42 @@
                     imagen: document.getElementById('dest-leadmagnet-imagen').value.trim()
                 };
 
-                // Generate new YAML content
+                // Generate YAML content
                 const yamlContent = generateDestinationYAML({
                     title, img, desc, historia, secciones,
-                    tours: currentDestination.tours,
+                    tours: isCreatingNewDestination ? [] : currentDestination.tours,
                     faqs,
                     leadMagnet: leadMagnet.titulo ? leadMagnet : null,
-                    body: currentDestination.body
+                    body: isCreatingNewDestination ? '' : currentDestination.body
                 });
 
-                // PUT to GitHub
-                await ghFetchDestinos(`/contents/${currentDestination.path}`, 'PUT', {
-                    message: `Update: ${currentDestination.slug}`,
-                    content: btoa(unescape(encodeURIComponent(yamlContent))),
-                    sha: currentDestination.sha
-                });
+                if (isCreatingNewDestination) {
+                    // CREATE new file
+                    const slug = document.getElementById('dest-slug-input').value.trim();
+                    const path = `src/content/destinos/${slug}.md`;
 
-                showToast('Destino guardado correctamente');
+                    await ghFetchDestinos(`/contents/${path}`, 'PUT', {
+                        message: `Create destination: ${slug}`,
+                        content: btoa(unescape(encodeURIComponent(yamlContent)))
+                    });
+
+                    showToast(`Destino "${title}" creado correctamente 🎉`);
+                } else {
+                    // UPDATE existing file
+                    await ghFetchDestinos(`/contents/${currentDestination.path}`, 'PUT', {
+                        message: `Update: ${currentDestination.slug}`,
+                        content: btoa(unescape(encodeURIComponent(yamlContent))),
+                        sha: currentDestination.sha
+                    });
+
+                    showToast('Destino guardado correctamente');
+                }
+
                 closeDestinationModal();
                 loadDestinations();
 
             } catch (e) {
-                showToast('Error guardando: ' + e.message, 'error');
+                showToast('Error: ' + e.message, 'error');
             } finally {
                 btn.innerHTML = originalText;
                 btn.disabled = false;
@@ -1586,14 +1692,19 @@
                 yaml += `    text: "${sec.text.replace(/"/g, '\\"')}"\n`;
             });
 
-            yaml += 'tours:\n';
-            data.tours.forEach(tour => {
-                yaml += `  - titulo: "${tour.titulo || ''}"\n`;
-                yaml += `    precio: "${tour.precio || ''}"\n`;
-                yaml += `    duracion: "${tour.duracion || ''}"\n`;
-                yaml += `    link: "${tour.link || ''}"\n`;
-                yaml += `    imagen: "${tour.imagen || ''}"\n`;
-            });
+            // Tours (handle empty array properly)
+            if (data.tours && data.tours.length > 0) {
+                yaml += 'tours:\n';
+                data.tours.forEach(tour => {
+                    yaml += `  - titulo: "${tour.titulo || ''}"\n`;
+                    yaml += `    precio: "${tour.precio || ''}"\n`;
+                    yaml += `    duracion: "${tour.duracion || ''}"\n`;
+                    yaml += `    link: "${tour.link || ''}"\n`;
+                    yaml += `    imagen: "${tour.imagen || ''}"\n`;
+                });
+            } else {
+                yaml += 'tours: []\n';
+            }
 
             // FAQs (optional)
             if (data.faqs && data.faqs.length > 0) {
