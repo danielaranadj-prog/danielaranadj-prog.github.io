@@ -1241,9 +1241,30 @@
             currentDestination = null;
         };
 
+        // Iconos disponibles para secciones
+        const SECTION_ICONS = [
+            { icon: 'fa-calendar-check', label: '📅 Tiempo', emoji: '📅' },
+            { icon: 'fa-thermometer-half', label: '🌡️ Clima', emoji: '🌡️' },
+            { icon: 'fa-wallet', label: '💰 Presupuesto', emoji: '💰' },
+            { icon: 'fa-plane-arrival', label: '✈️ Llegada', emoji: '✈️' },
+            { icon: 'fa-bed', label: '🏨 Alojamiento', emoji: '🏨' },
+            { icon: 'fa-utensils', label: '🍽️ Comida', emoji: '🍽️' },
+            { icon: 'fa-lightbulb', label: '💡 Tips', emoji: '💡' },
+            { icon: 'fa-exclamation-triangle', label: '⚠️ Seguridad', emoji: '⚠️' },
+            { icon: 'fa-clock', label: '⏰ Horarios', emoji: '⏰' },
+            { icon: 'fa-map-marker-alt', label: '📍 Ubicación', emoji: '📍' },
+            { icon: 'fa-money-bill-wave', label: '💵 Cambio', emoji: '💵' },
+            { icon: 'fa-bus', label: '🚌 Transporte', emoji: '🚌' }
+        ];
+
         function renderSectionsEditor(secciones) {
             const container = document.getElementById('dest-secciones');
-            container.innerHTML = secciones.map((sec, idx) => `
+            container.innerHTML = secciones.map((sec, idx) => createSectionHTML(sec, idx)).join('');
+        }
+
+        function createSectionHTML(sec, idx) {
+            const iconData = SECTION_ICONS.find(i => i.icon === sec.icon) || { emoji: '❓' };
+            return `
                 <div class="bg-gray-50 dark:bg-slate-700/50 rounded-xl p-4 border border-gray-200 dark:border-slate-600" data-section-idx="${idx}">
                     <div class="flex justify-between items-start mb-3">
                         <span class="text-xs font-bold text-gray-400">Sección ${idx + 1}</span>
@@ -1251,34 +1272,74 @@
                             <ion-icon name="trash-outline"></ion-icon>
                         </button>
                     </div>
-                    <div class="grid grid-cols-2 gap-3 mb-3">
-                        <input type="text" class="section-icon px-3 py-2 rounded-lg border dark:bg-slate-600 dark:border-slate-500 text-sm" placeholder="fa-icon" value="${sec.icon || ''}">
-                        <input type="text" class="section-label px-3 py-2 rounded-lg border dark:bg-slate-600 dark:border-slate-500 text-sm" placeholder="Label" value="${sec.label || ''}">
+                    <div class="flex gap-3 mb-3">
+                        <div class="relative">
+                            <button type="button" onclick="toggleIconPicker(${idx})" class="section-icon-btn w-12 h-12 rounded-xl border-2 border-dashed border-gray-300 dark:border-slate-500 hover:border-orange-400 flex items-center justify-center text-2xl transition-colors" data-icon="${sec.icon || ''}">
+                                ${iconData.emoji}
+                            </button>
+                            <input type="hidden" class="section-icon" value="${sec.icon || ''}">
+                            <div id="icon-picker-${idx}" class="hidden absolute top-14 left-0 z-50 bg-white dark:bg-slate-800 rounded-xl shadow-xl border dark:border-slate-600 p-3 w-64">
+                                <p class="text-xs text-gray-400 mb-2 font-bold">Selecciona un icono:</p>
+                                <div class="grid grid-cols-4 gap-2">
+                                    ${SECTION_ICONS.map(i => `
+                                        <button type="button" onclick="selectIcon(${idx}, '${i.icon}', '${i.emoji}')" class="w-10 h-10 rounded-lg hover:bg-orange-100 dark:hover:bg-slate-600 flex items-center justify-center text-xl transition-colors" title="${i.label}">
+                                            ${i.emoji}
+                                        </button>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        </div>
+                        <input type="text" class="section-label flex-1 px-3 py-2 rounded-lg border dark:bg-slate-600 dark:border-slate-500 text-sm" placeholder="Título (ej: Tiempo Sugerido)" value="${sec.label || ''}">
                     </div>
-                    <textarea class="section-text w-full px-3 py-2 rounded-lg border dark:bg-slate-600 dark:border-slate-500 text-sm resize-none" rows="2" placeholder="Contenido...">${sec.text || ''}</textarea>
+                    <div class="relative">
+                        <textarea class="section-text w-full px-3 py-2 pr-10 rounded-lg border dark:bg-slate-600 dark:border-slate-500 text-sm resize-none" rows="2" placeholder="Contenido... Usa [texto](url) para links">${sec.text || ''}</textarea>
+                        <button type="button" onclick="insertLink(${idx})" class="absolute right-2 top-2 text-gray-400 hover:text-orange-500 transition-colors" title="Insertar hipervínculo">
+                            <ion-icon name="link-outline" class="text-lg"></ion-icon>
+                        </button>
+                    </div>
+                    <p class="text-[10px] text-gray-400 mt-1">Formato links: [texto visible](https://url.com)</p>
                 </div>
-            `).join('');
+            `;
         }
+
+        window.toggleIconPicker = (idx) => {
+            // Close all other pickers
+            document.querySelectorAll('[id^="icon-picker-"]').forEach(p => {
+                if (p.id !== `icon-picker-${idx}`) p.classList.add('hidden');
+            });
+            document.getElementById(`icon-picker-${idx}`).classList.toggle('hidden');
+        };
+
+        window.selectIcon = (idx, icon, emoji) => {
+            const section = document.querySelector(`[data-section-idx="${idx}"]`);
+            section.querySelector('.section-icon').value = icon;
+            section.querySelector('.section-icon-btn').innerHTML = emoji;
+            section.querySelector('.section-icon-btn').dataset.icon = icon;
+            document.getElementById(`icon-picker-${idx}`).classList.add('hidden');
+        };
+
+        window.insertLink = (idx) => {
+            const section = document.querySelector(`[data-section-idx="${idx}"]`);
+            const textarea = section.querySelector('.section-text');
+            const linkText = prompt('Texto del enlace:', 'Ver más');
+            if (!linkText) return;
+            const linkUrl = prompt('URL del enlace:', 'https://');
+            if (!linkUrl) return;
+
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            const text = textarea.value;
+            const linkMarkdown = `[${linkText}](${linkUrl})`;
+
+            textarea.value = text.substring(0, start) + linkMarkdown + text.substring(end);
+            textarea.focus();
+            textarea.setSelectionRange(start + linkMarkdown.length, start + linkMarkdown.length);
+        };
 
         window.addSection = () => {
             const container = document.getElementById('dest-secciones');
             const idx = container.children.length;
-            const html = `
-                <div class="bg-gray-50 dark:bg-slate-700/50 rounded-xl p-4 border border-gray-200 dark:border-slate-600" data-section-idx="${idx}">
-                    <div class="flex justify-between items-start mb-3">
-                        <span class="text-xs font-bold text-gray-400">Sección ${idx + 1}</span>
-                        <button onclick="removeSection(${idx})" class="text-gray-400 hover:text-red-500">
-                            <ion-icon name="trash-outline"></ion-icon>
-                        </button>
-                    </div>
-                    <div class="grid grid-cols-2 gap-3 mb-3">
-                        <input type="text" class="section-icon px-3 py-2 rounded-lg border dark:bg-slate-600 dark:border-slate-500 text-sm" placeholder="fa-icon" value="">
-                        <input type="text" class="section-label px-3 py-2 rounded-lg border dark:bg-slate-600 dark:border-slate-500 text-sm" placeholder="Label" value="">
-                    </div>
-                    <textarea class="section-text w-full px-3 py-2 rounded-lg border dark:bg-slate-600 dark:border-slate-500 text-sm resize-none" rows="2" placeholder="Contenido..."></textarea>
-                </div>
-            `;
-            container.insertAdjacentHTML('beforeend', html);
+            container.insertAdjacentHTML('beforeend', createSectionHTML({ icon: '', label: '', text: '' }, idx));
         };
 
         window.removeSection = (idx) => {
@@ -1290,6 +1351,13 @@
                 el.dataset.sectionIdx = i;
             });
         };
+
+        // Close icon pickers when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.section-icon-btn') && !e.target.closest('[id^="icon-picker-"]')) {
+                document.querySelectorAll('[id^="icon-picker-"]').forEach(p => p.classList.add('hidden'));
+            }
+        });
 
         window.uploadDestinationImage = async () => {
             const input = document.createElement('input');
