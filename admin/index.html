@@ -469,6 +469,61 @@
                             <div id="dest-secciones" class="space-y-3"></div>
                         </div>
 
+                        <!-- FAQs Section -->
+                        <div class="border-t dark:border-slate-700 pt-6">
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="flex items-center gap-2">
+                                    <ion-icon name="help-circle-outline" class="text-blue-500 text-lg"></ion-icon>
+                                    <label class="text-xs font-bold text-gray-500 uppercase">Preguntas Frecuentes
+                                        (FAQs)</label>
+                                </div>
+                                <button onclick="addFAQ()"
+                                    class="text-xs text-blue-500 hover:text-blue-600 font-bold flex items-center gap-1">
+                                    <ion-icon name="add-circle-outline"></ion-icon> Agregar FAQ
+                                </button>
+                            </div>
+                            <p class="text-xs text-gray-400 mb-3">Las FAQs aparecerán en la página del destino con
+                                Schema SEO para Google.</p>
+                            <div id="dest-faqs" class="space-y-3"></div>
+                        </div>
+
+                        <!-- Lead Magnet Section -->
+                        <div class="border-t dark:border-slate-700 pt-6">
+                            <div class="flex items-center gap-2 mb-3">
+                                <ion-icon name="gift-outline" class="text-green-500 text-lg"></ion-icon>
+                                <label class="text-xs font-bold text-gray-500 uppercase">Lead Magnet (Descargable
+                                    Gratis)</label>
+                            </div>
+                            <p class="text-xs text-gray-400 mb-3">Ofrece un recurso gratis para capturar leads. Deja
+                                vacío si no tienes uno aún.</p>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-[10px] text-gray-400 mb-1">Título del Recurso</label>
+                                    <input type="text" id="dest-leadmagnet-titulo"
+                                        class="accent-input w-full px-3 py-2 rounded-lg border dark:bg-slate-700 dark:border-slate-600 text-sm"
+                                        placeholder="Checklist de viaje a Buenos Aires">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] text-gray-400 mb-1">URL del Archivo (PDF)</label>
+                                    <input type="text" id="dest-leadmagnet-archivo"
+                                        class="accent-input w-full px-3 py-2 rounded-lg border dark:bg-slate-700 dark:border-slate-600 text-sm"
+                                        placeholder="/downloads/checklist.pdf">
+                                </div>
+                            </div>
+                            <div class="mt-3">
+                                <label class="block text-[10px] text-gray-400 mb-1">Descripción</label>
+                                <input type="text" id="dest-leadmagnet-descripcion"
+                                    class="accent-input w-full px-3 py-2 rounded-lg border dark:bg-slate-700 dark:border-slate-600 text-sm"
+                                    placeholder="Todo lo que necesitas para tu viaje...">
+                            </div>
+                            <div class="mt-3">
+                                <label class="block text-[10px] text-gray-400 mb-1">Imagen de Preview (opcional)</label>
+                                <input type="text" id="dest-leadmagnet-imagen"
+                                    class="accent-input w-full px-3 py-2 rounded-lg border dark:bg-slate-700 dark:border-slate-600 text-sm"
+                                    placeholder="https://images.unsplash.com/...">
+                            </div>
+                        </div>
+
                         <!-- Tours Placeholder -->
                         <div
                             class="bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-purple-900/20 dark:to-indigo-900/20 rounded-xl p-4 border border-purple-200 dark:border-purple-800">
@@ -1119,7 +1174,7 @@
 
         function parseDestinationMD(content) {
             const parts = content.split('---');
-            if (parts.length < 3) return { title: 'Error', secciones: [], tours: [] };
+            if (parts.length < 3) return { title: 'Error', secciones: [], tours: [], faqs: [], leadMagnet: null };
 
             const frontmatter = parts[1];
             const body = parts.slice(2).join('---').trim();
@@ -1131,10 +1186,38 @@
                 historia: extractYAMLValue(frontmatter, 'historia'),
                 secciones: extractYAMLArray(frontmatter, 'secciones'),
                 tours: extractYAMLArray(frontmatter, 'tours'),
+                faqs: extractYAMLArray(frontmatter, 'faqs'),
+                leadMagnet: extractLeadMagnet(frontmatter),
                 body: body
             };
 
             return result;
+        }
+
+        function extractLeadMagnet(yaml) {
+            const lines = yaml.split('\n');
+            let inLeadMagnet = false;
+            const lm = {};
+
+            for (const line of lines) {
+                if (line.match(/^leadMagnet:/)) {
+                    inLeadMagnet = true;
+                    continue;
+                }
+
+                if (inLeadMagnet) {
+                    if (line.match(/^\w+:/) && !line.match(/^\s+/)) {
+                        break;
+                    }
+
+                    const keyVal = line.match(/^\s+(\w+):\s*["']?(.+?)["']?\s*$/);
+                    if (keyVal) {
+                        lm[keyVal[1]] = keyVal[2].replace(/^["']|["']$/g, '');
+                    }
+                }
+            }
+
+            return Object.keys(lm).length > 0 ? lm : null;
         }
 
         function extractYAMLValue(yaml, key) {
@@ -1214,6 +1297,14 @@
             document.getElementById('dest-historia').value = currentDestination.historia;
 
             renderSectionsEditor(currentDestination.secciones);
+            renderFAQsEditor(currentDestination.faqs || []);
+
+            // Load Lead Magnet data
+            const lm = currentDestination.leadMagnet || {};
+            document.getElementById('dest-leadmagnet-titulo').value = lm.titulo || '';
+            document.getElementById('dest-leadmagnet-archivo').value = lm.archivo || '';
+            document.getElementById('dest-leadmagnet-descripcion').value = lm.descripcion || '';
+            document.getElementById('dest-leadmagnet-imagen').value = lm.imagen || '';
 
             document.getElementById('destination-modal').classList.add('open');
         };
@@ -1334,6 +1425,45 @@
             });
         };
 
+        // === FAQ MANAGEMENT ===
+        function renderFAQsEditor(faqs) {
+            const container = document.getElementById('dest-faqs');
+            container.innerHTML = faqs.map((faq, idx) => createFAQHTML(faq, idx)).join('');
+        }
+
+        function createFAQHTML(faq, idx) {
+            return `
+                <div class="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-4 border border-blue-200 dark:border-blue-800" data-faq-idx="${idx}">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-bold text-blue-600 dark:text-blue-400">FAQ ${idx + 1}</span>
+                        <button onclick="removeFAQ(${idx})" class="text-red-400 hover:text-red-600 text-sm">
+                            <ion-icon name="trash-outline"></ion-icon>
+                        </button>
+                    </div>
+                    <input type="text" class="faq-pregunta w-full px-3 py-2 rounded-lg border dark:bg-slate-700 dark:border-slate-600 text-sm mb-2" 
+                        value="${(faq.pregunta || '').replace(/"/g, '&quot;')}" placeholder="¿Pregunta frecuente?">
+                    <textarea class="faq-respuesta w-full px-3 py-2 rounded-lg border dark:bg-slate-700 dark:border-slate-600 text-sm resize-none" 
+                        rows="2" placeholder="Respuesta...">${faq.respuesta || ''}</textarea>
+                </div>
+            `;
+        }
+
+        window.addFAQ = () => {
+            const container = document.getElementById('dest-faqs');
+            const idx = container.children.length;
+            container.insertAdjacentHTML('beforeend', createFAQHTML({ pregunta: '', respuesta: '' }, idx));
+        };
+
+        window.removeFAQ = (idx) => {
+            const faqs = document.querySelectorAll('#dest-faqs > div');
+            if (faqs[idx]) faqs[idx].remove();
+            // Reindex
+            document.querySelectorAll('#dest-faqs > div').forEach((el, i) => {
+                el.querySelector('span').textContent = `FAQ ${i + 1}`;
+                el.dataset.faqIdx = i;
+            });
+        };
+
         // Close icon pickers when clicking outside
         document.addEventListener('click', (e) => {
             if (!e.target.closest('.section-icon-btn') && !e.target.closest('[id^="icon-picker-"]')) {
@@ -1396,10 +1526,30 @@
                     });
                 });
 
+                // Collect FAQs
+                const faqs = [];
+                document.querySelectorAll('#dest-faqs > div').forEach(el => {
+                    const pregunta = el.querySelector('.faq-pregunta').value.trim();
+                    const respuesta = el.querySelector('.faq-respuesta').value.trim();
+                    if (pregunta && respuesta) {
+                        faqs.push({ pregunta, respuesta });
+                    }
+                });
+
+                // Collect Lead Magnet
+                const leadMagnet = {
+                    titulo: document.getElementById('dest-leadmagnet-titulo').value.trim(),
+                    descripcion: document.getElementById('dest-leadmagnet-descripcion').value.trim(),
+                    archivo: document.getElementById('dest-leadmagnet-archivo').value.trim(),
+                    imagen: document.getElementById('dest-leadmagnet-imagen').value.trim()
+                };
+
                 // Generate new YAML content
                 const yamlContent = generateDestinationYAML({
                     title, img, desc, historia, secciones,
                     tours: currentDestination.tours,
+                    faqs,
+                    leadMagnet: leadMagnet.titulo ? leadMagnet : null,
                     body: currentDestination.body
                 });
 
@@ -1444,6 +1594,26 @@
                 yaml += `    link: "${tour.link || ''}"\n`;
                 yaml += `    imagen: "${tour.imagen || ''}"\n`;
             });
+
+            // FAQs (optional)
+            if (data.faqs && data.faqs.length > 0) {
+                yaml += 'faqs:\n';
+                data.faqs.forEach(faq => {
+                    yaml += `  - pregunta: "${faq.pregunta.replace(/"/g, '\\"')}"\n`;
+                    yaml += `    respuesta: "${faq.respuesta.replace(/"/g, '\\"')}"\n`;
+                });
+            }
+
+            // Lead Magnet (optional)
+            if (data.leadMagnet) {
+                yaml += 'leadMagnet:\n';
+                yaml += `  titulo: "${data.leadMagnet.titulo}"\n`;
+                yaml += `  descripcion: "${data.leadMagnet.descripcion.replace(/"/g, '\\"')}"\n`;
+                yaml += `  archivo: "${data.leadMagnet.archivo}"\n`;
+                if (data.leadMagnet.imagen) {
+                    yaml += `  imagen: "${data.leadMagnet.imagen}"\n`;
+                }
+            }
 
             yaml += '---\n';
             if (data.body) yaml += data.body;
