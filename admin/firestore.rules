@@ -23,6 +23,17 @@ service cloud.firestore {
     }
     
     // ==========================================
+    // TOURS (lista de tours por país)
+    // Lectura pública (para mostrar en sitio)
+    // Escritura solo admin
+    // ==========================================
+    match /config/tours {
+      allow read: if true;
+      allow write: if request.auth != null 
+        && request.auth.token.email == 'danielaranadj@gmail.com';
+    }
+    
+    // ==========================================
     // BLOQUEAR TODO LO DEMÁS
     // ==========================================
     match /{document=**} {
