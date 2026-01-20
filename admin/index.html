@@ -1680,28 +1680,7 @@
             return result;
         }
 
-        function renderDestinationsGrid() {
-            const grid = document.getElementById('destinations-grid');
-            grid.innerHTML = destinationsCache.map(dest => `
-                <div class="bg-white dark:bg-slate-800 rounded-2xl border border-gray-200 dark:border-slate-700 overflow-hidden shadow-sm hover:shadow-lg transition-shadow group cursor-pointer" onclick="openDestinationEditor('${dest.slug}')">
-                    <div class="h-32 bg-gradient-to-br from-orange-400 to-pink-500 relative overflow-hidden">
-                        ${dest.img ? `<img src="${dest.img.startsWith('/') ? 'https://danielaranadj-prog.github.io' + dest.img : dest.img}" class="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform" onerror="this.style.display='none'">` : ''}
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
-                        <div class="absolute bottom-3 left-4">
-                            <h3 class="text-white font-bold text-lg">${dest.title}</h3>
-                            <p class="text-white/80 text-xs">${dest.slug}.md</p>
-                        </div>
-                    </div>
-                    <div class="p-4">
-                        <p class="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">${dest.desc || 'Sin descripción'}</p>
-                        <div class="flex items-center gap-2 mt-3 text-xs text-gray-400">
-                            <span class="flex items-center gap-1"><ion-icon name="list-outline"></ion-icon> ${dest.secciones.length} secciones</span>
-                            <span class="flex items-center gap-1"><ion-icon name="ticket-outline"></ion-icon> ${dest.tours.length} tours</span>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-        }
+
 
         window.openDestinationEditor = (slug) => {
             currentDestination = destinationsCache.find(d => d.slug === slug);
