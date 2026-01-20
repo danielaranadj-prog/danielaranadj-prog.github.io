@@ -171,6 +171,27 @@
                                 </div>
                             </div>
 
+                            <!-- Mexico Card -->
+                            <div onclick="switchTab('destinations-mexico')"
+                                class="dash-card cursor-pointer bg-white dark:bg-slate-800 p-6 rounded-2xl border border-gray-200 dark:border-slate-700 relative overflow-hidden group hover:border-emerald-300 transition-colors">
+                                <div
+                                    class="absolute right-0 top-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                                    <ion-icon name="map-outline" class="text-8xl text-emerald-500"></ion-icon>
+                                </div>
+                                <div class="relative z-10">
+                                    <div
+                                        class="w-14 h-14 rounded-xl bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center mb-4">
+                                        <span class="text-3xl">🇲🇽</span>
+                                    </div>
+                                    <h4 class="text-lg font-bold mb-2">Destinos México</h4>
+                                    <p class="text-xs text-gray-500 mb-3">Gestionar destinos turísticos de México.</p>
+                                    <span
+                                        class="inline-flex items-center gap-1 text-[10px] bg-green-100 text-green-700 px-2 py-1 rounded-full font-semibold">
+                                        <ion-icon name="checkmark-circle" class="text-xs"></ion-icon> ACTIVO
+                                    </span>
+                                </div>
+                            </div>
+
                             <!-- España Card (En Construcción) -->
                             <div onclick="switchTab('destinations-espana')"
                                 class="dash-card cursor-pointer bg-white dark:bg-slate-800 p-6 rounded-2xl border border-gray-200 dark:border-slate-700 relative overflow-hidden group hover:border-amber-300 transition-colors">
@@ -360,6 +381,50 @@
                 <div id="destinations-empty" class="hidden text-center py-20">
                     <ion-icon name="map-outline" class="text-6xl text-gray-300 dark:text-slate-600"></ion-icon>
                     <p class="text-gray-400 mt-4">No se encontraron destinos</p>
+                </div>
+            </div>
+
+            <!-- VISTA MÉXICO -->
+            <div id="view-destinations-mexico" class="hidden space-y-6">
+                <!-- Header -->
+                <div class="flex justify-between items-center border-b pb-4 dark:border-slate-700 mb-6">
+                    <div class="flex items-center gap-2">
+                        <button onclick="switchTab('home')" class="text-gray-400 hover:text-orange-500">
+                            <ion-icon name="arrow-back-outline"></ion-icon>
+                        </button>
+                        <div>
+                            <h2 class="text-xl font-bold flex items-center gap-2">
+                                <span class="text-2xl">🇲🇽</span> Destinos México
+                            </h2>
+                            <p class="text-xs text-gray-400 mt-1">Edita información de destinos turísticos de México
+                            </p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button onclick="openNewDestinationModal()"
+                            class="btn-primary-mexico bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2">
+                            <ion-icon name="add-outline"></ion-icon> Nuevo Destino
+                        </button>
+                        <button onclick="loadDestinationsMexico()" class="text-gray-400 hover:text-emerald-500 p-2"
+                            title="Recargar">
+                            <ion-icon name="refresh-outline" class="text-xl"></ion-icon>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Loader -->
+                <div id="destinations-mexico-loader" class="text-center py-20 hidden">
+                    <span class="loader border-t-emerald-500"></span>
+                    <p class="text-gray-400 text-sm mt-4">Cargando destinos de México...</p>
+                </div>
+
+                <!-- Grid de Destinos -->
+                <div id="destinations-mexico-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+
+                <!-- Empty State -->
+                <div id="destinations-mexico-empty" class="hidden text-center py-20">
+                    <ion-icon name="map-outline" class="text-6xl text-gray-300 dark:text-slate-600"></ion-icon>
+                    <p class="text-gray-400 mt-4">No se encontraron destinos en México</p>
                 </div>
             </div>
 
@@ -1066,10 +1131,11 @@
         }
 
         // --- NAVIGATION LOGIC (MODIFICADO PARA EL GRID) ---
+        // --- NAVIGATION LOGIC (MODIFICADO PARA EL GRID) ---
         let toursLoaded = false;
         window.switchTab = (tab) => {
             // Ocultar todas las vistas
-            ['home', 'posts', 'authors', 'destinations', 'destinations-espana', 'tours', 'affiliates'].forEach(t => {
+            ['home', 'posts', 'authors', 'destinations', 'destinations-mexico', 'destinations-espana', 'tours', 'affiliates'].forEach(t => {
                 const view = document.getElementById(`view-${t}`);
                 if (view) view.classList.add('hidden');
             });
@@ -1081,7 +1147,16 @@
             if (tab === 'posts' && cachedPosts.length === 0) loadPosts();
             if (tab === 'authors' && Object.keys(authorsData).length === 0) fetchAuthors();
             if (tab === 'affiliates' && !affiliatesLoaded) loadAffiliates();
-            if (tab === 'destinations' && destinationsCache.length === 0) loadDestinations();
+
+            if (tab === 'destinations') {
+                currentDestinationsRepo = 'argentina';
+                if (destinationsCache.length === 0) loadDestinations();
+            }
+            if (tab === 'destinations-mexico') {
+                currentDestinationsRepo = 'mexico';
+                if (destinationsCacheMexico.length === 0) loadDestinationsMexico();
+            }
+
             if (tab === 'tours' && !toursLoaded) {
                 toursLoaded = true;
                 if (typeof initToursManager === 'function') initToursManager();
@@ -1346,25 +1421,49 @@
         // ==================================================
         // DESTINATIONS MANAGER
         // ==================================================
-        const DESTINATIONS_REPO = 'argentina';
+        // Configuración de Repositorios (dynamic)
+        let currentDestinationsRepo = 'argentina'; // default
+        const REPOS = {
+            'argentina': 'argentina', // danielaranadj-prog/argentina
+            'mexico': 'mexico',       // danielaranadj-prog/mexico
+            'espana': 'destinos_espana'
+        };
         const DESTINATIONS_PATH = 'src/content/destinos';
-        let currentDestination = null;
-        let destinationsCache = [];
 
-        // Fetch específico para destinos (repo diferente al de posts)
+        let currentDestination = null;
+        let destinationsCache = [];        // Cache Argentina
+        let destinationsCacheMexico = [];  // Cache México 
+        let isCreatingNewDestination = false;
+
+        // Fetch específico para destinos (apunta al repo actual)
         async function ghFetchDestinos(ep, m = 'GET', b = null) {
+            // Verificar qué repo usar
+            const targetRepo = REPOS[currentDestinationsRepo] || 'argentina';
+
             const opts = { method: m, headers: { 'Authorization': `token ${githubConfig.githubToken}`, 'Content-Type': 'application/json' } };
             if (b) opts.body = JSON.stringify(b);
-            const res = await fetch(`https://api.github.com/repos/${githubConfig.repoOwner}/${DESTINATIONS_REPO}${ep}`, opts);
-            if (!res.ok) throw new Error(`GitHub: ${res.status}`);
+            const res = await fetch(`https://api.github.com/repos/${githubConfig.repoOwner}/${targetRepo}${ep}`, opts);
+            if (!res.ok) throw new Error(`GitHub (${targetRepo}): ${res.status}`);
             return res.json();
         }
 
-
+        // Cargar Destinos de Argentina (Wrapper)
         window.loadDestinations = async () => {
-            const loader = document.getElementById('destinations-loader');
-            const grid = document.getElementById('destinations-grid');
-            const empty = document.getElementById('destinations-empty');
+            currentDestinationsRepo = 'argentina';
+            await loadDestinationsGeneric('destinations-loader', 'destinations-grid', 'destinations-empty', destinationsCache, (data) => destinationsCache = data);
+        };
+
+        // Cargar Destinos de México (Wrapper)
+        window.loadDestinationsMexico = async () => {
+            currentDestinationsRepo = 'mexico';
+            await loadDestinationsGeneric('destinations-mexico-loader', 'destinations-mexico-grid', 'destinations-mexico-empty', destinationsCacheMexico, (data) => destinationsCacheMexico = data);
+        };
+
+        // Función Genérica de Carga
+        async function loadDestinationsGeneric(loaderId, gridId, emptyId, cacheVar, setCacheCallback) {
+            const loader = document.getElementById(loaderId);
+            const grid = document.getElementById(gridId);
+            const empty = document.getElementById(emptyId);
 
             loader.classList.remove('hidden');
             grid.innerHTML = '';
@@ -1379,7 +1478,7 @@
                     return;
                 }
 
-                destinationsCache = [];
+                const newCache = [];
 
                 for (const file of mdFiles) {
                     const data = await ghFetchDestinos(`/contents/${file.path}`);
@@ -1389,17 +1488,50 @@
                     parsed.sha = data.sha;
                     parsed.path = file.path;
                     parsed._rawContent = content;
-                    destinationsCache.push(parsed);
+                    newCache.push(parsed);
                 }
 
-                renderDestinationsGrid();
+                setCacheCallback(newCache);
+                renderDestinationsGridGeneric(gridId, newCache);
 
             } catch (e) {
                 showToast("Error cargando destinos: " + e.message, "error");
             } finally {
                 loader.classList.add('hidden');
             }
-        };
+        }
+
+        function renderDestinationsGridGeneric(gridId, data) {
+            const grid = document.getElementById(gridId);
+            // Determinar prefijo de URL de imagen según repo
+            const githubPagePrefix = currentDestinationsRepo === 'mexico' ? '/mexico' : '';
+
+            grid.innerHTML = data.map(dest => `
+                <div class="bg-white dark:bg-slate-800 rounded-2xl border border-gray-200 dark:border-slate-700 overflow-hidden shadow-sm hover:shadow-lg transition-shadow group cursor-pointer" onclick="openDestinationEditor('${dest.slug}')">
+                    <div class="h-32 bg-gradient-to-br from-orange-400 to-pink-500 relative overflow-hidden">
+                        ${dest.img ? `<img src="${dest.img.startsWith('/') ? 'https://danielaranadj-prog.github.io' + githubPagePrefix + dest.img : dest.img}" class="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform" onerror="this.style.display='none'">` : ''}
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+                        <div class="absolute bottom-3 left-4">
+                            <h3 class="text-white font-bold text-lg">${dest.title}</h3>
+                            <p class="text-white/80 text-xs">${dest.slug}.md</p>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <p class="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">${dest.desc || 'Sin descripción'}</p>
+                        <div class="flex items-center gap-2 mt-3 text-xs text-gray-400">
+                            <span class="flex items-center gap-1"><ion-icon name="list-outline"></ion-icon> ${dest.secciones.length} secciones</span>
+                            <span class="flex items-center gap-1"><ion-icon name="ticket-outline"></ion-icon> ${dest.tours.length} tours</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Reemplazar la función global renderDestinationsGrid por uso interno si es necesario, pero mantenemos compatibilidad
+        function renderDestinationsGrid() {
+            // Fallback para Argentina
+            renderDestinationsGridGeneric('destinations-grid', destinationsCache);
+        }
 
         function parseDestinationMD(content) {
             const parts = content.split('---');
@@ -1615,7 +1747,7 @@
             document.getElementById('destination-modal').classList.add('open');
         };
 
-        let isCreatingNewDestination = false;
+
 
         window.openNewDestinationModal = () => {
             // Set to create mode
