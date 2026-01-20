@@ -1008,6 +1008,12 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
+        // Expose Firestore globally for tours-manager.js
+        window.firestoreDB = db;
+        window.firestoreDoc = doc;
+        window.firestoreGetDoc = getDoc;
+        window.firestoreSetDoc = setDoc;
+
         let githubConfig = null;
         let authorsData = {};
         let authorsSha = null;

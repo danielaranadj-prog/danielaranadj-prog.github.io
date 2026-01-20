@@ -170,11 +170,11 @@ window.saveTour = async () => {
 // Firestore integration
 async function loadToursFromFirestore() {
     try {
-        const docRef = firebase.firestore().collection('config').doc('tours');
-        const doc = await docRef.get();
+        const docRef = window.firestoreDoc(window.firestoreDB, 'config', 'tours');
+        const docSnap = await window.firestoreGetDoc(docRef);
 
-        if (doc.exists) {
-            const data = doc.data();
+        if (docSnap.exists()) {
+            const data = docSnap.data();
             allTours = {
                 argentina: data.argentina || [],
                 espana: data.espana || [],
@@ -188,8 +188,8 @@ async function loadToursFromFirestore() {
 
 async function saveToursToFirestore() {
     try {
-        const docRef = firebase.firestore().collection('config').doc('tours');
-        await docRef.set(allTours, { merge: true });
+        const docRef = window.firestoreDoc(window.firestoreDB, 'config', 'tours');
+        await window.firestoreSetDoc(docRef, allTours, { merge: true });
     } catch (error) {
         console.error('Error saving tours:', error);
         showToast('Error al guardar', 'error');
