@@ -2099,12 +2099,16 @@
             yaml += `desc: "${data.desc}"\n`;
             yaml += `historia: "${data.historia.replace(/"/g, '\\"')}"\n`;
 
-            yaml += 'secciones:\n';
-            data.secciones.forEach(sec => {
-                yaml += `  - icon: "${sec.icon}"\n`;
-                yaml += `    label: "${sec.label}"\n`;
-                yaml += `    text: "${sec.text.replace(/"/g, '\\"')}"\n`;
-            });
+            if (data.secciones && data.secciones.length > 0) {
+                yaml += 'secciones:\n';
+                data.secciones.forEach(sec => {
+                    yaml += `  - icon: "${sec.icon}"\n`;
+                    yaml += `    label: "${sec.label}"\n`;
+                    yaml += `    text: "${sec.text.replace(/"/g, '\\"')}"\n`;
+                });
+            } else {
+                yaml += 'secciones: []\n';
+            }
 
             // Tours (handle empty array properly)
             if (data.tours && data.tours.length > 0) {
