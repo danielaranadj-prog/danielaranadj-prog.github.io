@@ -32,6 +32,7 @@
     </script>
 
     <link rel="stylesheet" href="css/admin.css">
+    <script src="js/v3-editor.js"></script>
 </head>
 
 <body class="antialiased min-h-screen flex flex-col">
@@ -546,19 +547,104 @@
                             </div>
                         </div>
 
-                        <!-- Tours Placeholder -->
-                        <div
-                            class="bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-purple-900/20 dark:to-indigo-900/20 rounded-xl p-4 border border-purple-200 dark:border-purple-800">
-                            <div class="flex items-center gap-3">
-                                <div
-                                    class="w-10 h-10 rounded-lg bg-purple-100 dark:bg-purple-900/50 flex items-center justify-center">
-                                    <ion-icon name="ticket-outline" class="text-purple-600 text-xl"></ion-icon>
+                        <!-- V3: CHECKLIST -->
+                        <div class="border-t dark:border-slate-700 pt-6">
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="flex items-center gap-2">
+                                    <ion-icon name="checkbox-outline" class="text-emerald-500 text-lg"></ion-icon>
+                                    <label class="text-xs font-bold text-gray-500 uppercase">Checklist de
+                                        Supervivencia</label>
+                                </div>
+                                <button onclick="addChecklist()"
+                                    class="text-xs text-emerald-500 hover:text-emerald-600 font-bold flex items-center gap-1">
+                                    <ion-icon name="add-circle-outline"></ion-icon> Agregar
+                                </button>
+                            </div>
+                            <p class="text-xs text-gray-400 mb-3">Tips esenciales: Dinero, Transporte, eSIM, Seguridad.
+                            </p>
+                            <div id="dest-checklist" class="space-y-3"></div>
+                        </div>
+
+                        <!-- V3: BARRIOS -->
+                        <div class="border-t dark:border-slate-700 pt-6">
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="flex items-center gap-2">
+                                    <ion-icon name="location-outline" class="text-purple-500 text-lg"></ion-icon>
+                                    <label class="text-xs font-bold text-gray-500 uppercase">Barrios (Dónde
+                                        alojarse)</label>
+                                </div>
+                                <button onclick="addBarrio()"
+                                    class="text-xs text-purple-500 hover:text-purple-600 font-bold flex items-center gap-1">
+                                    <ion-icon name="add-circle-outline"></ion-icon> Agregar
+                                </button>
+                            </div>
+                            <p class="text-xs text-gray-400 mb-3">Barrios con "vibra" e "ideal para".</p>
+                            <div id="dest-barrios" class="space-y-3"></div>
+                        </div>
+
+                        <!-- V3: EXPERIENCIAS (Top 7) -->
+                        <div class="border-t dark:border-slate-700 pt-6">
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="flex items-center gap-2">
+                                    <ion-icon name="star-outline" class="text-amber-500 text-lg"></ion-icon>
+                                    <label class="text-xs font-bold text-gray-500 uppercase">Experiencias (Top
+                                        7)</label>
+                                </div>
+                                <button onclick="addExperiencia()"
+                                    class="text-xs text-amber-500 hover:text-amber-600 font-bold flex items-center gap-1">
+                                    <ion-icon name="add-circle-outline"></ion-icon> Agregar
+                                </button>
+                            </div>
+                            <p class="text-xs text-gray-400 mb-3">Mix de GRATIS/PREMIUM con tags y CTAs afiliados.</p>
+                            <div id="dest-experiencias" class="space-y-3"></div>
+                        </div>
+
+                        <!-- V3: PREMIUM GUIDE -->
+                        <div class="border-t dark:border-slate-700 pt-6">
+                            <div class="flex items-center gap-2 mb-3">
+                                <ion-icon name="diamond-outline" class="text-yellow-500 text-lg"></ion-icon>
+                                <label class="text-xs font-bold text-gray-500 uppercase">Guía Premium (Upsell)</label>
+                            </div>
+                            <p class="text-xs text-gray-400 mb-3">Configura la oferta de guía premium con precio
+                                tachado.</p>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-[10px] text-gray-400 mb-1">Título</label>
+                                    <input type="text" id="dest-premium-titulo"
+                                        class="accent-input w-full px-3 py-2 rounded-lg border dark:bg-slate-700 text-sm"
+                                        placeholder="¿Quieres el viaje PERFECTO?">
                                 </div>
                                 <div>
-                                    <h4 class="font-bold text-sm text-purple-800 dark:text-purple-300">Tours &
-                                        Experiencias</h4>
-                                    <p class="text-xs text-purple-600 dark:text-purple-400">Widget de
-                                        Civitatis/GetYourGuide (Próximamente)</p>
+                                    <label class="block text-[10px] text-gray-400 mb-1">Subtítulo</label>
+                                    <input type="text" id="dest-premium-subtitulo"
+                                        class="accent-input w-full px-3 py-2 rounded-lg border dark:bg-slate-700 text-sm"
+                                        placeholder="No pierdas horas investigando...">
+                                </div>
+                            </div>
+                            <div class="mt-3">
+                                <label class="block text-[10px] text-gray-400 mb-1">Beneficios (uno por línea)</label>
+                                <textarea id="dest-premium-beneficios" rows="4"
+                                    class="accent-input w-full px-3 py-2 rounded-lg border dark:bg-slate-700 text-sm resize-none"
+                                    placeholder="Itinerarios detallados día por día&#10;Mapas offline secretos&#10;Restaurantes de locales"></textarea>
+                            </div>
+                            <div class="grid grid-cols-3 gap-4 mt-3">
+                                <div>
+                                    <label class="block text-[10px] text-gray-400 mb-1">Precio Original</label>
+                                    <input type="text" id="dest-premium-precioOriginal"
+                                        class="accent-input w-full px-3 py-2 rounded-lg border dark:bg-slate-700 text-sm"
+                                        placeholder="29.99" value="29.99">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] text-gray-400 mb-1">Precio Oferta</label>
+                                    <input type="text" id="dest-premium-precioOferta"
+                                        class="accent-input w-full px-3 py-2 rounded-lg border dark:bg-slate-700 text-sm"
+                                        placeholder="9.99" value="9.99">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] text-gray-400 mb-1">Link Checkout</label>
+                                    <input type="text" id="dest-premium-link"
+                                        class="accent-input w-full px-3 py-2 rounded-lg border dark:bg-slate-700 text-sm"
+                                        placeholder="/planifica/?destino=slug">
                                 </div>
                             </div>
                         </div>
@@ -1209,11 +1295,68 @@
                 secciones: extractYAMLArray(frontmatter, 'secciones'),
                 tours: extractYAMLArray(frontmatter, 'tours'),
                 faqs: extractYAMLArray(frontmatter, 'faqs'),
-                leadMagnet: extractLeadMagnet(frontmatter),
+                leadMagnet: extractNestedObject(frontmatter, 'leadMagnet'),
+                // V3 fields
+                checklist: extractYAMLArray(frontmatter, 'checklist'),
+                barrios: extractYAMLArray(frontmatter, 'barrios'),
+                experiencias: extractYAMLArray(frontmatter, 'experiencias'),
+                premiumGuide: extractNestedObject(frontmatter, 'premiumGuide'),
                 body: body
             };
 
             return result;
+        }
+
+        function extractNestedObject(yaml, key) {
+            const lines = yaml.split('\n');
+            let inObject = false;
+            let depth = 0;
+            const obj = {};
+            let arrayKey = null;
+            let arrayItems = [];
+
+            for (const line of lines) {
+                if (line.match(new RegExp(`^${key}:`))) {
+                    inObject = true;
+                    continue;
+                }
+
+                if (inObject) {
+                    if (line.match(/^\w+:/) && !line.match(/^\s+/)) {
+                        break;
+                    }
+
+                    // Check for array property
+                    const arrayMatch = line.match(/^\s{2}(\w+):$/);
+                    if (arrayMatch) {
+                        if (arrayKey && arrayItems.length > 0) {
+                            obj[arrayKey] = arrayItems;
+                        }
+                        arrayKey = arrayMatch[1];
+                        arrayItems = [];
+                        continue;
+                    }
+
+                    // Array item
+                    const arrayItemMatch = line.match(/^\s{4}-\s*["']?(.+?)["']?$/);
+                    if (arrayItemMatch && arrayKey) {
+                        arrayItems.push(arrayItemMatch[1].replace(/^["']|["']$/g, ''));
+                        continue;
+                    }
+
+                    const keyVal = line.match(/^\s+(\w+):\s*["']?(.+?)["']?\s*$/);
+                    if (keyVal) {
+                        obj[keyVal[1]] = keyVal[2].replace(/^["']|["']$/g, '');
+                    }
+                }
+            }
+
+            // Save last array
+            if (arrayKey && arrayItems.length > 0) {
+                obj[arrayKey] = arrayItems;
+            }
+
+            return Object.keys(obj).length > 0 ? obj : null;
         }
 
         function extractLeadMagnet(yaml) {
@@ -1334,6 +1477,20 @@
             document.getElementById('dest-leadmagnet-descripcion').value = lm.descripcion || '';
             document.getElementById('dest-leadmagnet-imagen').value = lm.imagen || '';
 
+            // V3: Load Checklist, Barrios, Experiencias, Premium Guide
+            if (typeof renderChecklistEditor === 'function') {
+                renderChecklistEditor(currentDestination.checklist || []);
+            }
+            if (typeof renderBarriosEditor === 'function') {
+                renderBarriosEditor(currentDestination.barrios || []);
+            }
+            if (typeof renderExperienciasEditor === 'function') {
+                renderExperienciasEditor(currentDestination.experiencias || []);
+            }
+            if (typeof loadPremiumGuide === 'function') {
+                loadPremiumGuide(currentDestination.premiumGuide || {});
+            }
+
             document.getElementById('destination-modal').classList.add('open');
         };
 
@@ -1366,6 +1523,12 @@
             document.getElementById('dest-leadmagnet-archivo').value = '';
             document.getElementById('dest-leadmagnet-descripcion').value = '';
             document.getElementById('dest-leadmagnet-imagen').value = '';
+
+            // V3: Clear containers
+            document.getElementById('dest-checklist').innerHTML = '';
+            document.getElementById('dest-barrios').innerHTML = '';
+            document.getElementById('dest-experiencias').innerHTML = '';
+            if (typeof loadPremiumGuide === 'function') loadPremiumGuide({});
 
             // Add default sections
             addSection();
@@ -1636,12 +1799,22 @@
                     imagen: document.getElementById('dest-leadmagnet-imagen').value.trim()
                 };
 
+                // V3: Collect data
+                const checklist = typeof collectChecklist === 'function' ? collectChecklist() : [];
+                const barrios = typeof collectBarrios === 'function' ? collectBarrios() : [];
+                const experiencias = typeof collectExperiencias === 'function' ? collectExperiencias() : [];
+                const premiumGuide = typeof collectPremiumGuide === 'function' ? collectPremiumGuide() : null;
+
                 // Generate YAML content
                 const yamlContent = generateDestinationYAML({
                     title, img, desc, historia, secciones,
                     tours: isCreatingNewDestination ? [] : currentDestination.tours,
                     faqs,
                     leadMagnet: leadMagnet.titulo ? leadMagnet : null,
+                    checklist,
+                    barrios,
+                    experiencias,
+                    premiumGuide,
                     body: isCreatingNewDestination ? '' : currentDestination.body
                 });
 
@@ -1724,6 +1897,61 @@
                 if (data.leadMagnet.imagen) {
                     yaml += `  imagen: "${data.leadMagnet.imagen}"\n`;
                 }
+            }
+
+            // V3: Checklist
+            if (data.checklist && data.checklist.length > 0) {
+                yaml += 'checklist:\n';
+                data.checklist.forEach(item => {
+                    yaml += `  - icono: "${item.icono || 'fa-check'}"\n`;
+                    yaml += `    titulo: "${item.titulo}"\n`;
+                    yaml += `    emoji: "${item.emoji || '✅'}"\n`;
+                    yaml += `    detalle: "${(item.detalle || '').replace(/"/g, '\\"')}"\n`;
+                    if (item.cta) yaml += `    cta: "${item.cta}"\n`;
+                    if (item.ctaLink) yaml += `    ctaLink: "${item.ctaLink}"\n`;
+                    if (item.ctaRecomendado) yaml += `    ctaRecomendado: true\n`;
+                });
+            }
+
+            // V3: Barrios
+            if (data.barrios && data.barrios.length > 0) {
+                yaml += 'barrios:\n';
+                data.barrios.forEach(b => {
+                    yaml += `  - nombre: "${b.nombre}"\n`;
+                    yaml += `    vibra: "${b.vibra || ''}"\n`;
+                    yaml += `    idealPara: "${b.idealPara || ''}"\n`;
+                    if (b.imagen) yaml += `    imagen: "${b.imagen}"\n`;
+                    if (b.colorTag) yaml += `    colorTag: "${b.colorTag}"\n`;
+                });
+            }
+
+            // V3: Experiencias
+            if (data.experiencias && data.experiencias.length > 0) {
+                yaml += 'experiencias:\n';
+                data.experiencias.forEach(e => {
+                    yaml += `  - titulo: "${e.titulo}"\n`;
+                    yaml += `    icono: "${e.icono || '🎯'}"\n`;
+                    yaml += `    tag: "${e.tag || 'GRATIS'}"\n`;
+                    yaml += `    tagColor: "${e.tagColor || '#10b981'}"\n`;
+                    yaml += `    descripcion: "${(e.descripcion || '').replace(/"/g, '\\"')}"\n`;
+                    if (e.cta) yaml += `    cta: "${e.cta}"\n`;
+                    if (e.ctaLink) yaml += `    ctaLink: "${e.ctaLink}"\n`;
+                });
+            }
+
+            // V3: Premium Guide
+            if (data.premiumGuide) {
+                yaml += 'premiumGuide:\n';
+                yaml += `  titulo: "${data.premiumGuide.titulo}"\n`;
+                yaml += `  subtitulo: "${data.premiumGuide.subtitulo || ''}"\n`;
+                yaml += '  beneficios:\n';
+                (data.premiumGuide.beneficios || []).forEach(b => {
+                    yaml += `    - "${b}"\n`;
+                });
+                yaml += `  precioOriginal: "${data.premiumGuide.precioOriginal || '29.99'}"\n`;
+                yaml += `  precioOferta: "${data.premiumGuide.precioOferta || '9.99'}"\n`;
+                yaml += `  moneda: "${data.premiumGuide.moneda || 'USD'}"\n`;
+                yaml += `  link: "${data.premiumGuide.link || ''}"\n`;
             }
 
             yaml += '---\n';
