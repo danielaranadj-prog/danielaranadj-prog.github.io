@@ -1683,7 +1683,11 @@
 
 
         window.openDestinationEditor = (slug) => {
-            currentDestination = destinationsCache.find(d => d.slug === slug);
+            // Determinar en qué cache buscar
+            let targetCache = destinationsCache;
+            if (currentDestinationsRepo === 'mexico') targetCache = destinationsCacheMexico;
+
+            currentDestination = targetCache.find(d => d.slug === slug);
             if (!currentDestination) return;
 
             // Set to edit mode
@@ -2073,7 +2077,12 @@
                 }
 
                 closeDestinationModal();
-                loadDestinations();
+                closeDestinationModal();
+                if (currentDestinationsRepo === 'mexico') {
+                    loadDestinationsMexico();
+                } else {
+                    loadDestinations();
+                }
 
             } catch (e) {
                 showToast('Error: ' + e.message, 'error');
