@@ -480,6 +480,15 @@
                                     type="text" id="tag-input" class="flex-1 text-sm bg-transparent outline-none"
                                     placeholder="Tags (Enter)"></div>
                             <div id="tags-container" class="flex flex-wrap gap-2"></div>
+
+                            <!-- Video Button -->
+                            <div class="pt-2">
+                                <button onclick="insertVideoLink()"
+                                    class="flex items-center gap-2 px-3 py-2 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-lg text-sm font-bold hover:bg-red-200 dark:hover:bg-red-900/50 transition-colors w-full justify-center">
+                                    <ion-icon name="logo-youtube" class="text-lg"></ion-icon> Insertar Video (YouTube /
+                                    TikTok)
+                                </button>
+                            </div>
                         </div>
                     </div>
 
@@ -607,6 +616,18 @@
                 setup: function (editor) {
                     editor.on('init', function () { editor.setContent(initialContent); });
                     editor.on('input change keyup', function () { renderLivePreview(); });
+
+                    editor.ui.registry.addButton('customVideoBtn', {
+                        icon: 'embed',
+                        tooltip: 'Insertar Video (YouTube/TikTok)',
+                        onAction: function (_) {
+                            const url = prompt('Pega el enlace del video (YouTube o TikTok):');
+                            if (url && url.trim()) {
+                                const cleanUrl = url.trim();
+                                editor.insertContent(`\n\n${cleanUrl}\n\n`);
+                            }
+                        }
+                    });
                 },
                 images_upload_handler: (blobInfo, progress) => new Promise(async (resolve, reject) => {
                     try {
@@ -619,6 +640,16 @@
                 })
             });
         }
+
+        window.insertVideoLink = () => {
+            const url = prompt('Pega el enlace del video (YouTube o TikTok):');
+            if (url && url.trim()) {
+                const cleanUrl = url.trim();
+                if (tinymce.activeEditor) {
+                    tinymce.activeEditor.insertContent(`\n\n${cleanUrl}\n\n`);
+                }
+            }
+        };
 
         function renderLivePreview() {
             let content = '';
