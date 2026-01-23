@@ -674,8 +674,7 @@
                             <div class="flex items-center justify-between mb-3">
                                 <div class="flex items-center gap-2">
                                     <ion-icon name="star-outline" class="text-amber-500 text-lg"></ion-icon>
-                                    <label class="text-xs font-bold text-gray-500 uppercase">Experiencias (Top
-                                        7)</label>
+                                    <label class="text-xs font-bold text-gray-500 uppercase">Experiencias</label>
                                 </div>
                                 <button onclick="addExperiencia()"
                                     class="text-xs text-amber-500 hover:text-amber-600 font-bold flex items-center gap-1">
@@ -1953,6 +1952,9 @@
                     reader.onload = async (ev) => {
                         const base64 = ev.target.result.split(',')[1];
                         const filename = file.name.toLowerCase().replace(/[^a-z0-9.]/g, '-');
+
+                        // Determinar ruta de subida (física en el repo)
+                        // Para México, usamos public/uploads igual que en Argentina
                         const path = `public/uploads/${filename}`;
 
                         await ghFetchDestinos(`/contents/${path}`, 'PUT', {
@@ -1960,7 +1962,13 @@
                             content: base64
                         });
 
-                        document.getElementById('dest-img').value = `/uploads/${filename}`;
+                        // Determinar valor para el markdown (URL relativa)
+                        let displayPath = `/uploads/${filename}`;
+                        if (currentDestinationsRepo === 'mexico') {
+                            displayPath = `/mexico/uploads/${filename}`;
+                        }
+
+                        document.getElementById('dest-img').value = displayPath;
                         showToast('Imagen subida correctamente');
                     };
                     reader.readAsDataURL(compressed);

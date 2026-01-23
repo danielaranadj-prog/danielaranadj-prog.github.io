@@ -522,7 +522,13 @@
         // TURNDOWN
         const turndownService = new TurndownService({ headingStyle: 'atx', codeBlockStyle: 'fenced', bulletListMarker: '-' });
         turndownService.use(turndownPluginGfm.gfm);
-        turndownService.addRule('iframe', { filter: 'iframe', replacement: function (content, node) { return '\n\n' + node.outerHTML + '\n\n'; } });
+        turndownService.addRule('iframe', {
+            filter: 'iframe',
+            replacement: function (content, node) {
+                const src = node.getAttribute('src');
+                return src ? '\n\n' + src + '\n\n' : '';
+            }
+        });
 
         // FIREBASE
         const firebaseConfig = {
