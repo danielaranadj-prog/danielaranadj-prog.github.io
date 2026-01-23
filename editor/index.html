@@ -651,12 +651,28 @@
         }
 
         window.insertVideoLink = () => {
-            const url = prompt('Pega el enlace del video (YouTube o TikTok):');
-            if (url && url.trim()) {
-                const cleanUrl = url.trim();
-                if (tinymce.activeEditor) {
-                    tinymce.activeEditor.insertContent(`\n\n${cleanUrl}\n\n`);
+            const input = prompt('Pega el enlace o código embed (YouTube/TikTok):');
+            if (!input || !input.trim()) return;
+
+            let cleanUrl = input.trim();
+
+            // Basic check for HTML embed code
+            if (cleanUrl.includes('<iframe') || cleanUrl.includes('<blockquote')) {
+                const div = document.createElement('div');
+                div.innerHTML = cleanUrl;
+
+                const iframe = div.querySelector('iframe');
+                const blockquote = div.querySelector('blockquote');
+
+                if (iframe && iframe.src) {
+                    cleanUrl = iframe.src;
+                } else if (blockquote && blockquote.getAttribute('cite')) {
+                    cleanUrl = blockquote.getAttribute('cite');
                 }
+            }
+
+            if (tinymce.activeEditor) {
+                tinymce.activeEditor.insertContent(`\n\n${cleanUrl}\n\n`);
             }
         };
 
