@@ -538,6 +538,15 @@
                 return src ? '\n\n' + src + '\n\n' : '';
             }
         });
+        turndownService.addRule('tiktok', {
+            filter: function (node) {
+                return node.nodeName === 'BLOCKQUOTE' && node.classList.contains('tiktok-embed');
+            },
+            replacement: function (content, node) {
+                const cite = node.getAttribute('cite');
+                return cite ? '\n\n' + cite + '\n\n' : '';
+            }
+        });
 
         // FIREBASE
         const firebaseConfig = {
