@@ -145,6 +145,35 @@
 
                     <div class="space-y-4">
                         <h3 class="text-xs font-bold uppercase text-gray-400 tracking-wider flex items-center gap-2">
+                            <ion-icon name="analytics-outline"></ion-icon> Analíticas
+                        </h3>
+
+                        <div onclick="switchTab('stats')"
+                            class="dash-card cursor-pointer bg-white dark:bg-slate-800 p-6 rounded-2xl border border-gray-200 dark:border-slate-700 relative overflow-hidden group">
+                            <div
+                                class="absolute right-0 top-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                                <ion-icon name="bar-chart-outline" class="text-8xl text-indigo-500"></ion-icon>
+                            </div>
+                            <div class="relative z-10">
+                                <div
+                                    class="w-14 h-14 rounded-xl bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center mb-4">
+                                    <ion-icon name="bar-chart-outline" class="text-2xl text-indigo-600"></ion-icon>
+                                </div>
+                                <h4 class="text-lg font-bold mb-2">Estadísticas</h4>
+                                <p class="text-xs text-gray-500 mb-3">Visitas y rendimiento del blog.</p>
+                                <div class="flex items-center justify-between">
+                                    <span id="stats-total-views-badge"
+                                        class="inline-flex items-center gap-1 text-[10px] bg-indigo-100 text-indigo-700 px-2 py-1 rounded-full font-semibold">
+                                        <ion-icon name="eye-outline" class="text-xs"></ion-icon>
+                                        <span id="stats-total-views-summary">--</span> vistas
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <h3 class="text-xs font-bold uppercase text-gray-400 tracking-wider flex items-center gap-2">
                             <ion-icon name="airplane-outline"></ion-icon> Gestión de Destinos
                         </h3>
 
@@ -425,6 +454,71 @@
                 <div id="destinations-mexico-empty" class="hidden text-center py-20">
                     <ion-icon name="map-outline" class="text-6xl text-gray-300 dark:text-slate-600"></ion-icon>
                     <p class="text-gray-400 mt-4">No se encontraron destinos en México</p>
+                </div>
+            </div>
+
+            <!-- VISTA ESTADÍSTICAS -->
+            <div id="view-stats" class="hidden space-y-6">
+                <div class="flex justify-between items-center border-b pb-4 dark:border-slate-700 mb-6">
+                    <div class="flex items-center gap-2">
+                        <button onclick="switchTab('home')" class="text-gray-400 hover:text-orange-500">
+                            <ion-icon name="arrow-back-outline"></ion-icon>
+                        </button>
+                        <div>
+                            <h2 class="text-xl font-bold flex items-center gap-2">
+                                <ion-icon name="bar-chart-outline" class="text-indigo-500"></ion-icon> Estadísticas
+                            </h2>
+                            <p class="text-xs text-gray-400 mt-1">Rendimiento de tus publicaciones</p>
+                        </div>
+                    </div>
+                    <button onclick="loadStats()" class="text-gray-400 hover:text-orange-500 p-2" title="Recargar">
+                        <ion-icon name="refresh-outline" class="text-xl"></ion-icon>
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div
+                        class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-gray-200 dark:border-slate-700 shadow-sm relative overflow-hidden">
+                        <div class="relative z-10">
+                            <p class="text-sm text-gray-500 mb-1">Total Vistas</p>
+                            <h3 class="text-3xl font-bold text-gray-800 dark:text-white" id="stat-total-views">--</h3>
+                        </div>
+                        <ion-icon name="eye-outline"
+                            class="absolute right-4 bottom-4 text-6xl text-gray-100 dark:text-slate-700"></ion-icon>
+                    </div>
+                    <div
+                        class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-gray-200 dark:border-slate-700 shadow-sm relative overflow-hidden">
+                        <div class="relative z-10">
+                            <p class="text-sm text-gray-500 mb-1">Post Más Leído</p>
+                            <h3 class="text-lg font-bold text-gray-800 dark:text-white line-clamp-2" id="stat-top-post">
+                                --</h3>
+                            <p class="text-xs text-indigo-500 mt-1" id="stat-top-post-views">-- vistas</p>
+                        </div>
+                        <ion-icon name="trophy-outline"
+                            class="absolute right-4 bottom-4 text-6xl text-yellow-100 dark:text-yellow-900/20"></ion-icon>
+                    </div>
+                </div>
+
+                <div
+                    class="bg-white dark:bg-slate-800 rounded-2xl border border-gray-200 dark:border-slate-700 overflow-hidden shadow-sm">
+                    <div class="p-6 border-b border-gray-200 dark:border-slate-700 flex justify-between items-center">
+                        <h3 class="font-bold">Desglose por Artículo</h3>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm">
+                            <thead class="bg-gray-50 dark:bg-slate-900/50 text-gray-500 uppercase text-xs">
+                                <tr>
+                                    <th class="px-6 py-4 font-semibold">Título</th>
+                                    <th class="px-6 py-4 font-semibold text-right">Vistas</th>
+                                </tr>
+                            </thead>
+                            <tbody id="stats-table-body" class="divide-y divide-gray-200 dark:divide-slate-700">
+                                <!-- JS inserts rows here -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="stats-loader" class="hidden text-center py-10"><span class="loader"></span></div>
+                    <div id="stats-empty" class="hidden text-center py-10 text-gray-400">No hay datos aún.</div>
                 </div>
             </div>
 
@@ -1407,6 +1501,69 @@
                 btn.disabled = false;
             }
         };
+
+        // --- ANALYTICS ---
+        async function loadStats() {
+            document.getElementById('stats-loader').classList.remove('hidden');
+            document.getElementById('stats-empty').classList.add('hidden');
+            document.getElementById('stats-table-body').innerHTML = '';
+
+            try {
+                // Fetch basic analytics (client-side aggregation for MVP)
+                const q = query(collection(db, "analytics_events"), orderBy("timestamp", "desc"), limit(500));
+                const snap = await getDocs(q);
+
+                if (snap.empty) {
+                    document.getElementById('stats-empty').classList.remove('hidden');
+                    return;
+                }
+
+                let totalViews = 0;
+                const pageCounts = {};
+                const pageTitles = {};
+
+                snap.forEach(doc => {
+                    const d = doc.data();
+                    if (d.type === 'page_view') {
+                        totalViews++;
+                        const p = d.path;
+                        pageCounts[p] = (pageCounts[p] || 0) + 1;
+                        if (d.title && !pageTitles[p]) pageTitles[p] = d.title;
+                    }
+                });
+
+                // Update Summary Cards
+                document.getElementById('stat-total-views').innerText = totalViews;
+                document.getElementById('stats-total-views-summary').innerText = totalViews;
+
+                // Sort Pages
+                const sortedPages = Object.keys(pageCounts).map(path => ({
+                    path,
+                    count: pageCounts[path],
+                    title: pageTitles[path] || path
+                })).sort((a, b) => b.count - a.count);
+
+                if (sortedPages.length > 0) {
+                    const top = sortedPages[0];
+                    document.getElementById('stat-top-post').innerText = top.title;
+                    document.getElementById('stat-top-post-views').innerText = `${top.count} vistas`;
+                }
+
+                // Render Table
+                const tbody = document.getElementById('stats-table-body');
+                tbody.innerHTML = sortedPages.map(p => `
+                    <tr class="hover:bg-gray-50 dark:hover:bg-slate-700/50 transition-colors">
+                        <td class="px-6 py-4 font-medium text-gray-900 dark:text-white max-w-xs truncate" title="${p.title}">${p.title}</td>
+                        <td class="px-6 py-4 text-right text-gray-500">${p.count}</td>
+                    </tr>
+                `).join('');
+
+            } catch (e) {
+                showToast("Error cargando estadísticas: " + e.message, "error");
+            } finally {
+                document.getElementById('stats-loader').classList.add('hidden');
+            }
+        }
 
         // --- UTILS ---
         window.toggleDarkMode = () => document.body.classList.toggle('dark');
