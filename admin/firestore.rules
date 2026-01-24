@@ -3,41 +3,51 @@ service cloud.firestore {
   match /databases/{database}/documents {
     
     // ==========================================
-    // CONFIG PRINCIPAL (contiene GitHub Token)
-    // Solo el admin puede leer/escribir
+    // GLOBAL DEFAULT: Deny everything by default
     // ==========================================
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // ==========================================
+    // INSTANTETRIPS BLOG & ANALYTICS RULES
+    // ==========================================
+    
+    // Analytics Events: Deny all client-side writes. 
+    match /analytics_events/{eventId} {
+      allow read, write: if false; // LOCKED DOWN (Server-side only)
+    }
+
+    // Posts: Public read (for blog). Auth required for write (CMS/Editor)
+    match /posts/{postId} {
+        allow read: if true;
+        allow write: if request.auth != null;
+    }
+
+    // ==========================================
+    // ADMIN / EDITOR RULES (V2)
+    // ==========================================
+
+    // CONFIG PRINCIPAL (GitHub Token): Only Master Admin
     match /config/main {
       allow read, write: if request.auth != null 
         && request.auth.token.email == 'danielaranadj@gmail.com';
     }
     
-    // ==========================================
-    // AFFILIATES (Booking, Skyscanner, etc.)
-    // Lectura pública (para build de Astro)
-    // Escritura solo admin
-    // ==========================================
+    // AFFILIATES & TOURS: Public Read (for Sites), Admin Write
     match /config/affiliates {
       allow read: if true;
-      allow write: if request.auth != null 
-        && request.auth.token.email == 'danielaranadj@gmail.com';
+      allow write: if request.auth != null && request.auth.token.email == 'danielaranadj@gmail.com';
     }
-    
-    // ==========================================
-    // TOURS (lista de tours por país)
-    // Lectura pública (para mostrar en sitio)
-    // Escritura solo admin
-    // ==========================================
     match /config/tours {
       allow read: if true;
-      allow write: if request.auth != null 
-        && request.auth.token.email == 'danielaranadj@gmail.com';
+      allow write: if request.auth != null && request.auth.token.email == 'danielaranadj@gmail.com';
     }
     
-    // ==========================================
-    // BLOQUEAR TODO LO DEMÁS
-    // ==========================================
-    match /{document=**} {
-      allow read, write: if false;
+    // GENERIC CONFIG: Fallback for other config items (like /config/adsense used in blog)
+    match /config/{configId} {
+      allow read: if true;
+      allow write: if request.auth != null && request.auth.token.email == 'danielaranadj@gmail.com';
     }
   }
 }
