@@ -552,7 +552,7 @@
                 return node.nodeName === 'A' && node.classList.contains('cta-destination-card');
             },
             replacement: function (content, node) {
-                 return '\n\n' + node.outerHTML + '\n\n';
+                return '\n\n' + node.outerHTML + '\n\n';
             }
         });
 
@@ -629,6 +629,9 @@
                 plugins: 'image media link lists table code preview wordcount help',
                 toolbar: 'undo redo | blocks fontsize | bold italic underline | bullist numlist | alignleft aligncenter alignright | link image media | customCtaBtn customVideoBtn | removeformat code',
                 content_style: 'body { font-family:Inter,sans-serif; font-size:16px; line-height:1.6 } img { max-width: 100%; height: auto; border-radius: 8px; }',
+                convert_urls: false,
+                relative_urls: false,
+                remove_script_host: false,
                 media_live_embeds: true,
                 setup: function (editor) {
                     editor.on('init', function () { editor.setContent(initialContent); });
@@ -667,7 +670,7 @@
         }
 
         window.insertCtaLink = () => {
-             // 1. Pedir datos al usuario
+            // 1. Pedir datos al usuario
             const url = prompt('URL del Destino (Ej: https://.../ushuaia)', 'https://www.instantetrips.com/argentina/destinos/ushuaia/');
             if (!url) return;
 
@@ -676,17 +679,17 @@
             const title = prompt('Título Principal (Ej: Ushuaia: El Fin del Mundo)', 'Ushuaia: El Fin del Mundo');
             const desc = prompt('Descripción (Ej: Clima, presupuesto...)', 'Clima, presupuesto, tours y experiencias imperdibles →');
 
-            // 2. Construir HTML (con estilos inline para email/blog portable)
+            // 2. Construir HTML (usando variables CSS para Dark Mode)
             const html = `
-            <a href="${url}" target="_blank" class="cta-destination-card" style="display:block; margin:2.5rem 0; padding:1.75rem; background:linear-gradient(135deg, rgba(244,185,66,0.08), rgba(117,170,219,0.08)); border-radius:16px; border-left:4px solid #F4B942; text-decoration:none; color:inherit;">
+            <a href="${url}" target="_blank" class="cta-destination-card" style="display:block; margin:2.5rem 0; padding:1.75rem; background:linear-gradient(135deg, rgba(244,185,66,0.08), rgba(117,170,219,0.08)); border-radius:16px; border-left:4px solid var(--accent-gold, #F4B942); text-decoration:none; color:inherit;">
               <span style="display:inline-flex; align-items:center; gap:8px; margin-bottom:1rem;">
                 <span style="font-size:1.5rem;">${emoji}</span>
-                <span style="font-size:0.7rem; font-weight:800; text-transform:uppercase; letter-spacing:1.5px; color:#75AADB; background:rgba(117,170,219,0.12); padding:6px 12px; border-radius:20px;">${label}</span>
+                <span style="font-size:0.7rem; font-weight:800; text-transform:uppercase; letter-spacing:1.5px; color:var(--brand-blue, #75AADB); background:rgba(117,170,219,0.12); padding:6px 12px; border-radius:20px;">${label}</span>
               </span>
               <br>
-              <strong style="font-size:1.4rem; font-weight:800; color:#2D3748;">${title}</strong>
+              <strong style="font-size:1.4rem; font-weight:800; color:var(--text-main, #2D3748);">${title}</strong>
               <br>
-              <span style="color:#718096; font-size:0.95rem;">${desc}</span>
+              <span style="color:var(--text-muted, #718096); font-size:0.95rem;">${desc}</span>
             </a>
             <p>&nbsp;</p>
             `;
