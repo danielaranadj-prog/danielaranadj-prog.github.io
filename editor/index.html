@@ -481,6 +481,21 @@
                                     placeholder="Tags (Enter)"></div>
                             <div id="tags-container" class="flex flex-wrap gap-2"></div>
 
+                            <!-- Widget Config -->
+                            <div class="pt-4 border-t dark:border-slate-800 mt-4">
+                                <label
+                                    class="text-xs font-bold uppercase text-accent tracking-widest mb-2 block">Widgets
+                                    de Viaje ✈️ Copiar código</label>
+                                <div class="grid grid-cols-1 gap-2">
+                                    <input type="text" id="flight-dest"
+                                        class="w-full text-xs bg-gray-50 dark:bg-slate-800 p-2 rounded outline-none border border-transparent focus:border-orange-500 accent-input"
+                                        placeholder="Destino Vuelos (Ej: Madrid)">
+                                    <input type="text" id="tour-city"
+                                        class="w-full text-xs bg-gray-50 dark:bg-slate-800 p-2 rounded outline-none border border-transparent focus:border-orange-500 accent-input"
+                                        placeholder="Ciudad Tours (Ej: Madrid)">
+                                </div>
+                            </div>
+
                             <!-- Video Button -->
                             <div class="pt-2">
                                 <button onclick="insertVideoLink()"
@@ -806,7 +821,15 @@
                 const dt = document.getElementById('post-date').value;
                 const a = document.getElementById('post-author').value;
                 const h = document.getElementById('post-hero').value;
-                const frontmatter = `---\ntitle: "${t}"\ndescription: "${d}"\npublishDate: "${dt}"\nauthor: "${a}"\nheroImage: "${h}"\nlayout: "../../layouts/BlogPost.astro"\ntags: [${tags.map(x => `"${x}"`).join(', ')}]\n---\n\n`;
+                const fd = document.getElementById('flight-dest').value;
+                const tc = document.getElementById('tour-city').value;
+
+                let frontmatter = `---\ntitle: "${t}"\ndescription: "${d}"\npublishDate: "${dt}"\nauthor: "${a}"\nheroImage: "${h}"\nlayout: "../../layouts/BlogPost.astro"\ntags: [${tags.map(x => `"${x}"`).join(', ')}]`;
+
+                if (fd) frontmatter += `\nflight_destination: "${fd}"`;
+                if (tc) frontmatter += `\ntour_city: "${tc}"`;
+
+                frontmatter += `\n---\n\n`;
                 const finalFile = frontmatter + mdContent;
                 let fn = currentPostFilename;
                 if (!fn) { const s = t.toLowerCase().replace(/[^a-z0-9]+/g, '-'); fn = `${dt}-${s}.md`; }
@@ -841,6 +864,9 @@
                     const tm = fmMatch[1].match(/tags:\s*\[(.*?)\]/);
                     if (tm) tags = tm[1].split(',').map(x => x.trim().replace(/['"]/g, '')).filter(Boolean);
                     renderTags();
+
+                    document.getElementById('flight-dest').value = get('flight_destination') || '';
+                    document.getElementById('tour-city').value = get('tour_city') || '';
                 }
                 const bodyMd = raw.replace(/^---[\s\S]+?---\s*/, '');
                 const bodyHtml = marked.parse(bodyMd);
@@ -900,7 +926,7 @@
         window.toggleDarkMode = () => document.body.classList.toggle('dark');
         window.closeLoadModal = () => document.getElementById('load-post-modal').classList.remove('open');
         window.closeAuthorModal = () => document.getElementById('author-modal').classList.remove('open');
-        window.clearAll = () => { if (confirm("¿Limpiar?")) { tinymce.activeEditor.setContent(''); document.getElementById('post-title').value = ''; tags = []; renderTags(); currentPostFilename = null; } };
+        window.clearAll = () => { if (confirm("¿Limpiar?")) { tinymce.activeEditor.setContent(''); document.getElementById('post-title').value = ''; tags = []; renderTags(); currentPostFilename = null; document.getElementById('flight-dest').value = ''; document.getElementById('tour-city').value = ''; } };
         window.showToast = (m, t) => { const d = document.createElement('div'); d.className = `p-3 rounded text-white text-sm font-bold ${t === 'error' ? 'bg-red-500' : 'bg-black'}`; d.innerText = m; document.getElementById('toast-container').appendChild(d); setTimeout(() => d.remove(), 3000); };
         window.updateSEO = () => {
             const t = document.getElementById('post-title').value.length;
