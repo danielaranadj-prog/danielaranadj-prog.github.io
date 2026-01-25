@@ -1228,7 +1228,7 @@
         let toursLoaded = false;
         window.switchTab = (tab) => {
             // Ocultar todas las vistas
-            ['home', 'posts', 'authors', 'destinations', 'destinations-mexico', 'destinations-espana', 'tours', 'affiliates'].forEach(t => {
+            ['home', 'posts', 'authors', 'stats', 'destinations', 'destinations-mexico', 'destinations-espana', 'tours', 'affiliates'].forEach(t => {
                 const view = document.getElementById(`view-${t}`);
                 if (view) view.classList.add('hidden');
             });
