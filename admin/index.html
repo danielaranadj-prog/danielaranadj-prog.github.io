@@ -1239,6 +1239,7 @@
             // Lógica de carga diferida
             if (tab === 'posts' && cachedPosts.length === 0) loadPosts();
             if (tab === 'authors' && Object.keys(authorsData).length === 0) fetchAuthors();
+            if (tab === 'stats') loadStats();
             if (tab === 'affiliates' && !affiliatesLoaded) loadAffiliates();
 
             if (tab === 'destinations') {
