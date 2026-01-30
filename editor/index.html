@@ -810,7 +810,52 @@
 
         const toBase64 = file => new Promise(r => { const rd = new FileReader(); rd.readAsDataURL(file); rd.onload = () => r(rd.result); });
 
+        function validatePost() {
+            const title = document.getElementById('post-title').value.trim();
+            const desc = document.getElementById('post-desc').value.trim();
+            const heroImage = document.getElementById('post-hero').value.trim();
+            const content = tinymce.activeEditor ? tinymce.activeEditor.getContent() : '';
+            const errors = [];
+
+            if (!title || title.length < 10) {
+                errors.push('❌ El título debe tener al menos 10 caracteres');
+            }
+
+            if (title.length > 70) {
+                errors.push('⚠️ El título es muy largo (máx 70 caracteres para SEO)');
+            }
+
+            if (!desc || desc.length < 50) {
+                errors.push('❌ La descripción debe tener al menos 50 caracteres');
+            }
+
+            if (desc.length > 160) {
+                errors.push('⚠️ La descripción es muy larga (máx 160 para SEO)');
+            }
+
+            if (tags.length === 0) {
+                errors.push('❌ Agrega al menos un tag');
+            }
+
+            if (!heroImage) {
+                errors.push('❌ Agrega una imagen principal');
+            }
+
+            if (!content || content.length < 100) {
+                errors.push('❌ El contenido es muy corto (mínimo 100 caracteres)');
+            }
+
+            return errors;
+        }
+
         window.publishCurrentPost = async () => {
+            // Validar antes de publicar
+            const errors = validatePost();
+            if (errors.length > 0) {
+                alert(errors.join('\n\n'));
+                return;
+            }
+
             const btn = document.querySelector('button[onclick="publishCurrentPost()"]');
             const orig = btn.innerText; btn.innerText = "Publicando..."; btn.disabled = true;
             try {
