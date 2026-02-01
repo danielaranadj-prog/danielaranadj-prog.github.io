@@ -34,24 +34,8 @@ service cloud.firestore {
         && request.auth.token.email == 'danielaranadj@gmail.com';
     }
     
-    // AFFILIATES & TOURS: Public Read (for Sites), Admin Write
-    match /config/affiliates {
-      allow read: if true;
-      allow write: if request.auth != null && request.auth.token.email == 'danielaranadj@gmail.com';
-    }
-    match /config/tours {
-      allow read: if true;
-      allow write: if request.auth != null && request.auth.token.email == 'danielaranadj@gmail.com';
-    }
-    
     // GENERIC CONFIG: Fallback for other config items (like /config/adsense used in blog)
     match /config/{configId} {
-      allow read: if true;
-      allow write: if request.auth != null && request.auth.token.email == 'danielaranadj@gmail.com';
-    }
-
-    // LIST/SETTINGS (Destinos, Kill Switch): Public Read, Admin Write
-    match /settings/{settingId} {
       allow read: if true;
       allow write: if request.auth != null && request.auth.token.email == 'danielaranadj@gmail.com';
     }
