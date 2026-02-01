@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "../../instante-trips-blog/blog"
+		},
+		{
+			"path": "../editor"
+		},
+		{
+			"path": "."
+		}
+	],
+	"settings": {}
+}

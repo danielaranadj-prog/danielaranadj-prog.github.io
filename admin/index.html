@@ -34,6 +34,7 @@
     <link rel="stylesheet" href="css/admin.css">
     <script src="js/v3-editor.js"></script>
     <script src="js/tours-manager.js?v=20260120" defer></script>
+    <script src="js/settings.js?v=20260201" defer></script>
 </head>
 
 <body class="antialiased min-h-screen flex flex-col">
@@ -178,46 +179,72 @@
                         </h3>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
                             <!-- Argentina Card -->
-                            <div onclick="switchTab('destinations')"
-                                class="dash-card cursor-pointer bg-white dark:bg-slate-800 p-6 rounded-2xl border border-gray-200 dark:border-slate-700 relative overflow-hidden group">
-                                <div
-                                    class="absolute right-0 top-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                                    <ion-icon name="map-outline" class="text-8xl text-sky-500"></ion-icon>
-                                </div>
-                                <div class="relative z-10">
+                            <div
+                                class="dash-card bg-white dark:bg-slate-800 p-6 rounded-2xl border border-gray-200 dark:border-slate-700 relative overflow-hidden group">
+                                <div onclick="switchTab('destinations')" class="cursor-pointer">
                                     <div
-                                        class="w-14 h-14 rounded-xl bg-sky-100 dark:bg-sky-900/30 flex items-center justify-center mb-4">
-                                        <span class="text-3xl">🇦🇷</span>
+                                        class="absolute right-0 top-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                                        <ion-icon name="map-outline" class="text-8xl text-sky-500"></ion-icon>
                                     </div>
-                                    <h4 class="text-lg font-bold mb-2">Destinos Argentina</h4>
-                                    <p class="text-xs text-gray-500 mb-3">Gestionar destinos turísticos de Argentina.
-                                    </p>
-                                    <span
-                                        class="inline-flex items-center gap-1 text-[10px] bg-green-100 text-green-700 px-2 py-1 rounded-full font-semibold">
-                                        <ion-icon name="checkmark-circle" class="text-xs"></ion-icon> ACTIVO
-                                    </span>
+                                    <div class="relative z-10">
+                                        <div
+                                            class="w-14 h-14 rounded-xl bg-sky-100 dark:bg-sky-900/30 flex items-center justify-center mb-4">
+                                            <span class="text-3xl">🇦🇷</span>
+                                        </div>
+                                        <h4 class="text-lg font-bold mb-2">Destinos Argentina</h4>
+                                        <p class="text-xs text-gray-500 mb-3">Gestionar destinos turísticos de
+                                            Argentina.</p>
+                                    </div>
+                                </div>
+                                <div
+                                    class="mt-4 flex items-center justify-between border-t border-gray-100 dark:border-slate-700 pt-3 relative z-20">
+                                    <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Estado
+                                        del Sitio</span>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" id="toggle-maintenance-argentina" class="sr-only peer"
+                                            onchange="toggleMaintenanceMode('argentina', this.checked)">
+                                        <div
+                                            class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-sky-300 dark:peer-focus:ring-sky-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-600 peer-checked:bg-sky-500">
+                                        </div>
+                                        <span
+                                            class="ml-2 text-[10px] font-medium text-gray-500 dark:text-gray-400 status-text">Activo</span>
+                                    </label>
                                 </div>
                             </div>
 
                             <!-- Mexico Card -->
-                            <div onclick="switchTab('destinations-mexico')"
-                                class="dash-card cursor-pointer bg-white dark:bg-slate-800 p-6 rounded-2xl border border-gray-200 dark:border-slate-700 relative overflow-hidden group hover:border-emerald-300 transition-colors">
-                                <div
-                                    class="absolute right-0 top-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                                    <ion-icon name="map-outline" class="text-8xl text-emerald-500"></ion-icon>
-                                </div>
-                                <div class="relative z-10">
+                            <div
+                                class="dash-card bg-white dark:bg-slate-800 p-6 rounded-2xl border border-gray-200 dark:border-slate-700 relative overflow-hidden group hover:border-emerald-300 transition-colors">
+                                <div onclick="switchTab('destinations-mexico')" class="cursor-pointer">
                                     <div
-                                        class="w-14 h-14 rounded-xl bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center mb-4">
-                                        <span class="text-3xl">🇲🇽</span>
+                                        class="absolute right-0 top-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                                        <ion-icon name="map-outline" class="text-8xl text-emerald-500"></ion-icon>
                                     </div>
-                                    <h4 class="text-lg font-bold mb-2">Destinos México</h4>
-                                    <p class="text-xs text-gray-500 mb-3">Gestionar destinos turísticos de México.</p>
-                                    <span
-                                        class="inline-flex items-center gap-1 text-[10px] bg-green-100 text-green-700 px-2 py-1 rounded-full font-semibold">
-                                        <ion-icon name="checkmark-circle" class="text-xs"></ion-icon> ACTIVO
-                                    </span>
+                                    <div class="relative z-10">
+                                        <div
+                                            class="w-14 h-14 rounded-xl bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center mb-4">
+                                            <span class="text-3xl">🇲🇽</span>
+                                        </div>
+                                        <h4 class="text-lg font-bold mb-2">Destinos México</h4>
+                                        <p class="text-xs text-gray-500 mb-3">Gestionar destinos turísticos de México.
+                                        </p>
+                                    </div>
+                                </div>
+                                <div
+                                    class="mt-4 flex items-center justify-between border-t border-gray-100 dark:border-slate-700 pt-3 relative z-20">
+                                    <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Estado
+                                        del Sitio</span>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" id="toggle-maintenance-mexico" class="sr-only peer"
+                                            onchange="toggleMaintenanceMode('mexico', this.checked)">
+                                        <div
+                                            class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-emerald-300 dark:peer-focus:ring-emerald-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-600 peer-checked:bg-emerald-500">
+                                        </div>
+                                        <span
+                                            class="ml-2 text-[10px] font-medium text-gray-500 dark:text-gray-400 status-text">Activo</span>
+                                    </label>
                                 </div>
                             </div>
 
@@ -1202,6 +1229,10 @@
                 document.getElementById('login-section').classList.add('hidden');
                 document.getElementById('dashboard-section').classList.remove('hidden');
                 document.getElementById('admin-user-display').textContent = user.email;
+
+                // Initialize modules
+                if (window.initMaintenanceControls) window.initMaintenanceControls();
+
                 const docSnap = await getDoc(doc(db, "config", "main"));
                 if (docSnap.exists()) {
                     githubConfig = docSnap.data();
