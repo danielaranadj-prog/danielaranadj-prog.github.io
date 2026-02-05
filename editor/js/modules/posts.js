@@ -27,7 +27,7 @@ export class PostsManager {
         const title = document.getElementById('post-title')?.value.trim() || '';
         const desc = document.getElementById('post-desc')?.value.trim() || '';
         const heroImage = document.getElementById('post-hero')?.value.trim() || '';
-        const content = tinymce.activeEditor ? tinymce.activeEditor.getContent() : '';
+        const content = window.tiptapService?.editor ? window.tiptapService.getHTML() : '';
         const tags = window.tags || [];
         const errors = [];
 
@@ -76,8 +76,8 @@ export class PostsManager {
         setButtonLoading(btn, 'Publicando...');
 
         try {
-            const rawContent = tinymce.activeEditor.getContent();
-            const mdContent = markdownConverter.htmlToMarkdown(rawContent);
+            const rawContent = window.tiptapService.getHTML();
+            const mdContent = window.tiptapService.getMarkdown();
 
             const title = document.getElementById('post-title').value;
             const desc = document.getElementById('post-desc').value;
@@ -235,10 +235,9 @@ tags: [${tags.map(x => `"${x}"`).join(', ')}]`;
                 window.renderTags();
             }
 
-            // Convert markdown to HTML and set in TinyMCE
-            const html = marked.parse(markdown);
-            if (tinymce.activeEditor) {
-                tinymce.activeEditor.setContent(html);
+            // Set markdown content in Tiptap
+            if (window.tiptapService?.editor) {
+                window.tiptapService.setContent(markdown);
             }
 
             // Store current post info

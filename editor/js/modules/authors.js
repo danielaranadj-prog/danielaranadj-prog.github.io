@@ -24,12 +24,22 @@ export class AuthorsManager {
         if (!this.githubConfig) return;
 
         try {
-            const data = await github.getFile('src/data/authors.json');
+            // Load from authors.ts (TypeScript file used by Astro)
+            const data = await github.getFile('src/data/authors.ts');
             const content = github.decodeContent(data.content);
-            this.authors = JSON.parse(content);
+
+            // Parse TypeScript export to extract authors array
+            // Format: export const authors = [...]
+            const match = content.match(/export\s+const\s+authors\s*=\s*(\[[\s\S]*?\]);/);
+            if (match) {
+                // Use Function constructor to safely evaluate the array
+                this.authors = new Function(`return ${match[1]}`)();
+            } else {
+                throw new Error('Could not parse authors from .ts file');
+            }
         } catch (error) {
-            // If authors.json doesn't exist, use EMAIL_TO_AUTHOR mapping from firebase config
-            console.warn('authors.json not found, using EMAIL_TO_AUTHOR mapping');
+            // If authors.ts doesn't exist, use EMAIL_TO_AUTHOR mapping from firebase config
+            console.warn('authors.ts not found, using EMAIL_TO_AUTHOR mapping:', error.message);
 
             // Import EMAIL_TO_AUTHOR from config
             import('../config/firebase.js').then(module => {
@@ -37,7 +47,9 @@ export class AuthorsManager {
 
                 // Convert EMAIL_TO_AUTHOR object to authors array
                 this.authors = Object.values(EMAIL_TO_AUTHOR).filter(author => author.slug);
+                this.populateAuthorSelect();
             });
+            return;
         }
 
         this.populateAuthorSelect();

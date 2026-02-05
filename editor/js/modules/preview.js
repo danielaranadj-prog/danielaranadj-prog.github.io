@@ -14,9 +14,9 @@ export class PreviewManager {
     render() {
         let content = '';
 
-        // Get content from TinyMCE
-        if (tinymce.activeEditor) {
-            content = tinymce.activeEditor.getContent();
+        // Get content from Tiptap
+        if (window.tiptapService?.editor) {
+            content = window.tiptapService.getHTML();
         }
 
         const title = document.getElementById('post-title')?.value || '';
