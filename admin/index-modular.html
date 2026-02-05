@@ -34,9 +34,6 @@
     <link rel="stylesheet" href="css/admin.css">
     <script src="js/v3-editor.js"></script>
     <script src="js/tours-manager.js?v=20260120" defer></script>
-
-    <!-- Modular JavaScript (NEW) -->
-    <script type="module" src="js/main.js"></script>
 </head>
 
 <body class="antialiased min-h-screen flex flex-col">
@@ -1143,8 +1140,12 @@
 
     <div id="toast-container" class="fixed bottom-6 right-6 z-[80] flex flex-col gap-2 pointer-events-none"></div>
 
+    <!-- Load modular JavaScript -->
+    <script type="module" src="js/main.js"></script>
+
+    <!-- Legacy inline scripts for features not yet modularized -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, doc, getDoc, setDoc, serverTimestamp, collection, query, getDocs, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc, serverTimestamp, collection, query, getDocs, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 

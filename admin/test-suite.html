@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Suite - Admin Panel Modules</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class'
+        }
+    </script>
+    <style>
+        .test-pass {
+            @apply bg-green-100 border-green-500 text-green-800;
+        }
+
+        .test-fail {
+            @apply bg-red-100 border-red-500 text-red-800;
+        }
+
+        .test-pending {
+            @apply bg-gray-100 border-gray-300 text-gray-600;
+        }
+    </style>
+</head>
+
+<body class="p-8 bg-gray-50 dark:bg-slate-900">
+    <div class="max-w-4xl mx-auto">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-8 mb-6">
+            <h1 class="text-3xl font-bold text-gray-800 dark:text-white mb-2">🧪 Test Suite</h1>
+            <p class="text-gray-600 dark:text-gray-400">Verificación de módulos del Admin Panel</p>
+        </div>
+
+        <!-- Test Results -->
+        <div id="test-results" class="space-y-4">
+            <!-- Tests will be added here -->
+        </div>
+
+        <!-- Manual Tests Section -->
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-8 mt-6">
+            <h2 class="text-xl font-bold mb-4">Pruebas Manuales</h2>
+
+            <div class="space-y-4">
+                <!-- Theme Test -->
+                <div class="border border-gray-200 dark:border-slate-700 rounded-lg p-4">
+                    <h3 class="font-bold mb-2">1. Theme Module</h3>
+                    <button onclick="window.toggleDarkMode()"
+                        class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded transition-colors">
+                        Toggle Dark Mode
+                    </button>
+                    <p class="text-sm text-gray-500 mt-2">✓ Debe cambiar entre modo claro y oscuro</p>
+                </div>
+
+                <!-- Toast Test -->
+                <div class="border border-gray-200 dark:border-slate-700 rounded-lg p-4">
+                    <h3 class="font-bold mb-2">2. Toast Module</h3>
+                    <div class="flex gap-2 flex-wrap">
+                        <button onclick="window.showToast('Success!', 'success')"
+                            class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded transition-colors">
+                            Success
+                        </button>
+                        <button onclick="window.showToast('Error!', 'error')"
+                            class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded transition-colors">
+                            Error
+                        </button>
+                        <button onclick="window.showToast('Info', 'info')"
+                            class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded transition-colors">
+                            Info
+                        </button>
+                        <button onclick="window.showToast('Warning', 'warning')"
+                            class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded transition-colors">
+                            Warning
+                        </button>
+                    </div>
+                    <p class="text-sm text-gray-500 mt-2">✓ Deben aparecer notificaciones de colores</p>
+                </div>
+
+                <!-- Keyboard Shortcuts Test -->
+                <div class="border border-gray-200 dark:border-slate-700 rounded-lg p-4">
+                    <h3 class="font-bold mb-2">3. Keyboard Shortcuts</h3>
+                    <ul class="text-sm space-y-1">
+                        <li>• <kbd class="bg-gray-200 dark:bg-slate-700 px-2 py-1 rounded">Ctrl+S</kbd> - Guardar
+                            (simula click en botón submit)</li>
+                        <li>• <kbd class="bg-gray-200 dark:bg-slate-700 px-2 py-1 rounded">Esc</kbd> - Cerrar modal</li>
+                    </ul>
+                    <p class="text-sm text-gray-500 mt-2">✓ Revisa la consola para ver el mensaje de shortcuts</p>
+                </div>
+
+                <!-- Confirm Dialog Test -->
+                <div class="border border-gray-200 dark:border-slate-700 rounded-lg p-4">
+                    <h3 class="font-bold mb-2">4. Confirm Dialog</h3>
+                    <button onclick="testConfirm()"
+                        class="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded transition-colors">
+                        Test Confirm
+                    </button>
+                    <p class="text-sm text-gray-500 mt-2">✓ Debe mostrar un diálogo de confirmación mejorado</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Console Output -->
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-8 mt-6">
+            <h2 class="text-xl font-bold mb-4">📋 Console Output</h2>
+            <div id="console-output"
+                class="bg-gray-900 text-green-400 p-4 rounded-lg font-mono text-sm max-h-64 overflow-y-auto">
+                <!-- Console messages will appear here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2"></div>
+
+    <!-- Load modules -->
+    <script type="module">
+        import './js/main.js';
+
+        // Automated Tests
+        const tests = [];
+        const results = document.getElementById('test-results');
+        const consoleOutput = document.getElementById('console-output');
+
+        // Capture console.log
+        const originalLog = console.log;
+        console.log = function (...args) {
+            originalLog.apply(console, args);
+            const msg = args.join(' ');
+            consoleOutput.innerHTML += `<div>${new Date().toLocaleTimeString()}: ${msg}</div>`;
+            consoleOutput.scrollTop = consoleOutput.scrollHeight;
+        };
+
+        function addTest(name, testFn) {
+            tests.push({ name, testFn });
+        }
+
+        function renderTest(name, status, message = '') {
+            const statusClass = status === 'pass' ? 'test-pass' : status === 'fail' ? 'test-fail' : 'test-pending';
+            const icon = status === 'pass' ? '✅' : status === 'fail' ? '❌' : '⏳';
+
+            const div = document.createElement('div');
+            div.className = `border-l-4 p-4 rounded ${statusClass}`;
+            div.innerHTML = `
+                <div class="flex items-center justify-between">
+                    <div>
+                        <span class="text-2xl mr-2">${icon}</span>
+                        <span class="font-bold">${name}</span>
+                    </div>
+                    <span class="text-sm">${status.toUpperCase()}</span>
+                </div>
+                ${message ? `<p class="text-sm mt-2 ml-10">${message}</p>` : ''}
+            `;
+            results.appendChild(div);
+        }
+
+        // Define tests
+        addTest('Firebase Config Module', () => {
+            return window.firestoreDB !== undefined && window.firestoreDoc !== undefined;
+        });
+
+        addTest('Toast Module', () => {
+            return typeof window.showToast === 'function';
+        });
+
+        addTest('Theme Module', () => {
+            return typeof window.toggleDarkMode === 'function';
+        });
+
+        addTest('Confirm Dialog', () => {
+            return typeof window.confirm === 'function';
+        });
+
+        addTest('GitHub Service', () => {
+            // Check if ghFetch is available (exposed globally)
+            return typeof window.ghFetch === 'function';
+        });
+
+        addTest('Blog Manager', () => {
+            return typeof window.loadPosts === 'function' &&
+                typeof window.filterPosts === 'function' &&
+                window.blogManager !== undefined;
+        });
+
+        addTest('Auth Manager', () => {
+            return typeof window.logout === 'function';
+        });
+
+        // Run tests
+        setTimeout(() => {
+            console.log('🧪 Running automated tests...');
+
+            tests.forEach(test => {
+                try {
+                    const result = test.testFn();
+                    if (result) {
+                        renderTest(test.name, 'pass', 'Module loaded successfully');
+                        console.log(`✅ ${test.name}: PASS`);
+                    } else {
+                        renderTest(test.name, 'fail', 'Module not found or not working');
+                        console.log(`❌ ${test.name}: FAIL`);
+                    }
+                } catch (error) {
+                    renderTest(test.name, 'fail', error.message);
+                    console.log(`❌ ${test.name}: ERROR - ${error.message}`);
+                }
+            });
+
+            console.log('✅ All automated tests completed');
+        }, 1000);
+
+        // Manual test helper
+        window.testConfirm = async () => {
+            const result = await window.confirm('¿Estás seguro de que quieres continuar?');
+            if (result) {
+                window.showToast('Confirmado!', 'success');
+            } else {
+                window.showToast('Cancelado', 'info');
+            }
+        };
+    </script>
+</body>
+
+</html>

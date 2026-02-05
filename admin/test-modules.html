@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test - Módulos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class'
+        }
+    </script>
+</head>
+<body class="p-8 bg-gray-100 dark:bg-slate-900">
+    <div class="max-w-2xl mx-auto space-y-4">
+        <h1 class="text-2xl font-bold text-gray-800 dark:text-white">Test de Módulos</h1>
+        
+        <div class="bg-white dark:bg-slate-800 p-4 rounded-lg">
+            <h2 class="font-bold mb-2">1. Theme Module</h2>
+            <button onclick="window.toggleDarkMode()" class="bg-blue-500 text-white px-4 py-2 rounded">
+                Toggle Dark Mode
+            </button>
+        </div>
+
+        <div class="bg-white dark:bg-slate-800 p-4 rounded-lg">
+            <h2 class="font-bold mb-2">2. Toast Module</h2>
+            <div class="space-x-2">
+                <button onclick="window.showToast('Success!', 'success')" class="bg-green-500 text-white px-4 py-2 rounded">
+                    Success Toast
+                </button>
+                <button onclick="window.showToast('Error!', 'error')" class="bg-red-500 text-white px-4 py-2 rounded">
+                    Error Toast
+                </button>
+                <button onclick="window.showToast('Info', 'info')" class="bg-blue-500 text-white px-4 py-2 rounded">
+                    Info Toast
+                </button>
+            </div>
+        </div>
+
+        <div class="bg-white dark:bg-slate-800 p-4 rounded-lg">
+            <h2 class="font-bold mb-2">3. Firebase Module</h2>
+            <p class="text-sm text-gray-600 dark:text-gray-400">
+                Abre la consola del navegador. Deberías ver: "✅ Admin Panel modules loaded"
+            </p>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2"></div>
+
+    <!-- Load modules -->
+    <script type="module" src="js/main.js"></script>
+</body>
+</html>
