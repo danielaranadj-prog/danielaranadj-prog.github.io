@@ -538,10 +538,6 @@
 
     <div id="toast-container" class="fixed bottom-6 left-6 z-[80] flex flex-col gap-2"></div>
 
-    <!-- Modular JavaScript -->
-    <script type="module" src="js/main.js"></script>
-
-    <!-- LEGACY INLINE SCRIPT - Keep for now as fallback -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";

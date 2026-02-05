@@ -1,0 +1,27 @@
+// Main Entry Point for Editor
+import { initTheme } from './ui/theme.js';
+import './config/firebase.js';
+import './ui/toast.js';
+import './core/auth.js';
+import './services/github.js';
+import './services/tinymce.js';
+import './utils/markdown.js';
+import './utils/image-upload.js';
+import './utils/autosave.js';
+import './ui/skeleton.js';
+import './ui/button-states.js';
+import './modules/preview.js';
+import './modules/editor.js';
+import './modules/posts.js';
+import './modules/authors.js';
+
+// Initialize app
+document.addEventListener('DOMContentLoaded', () => {
+    initTheme();
+    console.log('✅ Editor V6.3 modules loaded');
+    console.log('💡 Tip: Press Ctrl+S to save, Esc to close modals');
+    console.log('⚡ Auto-save enabled for forms');
+});
+
+// Note: Most initialization happens in auth.js when user logs in
+// TinyMCE, authors, and posts are loaded after GitHub config is available
