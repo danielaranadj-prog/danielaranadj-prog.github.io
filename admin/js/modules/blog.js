@@ -19,12 +19,13 @@ export class BlogManager {
     }
 
     async loadPosts() {
-        const loader = document.getElementById('posts-loader');
         const grid = document.getElementById('posts-grid');
         const noResults = document.getElementById('no-results');
 
-        if (loader) loader.classList.remove('hidden');
-        if (grid) grid.innerHTML = '';
+        // Show skeleton instead of spinner
+        if (grid) {
+            window.showSkeleton('posts-grid', 'grid', 6);
+        }
         if (noResults) noResults.classList.add('hidden');
 
         try {
@@ -42,7 +43,7 @@ export class BlogManager {
 
                 // Extract frontmatter
                 const get = (key) => {
-                    const match = content.match(new RegExp(`${key}:\\\\s*["'](.+?)["']`));
+                    const match = content.match(new RegExp(`${key}:\\s*[\"'](.+?)[\"']`));
                     return match ? match[1] : 'Unknown';
                 };
 
@@ -66,8 +67,7 @@ export class BlogManager {
         } catch (error) {
             console.error('Error loading posts:', error);
             showToast("Error cargando posts", "error");
-        } finally {
-            if (loader) loader.classList.add('hidden');
+            if (grid) grid.innerHTML = '';
         }
     }
 
@@ -141,15 +141,41 @@ export class BlogManager {
     }
 
     async deletePost(path, sha) {
-        if (!confirm("¿Eliminar permanentemente este post?")) return;
+        // Use custom confirm dialog
+        const confirmed = await window.confirm(`¿Eliminar permanentemente este post?\n\n${path}`);
+        if (!confirmed) return;
+
+        // Find the delete button that was clicked
+        const deleteButtons = document.querySelectorAll(`button[onclick*="${path}"]`);
+        const button = Array.from(deleteButtons).find(btn => btn.onclick?.toString().includes('deletePost'));
 
         try {
+            // Show loading state
+            if (button) {
+                window.setButtonLoading(button, 'Eliminando...');
+            }
+
             const config = window.githubConfig;
             await github.deleteFile(path, `[ADMIN] Delete ${path}`, sha);
+
+            // Show success state
+            if (button) {
+                window.setButtonSuccess(button, 'Eliminado');
+            }
+
             showToast("Post eliminado", "success");
-            await this.loadPosts();
+
+            // Reload posts after a short delay
+            setTimeout(() => this.loadPosts(), 500);
+
         } catch (error) {
             console.error('Error deleting post:', error);
+
+            // Show error state
+            if (button) {
+                window.setButtonError(button, 'Error');
+            }
+
             showToast("Error: " + error.message, "error");
         }
     }
