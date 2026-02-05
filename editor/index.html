@@ -58,6 +58,47 @@
             border-color: #334155 !important;
         }
 
+        /* Tiptap Toolbar Buttons */
+        .toolbar-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
+            min-width: 32px;
+            height: 32px;
+            padding: 4px 8px;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #374151;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .dark .toolbar-btn {
+            background: #1e293b;
+            border-color: #475569;
+            color: #e2e8f0;
+        }
+
+        .toolbar-btn:hover {
+            background: #f3f4f6;
+            border-color: #f97316;
+            color: #f97316;
+            transform: translateY(-1px);
+        }
+
+        .dark .toolbar-btn:hover {
+            background: #334155;
+            border-color: #f97316;
+        }
+
+        .toolbar-btn:active {
+            transform: translateY(0);
+        }
+
         /* Glassmorphism */
         .glass-card {
             background: rgba(255, 255, 255, 0.85);
@@ -378,9 +419,85 @@
 
                     <div
                         class="bg-white dark:bg-slate-900 rounded-2xl shadow-lg border border-gray-200 dark:border-slate-800 overflow-hidden min-h-[500px] card-hover">
+
+                        <!-- Tiptap Toolbar -->
+                        <div id="tiptap-toolbar"
+                            class="flex flex-wrap gap-1 p-3 bg-gray-50 dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700">
+                            <!-- Text Formatting -->
+                            <button onclick="window.tiptapService?.editor?.chain().focus().toggleBold().run()"
+                                class="toolbar-btn" title="Negrita (Ctrl+B)">
+                                <ion-icon name="text-outline" class="font-bold"></ion-icon>
+                                <strong>B</strong>
+                            </button>
+                            <button onclick="window.tiptapService?.editor?.chain().focus().toggleItalic().run()"
+                                class="toolbar-btn" title="Cursiva (Ctrl+I)">
+                                <em>I</em>
+                            </button>
+                            <button onclick="window.tiptapService?.editor?.chain().focus().toggleStrike().run()"
+                                class="toolbar-btn" title="Tachado">
+                                <s>S</s>
+                            </button>
+
+                            <div class="w-px h-6 bg-gray-300 dark:bg-slate-600 mx-1"></div>
+
+                            <!-- Headings -->
+                            <button
+                                onclick="window.tiptapService?.editor?.chain().focus().toggleHeading({ level: 1 }).run()"
+                                class="toolbar-btn" title="Título 1">
+                                H1
+                            </button>
+                            <button
+                                onclick="window.tiptapService?.editor?.chain().focus().toggleHeading({ level: 2 }).run()"
+                                class="toolbar-btn" title="Título 2">
+                                H2
+                            </button>
+                            <button
+                                onclick="window.tiptapService?.editor?.chain().focus().toggleHeading({ level: 3 }).run()"
+                                class="toolbar-btn" title="Título 3">
+                                H3
+                            </button>
+
+                            <div class="w-px h-6 bg-gray-300 dark:bg-slate-600 mx-1"></div>
+
+                            <!-- Lists -->
+                            <button onclick="window.tiptapService?.editor?.chain().focus().toggleBulletList().run()"
+                                class="toolbar-btn" title="Lista con viñetas">
+                                <ion-icon name="list-outline"></ion-icon>
+                            </button>
+                            <button onclick="window.tiptapService?.editor?.chain().focus().toggleOrderedList().run()"
+                                class="toolbar-btn" title="Lista numerada">
+                                <ion-icon name="list-outline"></ion-icon>
+                                <span class="text-xs">1.</span>
+                            </button>
+
+                            <div class="w-px h-6 bg-gray-300 dark:bg-slate-600 mx-1"></div>
+
+                            <!-- Blockquote & Code -->
+                            <button onclick="window.tiptapService?.editor?.chain().focus().toggleBlockquote().run()"
+                                class="toolbar-btn" title="Cita">
+                                <ion-icon name="chatbox-outline"></ion-icon>
+                            </button>
+                            <button onclick="window.tiptapService?.editor?.chain().focus().toggleCodeBlock().run()"
+                                class="toolbar-btn" title="Bloque de código">
+                                <ion-icon name="code-slash-outline"></ion-icon>
+                            </button>
+
+                            <div class="w-px h-6 bg-gray-300 dark:bg-slate-600 mx-1"></div>
+
+                            <!-- Undo/Redo -->
+                            <button onclick="window.tiptapService?.editor?.chain().focus().undo().run()"
+                                class="toolbar-btn" title="Deshacer (Ctrl+Z)">
+                                <ion-icon name="arrow-undo-outline"></ion-icon>
+                            </button>
+                            <button onclick="window.tiptapService?.editor?.chain().focus().redo().run()"
+                                class="toolbar-btn" title="Rehacer (Ctrl+Shift+Z)">
+                                <ion-icon name="arrow-redo-outline"></ion-icon>
+                            </button>
+                        </div>
+
                         <!-- Tiptap Editor -->
                         <div id="editor"
-                            class="tiptap-editor w-full min-h-[400px] p-4 bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-600 focus-within:border-orange-500 dark:focus-within:border-orange-500 transition-colors">
+                            class="tiptap-editor w-full min-h-[400px] p-4 bg-white dark:bg-slate-800 focus-within:border-orange-500 dark:focus-within:border-orange-500 transition-colors">
                         </div>
                     </div>
 
