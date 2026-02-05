@@ -27,12 +27,20 @@ export class AuthorsManager {
             const data = await github.getFile('src/data/authors.json');
             const content = github.decodeContent(data.content);
             this.authors = JSON.parse(content);
-
-            this.populateAuthorSelect();
         } catch (error) {
-            console.error('Error loading authors:', error);
-            this.authors = [];
+            // If authors.json doesn't exist, use EMAIL_TO_AUTHOR mapping from firebase config
+            console.warn('authors.json not found, using EMAIL_TO_AUTHOR mapping');
+
+            // Import EMAIL_TO_AUTHOR from config
+            import('../config/firebase.js').then(module => {
+                const EMAIL_TO_AUTHOR = module.EMAIL_TO_AUTHOR;
+
+                // Convert EMAIL_TO_AUTHOR object to authors array
+                this.authors = Object.values(EMAIL_TO_AUTHOR).filter(author => author.slug);
+            });
         }
+
+        this.populateAuthorSelect();
     }
 
     populateAuthorSelect() {
