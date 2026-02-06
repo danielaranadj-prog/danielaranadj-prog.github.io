@@ -482,33 +482,34 @@
 
             <!-- 1. Icon Sidebar (Left) -->
             <aside id="icon-sidebar" class="w-[70px] bg-[#1a1a1a] flex flex-col items-center py-6 gap-6">
-                <button class="icon-btn active" data-section="editor" title="Editor">
-                    <ion-icon name="home-outline"></ion-icon>
+                <button class="icon-btn" data-tab="editor" title="Editor">
+                    <ion-icon name="home-outline" class="text-gray-400"></ion-icon>
                 </button>
-                <button class="icon-btn" data-section="posts" title="Publicaciones">
-                    <ion-icon name="document-text-outline"></ion-icon>
+                <button class="icon-btn" data-tab="posts" title="Publicaciones">
+                    <ion-icon name="document-text-outline" class="text-gray-400"></ion-icon>
                 </button>
-                <button class="icon-btn" data-section="media" title="Medios">
-                    <ion-icon name="images-outline"></ion-icon>
+                <button class="icon-btn" data-tab="media" title="Medios">
+                    <ion-icon name="images-outline" class="text-gray-400"></ion-icon>
                 </button>
-                <button class="icon-btn" data-section="video" title="Videos">
-                    <ion-icon name="videocam-outline"></ion-icon>
+                <button class="icon-btn" data-tab="tours" title="Tours">
+                    <ion-icon name="videocam-outline" class="text-gray-400"></ion-icon>
                 </button>
 
                 <div class="flex-1"></div>
 
-                <button class="icon-btn" data-section="settings" title="Configuración">
-                    <ion-icon name="settings-outline"></ion-icon>
+                <!-- Settings -->
+                <button class="icon-btn" id="btn-settings" title="Configuración">
+                    <ion-icon name="settings-outline" class="text-gray-400"></ion-icon>
                 </button>
-                <button class="icon-btn" data-section="user" title="Usuario">
-                    <ion-icon name="person-outline"></ion-icon>
+                <button class="icon-btn" id="btn-author" title="Autor">
+                    <ion-icon name="person-outline" class="text-gray-400"></ion-icon>
                 </button>
-                <button onclick="toggleDarkMode()" class="icon-btn" title="Tema">
-                    <ion-icon name="moon-outline" class="dark:hidden"></ion-icon>
-                    <ion-icon name="sunny-outline" class="hidden dark:block"></ion-icon>
+                <button class="icon-btn" id="toggle-theme" title="Tema" data-action="toggle-theme">
+                    <ion-icon name="moon-outline" class="text-gray-400 dark:hidden"></ion-icon>
+                    <ion-icon name="sunny-outline" class="text-gray-400 hidden dark:block"></ion-icon>
                 </button>
-                <button onclick="logout()" class="icon-btn text-red-400" title="Salir">
-                    <ion-icon name="log-out-outline"></ion-icon>
+                <button class="icon-btn" id="btn-logout" title="Cerrar sesión">
+                    <ion-icon name="log-out-outline" class="text-gray-400"></ion-icon>
                 </button>
             </aside>
 

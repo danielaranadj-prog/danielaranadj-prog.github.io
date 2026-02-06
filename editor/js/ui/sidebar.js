@@ -30,6 +30,21 @@ export class SidebarManager {
             });
         });
 
+        // Theme toggle button
+        const themeToggleBtn = document.getElementById('toggle-theme');
+        if (themeToggleBtn) {
+            themeToggleBtn.addEventListener('click', () => {
+                if (window.toggleTheme) {
+                    window.toggleTheme();
+                } else {
+                    // Fallback if toggleTheme not loaded yet
+                    document.documentElement.classList.toggle('dark');
+                    const isDark = document.documentElement.classList.contains('dark');
+                    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+                }
+            });
+        }
+
         // Collapse/expand button
         const collapseBtn = document.getElementById('sidebar-collapse-btn');
         if (collapseBtn) {
