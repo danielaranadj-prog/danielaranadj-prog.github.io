@@ -546,7 +546,9 @@
 
                     <!-- Header -->
                     <div class="flex items-center justify-between">
-                        <h2 class="text-lg font-bold">Configuración del Artículo</h2>
+                        <h2 class="text-sm font-semibold uppercase tracking-wide mb-4 text-slate-900 dark:text-white">
+                            Configuración del Artículo
+                        </h2>
                         <button onclick="publishCurrentPost()"
                             class="px-3 py-1 bg-orange-500 text-white text-sm rounded-lg hover:bg-orange-600 transition-colors">
                             Publicar
@@ -555,14 +557,15 @@
 
                     <!-- Title -->
                     <div>
-                        <label class="block text-sm font-semibold mb-2">Título</label>
+                        <label class="block text-xs font-medium mb-2 text-slate-700 dark:text-slate-300">Título</label>
                         <input type="text" id="post-title" placeholder="Título del post..." oninput="updateSEO()"
                             class="w-full p-3 rounded-lg border border-gray-200 dark:bg-slate-800 dark:border-slate-600 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all">
                     </div>
 
                     <!-- SEO Description -->
                     <div>
-                        <label class="block text-sm font-semibold mb-2">Resumen SEO</label>
+                        <label class="block text-xs font-medium mb-2 text-slate-700 dark:text-slate-300">Resumen
+                            SEO</label>
                         <textarea id="post-desc" rows="3" placeholder="Descripción SEO..." oninput="updateSEO()"
                             class="w-full p-3 rounded-lg border border-gray-200 dark:bg-slate-800 dark:border-slate-600 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all"></textarea>
                     </div>
@@ -570,12 +573,14 @@
                     <!-- Date & Author -->
                     <div class="grid grid-cols-2 gap-3">
                         <div>
-                            <label class="block text-sm font-semibold mb-2">Fecha</label>
+                            <label
+                                class="block text-xs font-medium mb-2 text-slate-700 dark:text-slate-300">Fecha</label>
                             <input type="date" id="post-date"
                                 class="w-full p-3 rounded-lg border border-gray-200 dark:bg-slate-800 dark:border-slate-600 text-sm">
                         </div>
                         <div>
-                            <label class="block text-sm font-semibold mb-2">Autor</label>
+                            <label
+                                class="block text-xs font-medium mb-2 text-slate-700 dark:text-slate-300">Autor</label>
                             <select id="post-author"
                                 class="w-full p-3 rounded-lg border border-gray-200 dark:bg-slate-800 dark:border-slate-600 text-sm">
                                 <option value="">Selecciona...</option>
@@ -585,7 +590,7 @@
 
                     <!-- Tags -->
                     <div>
-                        <label class="block text-sm font-semibold mb-2">Tags</label>
+                        <label class="block text-xs font-medium mb-2 text-slate-700 dark:text-slate-300">Tags</label>
                         <input type="text" id="tag-input" placeholder="# Tags (Enter)"
                             class="w-full p-3 rounded-lg border border-gray-200 dark:bg-slate-800 dark:border-slate-600 text-sm">
                         <div id="tags-container" class="flex flex-wrap gap-2 mt-2"></div>
@@ -593,7 +598,8 @@
 
                     <!-- Featured Image -->
                     <div>
-                        <label class="block text-sm font-semibold mb-2">Imagen Destacada</label>
+                        <label class="block text-xs font-medium mb-2 text-slate-700 dark:text-slate-300">Imagen
+                            Destacada</label>
                         <input type="text" id="post-hero" placeholder="URL de la imagen"
                             class="w-full p-3 rounded-lg border border-gray-200 dark:bg-slate-800 dark:border-slate-600 text-sm mb-2">
                         <input type="file" id="hero-upload" accept="image/*" class="hidden"
@@ -610,7 +616,7 @@
 
                     <!-- Table of Contents -->
                     <div class="border-t border-gray-200 dark:border-slate-700 pt-4">
-                        <label class="block text-sm font-semibold mb-3">Índice</label>
+                        <label class="block text-xs font-medium mb-3 text-slate-700 dark:text-slate-300">Índice</label>
                         <div id="toc-list" class="space-y-2 text-sm">
                             <div class="text-gray-400">El índice se generará automáticamente</div>
                         </div>
