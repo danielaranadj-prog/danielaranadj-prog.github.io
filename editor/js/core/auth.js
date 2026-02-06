@@ -18,16 +18,18 @@ export class AuthManager {
 
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
 
             try {
                 await signInWithEmailAndPassword(auth, email, password);
+                // Success handled by onAuthStateChanged listener
             } catch (error) {
+                console.error('Login error:', error);
                 const errorEl = document.getElementById('login-error');
                 if (errorEl) {
                     errorEl.classList.remove('hidden');
-                    errorEl.textContent = "Login fallido";
+                    errorEl.textContent = "Login fallido - Verifica tus credenciales";
                 }
                 showToast("Error de autenticación", "error");
             }
