@@ -58,6 +58,33 @@
             border-color: #334155 !important;
         }
 
+        /* Tiptap Cursor - Make it highly visible */
+        .tiptap {
+            caret-color: #f97316;
+            /* Orange cursor */
+        }
+
+        .dark .tiptap {
+            caret-color: #fb923c;
+            /* Lighter orange for dark mode */
+        }
+
+        /* Ensure cursor is visible */
+        .tiptap:focus {
+            caret-color: #f97316;
+            outline: none;
+        }
+
+        /* Selection styling */
+        .tiptap::selection {
+            background: rgba(249, 115, 22, 0.3);
+        }
+
+        .tiptap p {
+            margin: 0.5rem 0;
+            line-height: 1.75;
+        }
+
         /* Tiptap Toolbar Buttons */
         .toolbar-btn {
             display: flex;
@@ -456,10 +483,9 @@
         <div class="glass-card p-10 rounded-3xl shadow-2xl w-full max-w-md">
             <div class="text-center mb-8">
                 <img src="public/blog.svg" alt="Logo" class="h-14 mx-auto mb-4 logo-adaptive">
-                <h1
-                    class="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
-                    Editor V6.4</h1>
-                <p class="text-xs text-gray-400 mt-1">Panel de Publicaciones</p>
+                <h1 class="text-4xl font-bold text-white mb-2">
+                    Editor V7</h1>
+                <p class="text-gray-400">Panel de Publicaciones · Powered by Tiptap</p>
             </div>
             <form id="login-form" class="space-y-4">
                 <input type="email" id="login-email" placeholder="Email" required
