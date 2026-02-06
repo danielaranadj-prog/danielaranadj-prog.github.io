@@ -15,11 +15,16 @@ import './modules/editor.js';
 import './modules/posts.js';
 import './modules/authors.js';
 import './utils/tiptap-helpers.js';
+import { initSidebar } from './ui/sidebar.js'; // V7 Sidebar
 
 // Initialize app
 document.addEventListener('DOMContentLoaded', () => {
     initTheme();
-    console.log('✅ Editor V6.4 with Tiptap loaded');
+
+    // Initialize V7 Sidebar
+    initSidebar();
+
+    console.log('✅ Editor V7 with Tiptap loaded');
     console.log('💡 Tip: Press Ctrl+S to save, Esc to close modals');
     console.log('⚡ Auto-save enabled for forms');
 });
