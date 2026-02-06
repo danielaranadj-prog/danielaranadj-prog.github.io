@@ -11,9 +11,7 @@
         src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
-    <script src="https://cdn.tiny.cloud/1/mzaiavt8ne1jnylgt9u8ns2j7xbaofg5gexdmktmbfa09jh3/tinymce/6/tinymce.min.js"
-        referrerpolicy="origin"></script>
-
+    <!-- Tiptap will be loaded via npm modules -->
     <script src="https://unpkg.com/turndown/dist/turndown.js"></script>
     <script src="https://unpkg.com/turndown-plugin-gfm/dist/turndown-plugin-gfm.js"></script>
 
@@ -48,16 +46,84 @@
         }
 
         .logo-adaptive {
-            filter: invert(1);
-            transition: filter 0.3s;
+            filter: invert(0);
         }
 
         .dark .logo-adaptive {
             filter: invert(0);
         }
 
-        .dark .tox-tinymce {
+        /* Tiptap Editor Styles */
+        .tiptap-editor {
             border-color: #334155 !important;
+        }
+
+        /* Tiptap Cursor - Make it highly visible */
+        .tiptap {
+            caret-color: #f97316;
+            /* Orange cursor */
+        }
+
+        .dark .tiptap {
+            caret-color: #fb923c;
+            /* Lighter orange for dark mode */
+        }
+
+        /* Ensure cursor is visible */
+        .tiptap:focus {
+            caret-color: #f97316;
+            outline: none;
+        }
+
+        /* Selection styling */
+        .tiptap::selection {
+            background: rgba(249, 115, 22, 0.3);
+        }
+
+        .tiptap p {
+            margin: 0.5rem 0;
+            line-height: 1.75;
+        }
+
+        /* Tiptap Toolbar Buttons */
+        .toolbar-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
+            min-width: 32px;
+            height: 32px;
+            padding: 4px 8px;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #374151;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .dark .toolbar-btn {
+            background: #1e293b;
+            border-color: #475569;
+            color: #e2e8f0;
+        }
+
+        .toolbar-btn:hover {
+            background: #f3f4f6;
+            border-color: #f97316;
+            color: #f97316;
+            transform: translateY(-1px);
+        }
+
+        .dark .toolbar-btn:hover {
+            background: #334155;
+            border-color: #f97316;
+        }
+
+        .toolbar-btn:active {
+            transform: translateY(0);
         }
 
         /* Glassmorphism */
@@ -70,12 +136,174 @@
         }
 
         .dark .glass-card {
-            background: rgba(15, 23, 42, 0.9);
+            background: rgba(15, 23, 42, 0.7);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
         }
 
-        /* Animated Gradient Background */
+        /* V7 Sidebar Styles */
+        #v7-sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 280px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-right: 1px solid rgba(0, 0, 0, 0.1);
+            z-index: 40;
+            transition: transform 0.3s ease, width 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .dark #v7-sidebar {
+            background: rgba(15, 23, 42, 0.95);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        #v7-sidebar.collapsed {
+            width: 80px;
+        }
+
+        /* Sidebar Header */
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .dark .sidebar-header {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Sidebar Tabs */
+        .sidebar-tabs {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            padding: 1rem;
+        }
+
+        .sidebar-tab-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            background: transparent;
+            border: none;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #64748b;
+            text-align: left;
+        }
+
+        .dark .sidebar-tab-btn {
+            color: #94a3b8;
+        }
+
+        .sidebar-tab-btn:hover {
+            background: rgba(249, 115, 22, 0.1);
+            color: #f97316;
+        }
+
+        .sidebar-tab-btn.active {
+            background: linear-gradient(135deg, #f97316 0%, #fb923c 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
+        }
+
+        .sidebar-tab-btn ion-icon {
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+
+        #v7-sidebar.collapsed .sidebar-tab-btn span {
+            display: none;
+        }
+
+        #v7-sidebar.collapsed .sidebar-tab-btn {
+            justify-content: center;
+            padding: 0.75rem;
+        }
+
+        /* Main Content with Sidebar */
+        #v7-main-content {
+            margin-left: 280px;
+            transition: margin-left 0.3s ease;
+            min-height: 100vh;
+        }
+
+        #v7-main-content.sidebar-collapsed {
+            margin-left: 80px;
+        }
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content:not(.hidden) {
+            display: block;
+        }
+
+        /* Collapse Button */
+        .sidebar-collapse-btn {
+            position: absolute;
+            right: -12px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 24px;
+            height: 24px;
+            background: white;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            z-index: 41;
+        }
+
+        .dark .sidebar-collapse-btn {
+            background: #1e293b;
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-collapse-btn:hover {
+            background: #f97316;
+            border-color: #f97316;
+            color: white;
+        }
+
+        .sidebar-collapse-btn ion-icon {
+            font-size: 0.875rem;
+            transition: transform 0.3s ease;
+        }
+
+        #v7-sidebar.collapsed .sidebar-collapse-btn ion-icon {
+            transform: rotate(180deg);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            #v7-sidebar {
+                transform: translateX(-100%);
+            }
+
+            #v7-sidebar.mobile-open {
+                transform: translateX(0);
+            }
+
+            #v7-main-content {
+                margin-left: 0;
+            }
+        }
+
+        /* Gradient Background */
         .gradient-bg {
             background: linear-gradient(-45deg, #f3f4f6, #dbeafe, #fce7f3, #ffedd5, #f3f4f6);
             background-size: 400% 400%;
@@ -107,884 +335,637 @@
             }
         }
 
-        /* Premium Buttons */
-        .btn-primary {
-            background: linear-gradient(135deg, #171717 0%, #262626 100%);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn-primary::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-        }
-
-        .btn-primary:hover::before {
-            opacity: 1;
-        }
-
-        .btn-primary:active {
-            transform: translateY(0);
-        }
-
-        .dark .btn-primary {
-            background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
-        }
-
-        /* Accent Colors */
-        .accent-input {
-            transition: all 0.2s ease;
-            border: 1px solid transparent;
-        }
-
-        .accent-input:focus {
-            border-color: #f97316;
-            box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.15);
-            outline: none;
-        }
-
-        .text-accent {
-            color: #f97316;
-        }
-
-        .bg-accent {
-            background-color: #f97316;
-        }
-
-        /* Modal Animations */
-        .modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(8px);
-            z-index: 50;
-            display: none;
-            place-items: center;
-        }
-
-        .modal-overlay.open {
-            display: grid;
-        }
-
-        .modal-content {
-            animation: modalSlideUp 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-
-        @keyframes modalSlideUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px) scale(0.95);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-        }
-
-        /* Enhanced Header */
-        .header-enhanced {
-            background: linear-gradient(to right, rgba(255, 255, 255, 0.95), rgba(249, 250, 251, 0.95));
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-        }
-
-        .dark .header-enhanced {
-            background: linear-gradient(to right, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.95));
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        /* Interactive Elements */
-        .btn-icon {
-            transition: all 0.2s ease;
-            border-radius: 10px;
-        }
-
-        .btn-icon:hover {
-            background: rgba(249, 115, 22, 0.1);
-            color: #f97316;
-            transform: scale(1.05);
-        }
-
-        /* Card Hover Effects */
+        /* Card Hover Effect */
         .card-hover {
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .card-hover:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.15);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
         }
 
-        /* Existing Styles */
-        .loader {
-            width: 20px;
-            height: 20px;
-            border: 2px solid #ccc;
-            border-top-color: #f97316;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
+        /* Accent Input */
+        .accent-input {
+            transition: all 0.2s;
         }
 
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
+        .accent-input:focus {
+            outline: none;
+            border-color: #f97316;
+            box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
+        }
+
+        /* Skeleton Loading */
+        .skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+
+        .dark .skeleton {
+            background: linear-gradient(90deg, #1e293b 25%, #334155 50%, #1e293b 75%);
+            background-size: 200% 100%;
+        }
+
+        @keyframes loading {
+            0% {
+                background-position: 200% 0;
+            }
+
+            100% {
+                background-position: -200% 0;
             }
         }
 
-        .dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            display: inline-block;
-            transition: all 0.3s;
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 50;
+            align-items: center;
+            justify-content: center;
         }
 
-        .dot-green {
-            background: #22c55e;
-            box-shadow: 0 0 8px #22c55e;
+        .modal.open {
+            display: flex;
         }
 
-        .dot-yellow {
-            background: #eab308;
-            box-shadow: 0 0 8px #eab308;
+        /* Toast */
+        .toast {
+            animation: slideIn 0.3s ease-out;
         }
 
-        .dot-red {
-            background: #ef4444;
-            box-shadow: 0 0 8px #ef4444;
+        @keyframes slideIn {
+            from {
+                transform: translateX(-100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
         }
 
-        .prose {
-            font-size: 0.95rem;
-            line-height: 1.7;
-            color: #333;
-            max-width: 65ch;
-            margin: 0 auto;
+        /* Hide by default */
+        .hidden {
+            display: none !important;
         }
 
-        .dark .prose {
-            color: #e2e8f0;
+        /* CTA Destination Card Styles */
+        .cta-destination-card {
+            display: block;
+            margin: 2rem 0;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+            transition: all 0.3s ease;
+            text-decoration: none;
         }
 
-        .prose h1 {
-            font-size: 2.25em;
-            font-weight: 800;
-            margin-bottom: 0.5em;
-            line-height: 1.2;
+        .cta-destination-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
         }
 
-        .prose h2 {
-            font-size: 1.5em;
+        .cta-destination-card a {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            text-decoration: none;
+            color: white;
+        }
+
+        .cta-emoji {
+            font-size: 3rem;
+            flex-shrink: 0;
+        }
+
+        .cta-content {
+            flex: 1;
+        }
+
+        .cta-label {
+            display: block;
+            font-size: 0.75rem;
             font-weight: 700;
-            margin-top: 1.5em;
-            margin-bottom: 0.5em;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            opacity: 0.9;
+            margin-bottom: 0.25rem;
         }
 
-        .prose p {
-            margin-bottom: 1em;
+        .cta-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0 0 0.5rem 0;
+            color: white;
         }
 
-        .prose img {
-            border-radius: 8px;
-            margin: 1em 0;
-            max-width: 100%;
-            height: auto;
-        }
-
-        .prose iframe {
-            width: 100%;
-            aspect-ratio: 16/9;
-            border-radius: 8px;
-            margin: 1em 0;
+        .cta-description {
+            font-size: 0.95rem;
+            opacity: 0.95;
+            margin: 0;
+            line-height: 1.5;
         }
     </style>
 </head>
 
-<body class="antialiased">
+<body class="gradient-bg">
 
-    <div id="preview-modal-mobile" class="modal-overlay z-[60]">
-        <div class="bg-white dark:bg-slate-900 w-full h-full flex flex-col">
-            <div
-                class="flex justify-between items-center p-4 border-b dark:border-slate-700 bg-white dark:bg-slate-900">
-                <h3 class="font-bold text-lg flex items-center gap-2"><ion-icon name="eye-outline"></ion-icon> Vista
-                    Previa</h3>
-                <button onclick="closeMobilePreview()" class="text-3xl p-2"><ion-icon
-                        name="close-outline"></ion-icon></button>
-            </div>
-            <div id="mobile-preview-content"
-                class="flex-1 overflow-y-auto p-6 prose dark:prose-invert max-w-none pb-20"></div>
-        </div>
-    </div>
-
-    <div id="load-post-modal" class="modal-overlay">
-        <div
-            class="modal-content bg-white dark:bg-slate-900 w-full max-w-2xl rounded-2xl shadow-2xl p-6 flex flex-col max-h-[85vh]">
-            <div class="flex justify-between items-center mb-4 border-b dark:border-slate-800 pb-3">
-                <h3 class="font-bold text-lg flex items-center gap-2 text-accent"><ion-icon
-                        name="folder-open-outline"></ion-icon> Explorar</h3>
-                <button onclick="closeLoadModal()" class="btn-icon p-2"><ion-icon name="close-outline"
-                        class="text-2xl"></ion-icon></button>
-            </div>
-            <input type="text" id="search-posts" placeholder="Buscar..."
-                class="w-full p-3 bg-gray-50 dark:bg-slate-800 rounded-xl accent-input border border-gray-200 dark:border-slate-700 mb-4"
-                oninput="filterPosts()">
-            <div id="posts-list" class="space-y-2 overflow-y-auto flex-1 pr-2"></div>
-        </div>
-    </div>
-
-    <div id="author-modal" class="modal-overlay">
-        <div class="modal-content bg-white dark:bg-slate-900 w-full max-w-lg rounded-2xl shadow-2xl p-6">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="font-bold text-lg text-accent">Autores</h3>
-                <button onclick="closeAuthorModal()" class="btn-icon p-2"><ion-icon name="close-outline"
-                        class="text-2xl"></ion-icon></button>
-            </div>
-            <div class="space-y-3">
-                <input type="text" id="new-auth-name" placeholder="Nombre"
-                    class="w-full p-3 rounded-xl accent-input border border-gray-200 dark:bg-slate-800 dark:border-slate-600">
-                <input type="text" id="new-auth-role" placeholder="Rol"
-                    class="w-full p-3 rounded-xl accent-input border border-gray-200 dark:bg-slate-800 dark:border-slate-600">
-                <textarea id="new-auth-bio" rows="2" placeholder="Bio..."
-                    class="w-full p-3 rounded-xl accent-input border border-gray-200 dark:bg-slate-800 dark:border-slate-600"></textarea>
-                <input type="file" id="new-auth-file" class="w-full text-xs">
-                <button onclick="saveNewAuthor()" id="btn-save-auth"
-                    class="w-full btn-primary text-white py-3 rounded-xl font-bold">Guardar</button>
-            </div>
-            <div id="authors-list-container" class="mt-4 pt-4 border-t dark:border-slate-700"></div>
-        </div>
-    </div>
-
-    <div id="login-section" class="flex items-center justify-center min-h-screen p-4 gradient-bg">
-        <div class="w-full max-w-sm text-center glass-card rounded-3xl p-8">
-            <div class="mb-8">
+    <!-- Login Section -->
+    <div id="login-section" class="min-h-screen flex items-center justify-center p-6">
+        <div class="glass-card p-10 rounded-3xl shadow-2xl w-full max-w-md">
+            <div class="text-center mb-8">
                 <img src="public/blog.svg" alt="Logo" class="h-14 mx-auto mb-4 logo-adaptive">
-                <h1
-                    class="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
-                    Editor V6.3</h1>
-                <p class="text-xs text-gray-400 mt-1">Panel de Publicaciones</p>
+                <h1 class="text-4xl font-bold text-white mb-2">
+                    Editor V7</h1>
+                <p class="text-gray-400">Panel de Publicaciones · Powered by Tiptap</p>
             </div>
             <form id="login-form" class="space-y-4">
-                <input type="email" id="email" placeholder="Email"
-                    class="w-full p-4 bg-white/50 dark:bg-slate-800/50 rounded-xl accent-input border border-gray-200 dark:border-slate-700"
-                    required>
-                <input type="password" id="password" placeholder="Contraseña"
-                    class="w-full p-4 bg-white/50 dark:bg-slate-800/50 rounded-xl accent-input border border-gray-200 dark:border-slate-700"
-                    required>
-                <button type="submit" class="w-full btn-primary text-white font-bold py-4 rounded-xl">Entrar</button>
+                <input type="email" id="login-email" placeholder="Email" required
+                    class="w-full p-4 rounded-xl accent-input border border-gray-200 dark:bg-slate-800 dark:border-slate-600">
+                <input type="password" id="login-password" placeholder="Contraseña" required
+                    class="w-full p-4 rounded-xl accent-input border border-gray-200 dark:bg-slate-800 dark:border-slate-600">
+                <button type="submit"
+                    class="w-full py-4 bg-gradient-to-r from-orange-500 to-pink-500 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all hover:scale-105">
+                    Entrar
+                </button>
             </form>
-            <p id="login-error" class="text-red-500 text-sm mt-4 hidden"></p>
-            <p class="text-xs text-gray-400 mt-6">© 2024 Instante Trips</p>
         </div>
     </div>
 
-    <div id="app-section" class="hidden h-[100dvh] flex flex-col">
-        <header class="header-enhanced h-16 flex-none z-40">
-            <div class="w-full px-4 h-full flex items-center justify-between">
-                <div class="flex items-center gap-4">
-                    <div class="flex items-center gap-3">
-                        <div
-                            class="w-8 h-8 bg-gradient-to-br from-orange-400 to-orange-600 rounded-lg flex items-center justify-center shadow-lg">
-                            <img src="public/blog.svg" alt="Logo" class="h-5 invert">
+    <!-- Main App Section (Hidden by default) -->
+    <div id="app-section" class="hidden">
+
+        <!-- V7 Mockup Layout: 3 Columns -->
+        <div id="v7-layout" class="flex h-screen overflow-hidden">
+
+            <!-- 1. Icon Sidebar (Left) -->
+            <aside id="icon-sidebar" class="w-[70px] bg-[#1a1a1a] flex flex-col items-center py-6 gap-6">
+                <button class="icon-btn" data-tab="editor" title="Editor">
+                    <ion-icon name="home-outline" class="text-gray-400"></ion-icon>
+                </button>
+                <button class="icon-btn" data-tab="posts" title="Publicaciones">
+                    <ion-icon name="document-text-outline" class="text-gray-400"></ion-icon>
+                </button>
+                <button class="icon-btn" data-tab="media" title="Medios">
+                    <ion-icon name="images-outline" class="text-gray-400"></ion-icon>
+                </button>
+                <button class="icon-btn" data-tab="tours" title="Tours">
+                    <ion-icon name="videocam-outline" class="text-gray-400"></ion-icon>
+                </button>
+
+                <div class="flex-1"></div>
+
+                <!-- Settings -->
+                <button class="icon-btn" id="btn-settings" title="Configuración">
+                    <ion-icon name="settings-outline" class="text-gray-400"></ion-icon>
+                </button>
+                <button class="icon-btn" id="btn-author" title="Autor">
+                    <ion-icon name="person-outline" class="text-gray-400"></ion-icon>
+                </button>
+                <button class="icon-btn" id="toggle-theme" title="Tema" data-action="toggle-theme">
+                    <ion-icon name="moon-outline" class="text-gray-400 dark:hidden"></ion-icon>
+                    <ion-icon name="sunny-outline" class="text-gray-400 hidden dark:block"></ion-icon>
+                </button>
+                <button class="icon-btn" id="btn-logout" title="Cerrar sesión">
+                    <ion-icon name="log-out-outline" class="text-gray-400"></ion-icon>
+                </button>
+            </aside>
+
+            <!-- 1. EDITOR TAB -->
+            <div id="editor-tab" class="tab-content flex-1 flex">
+
+                <!-- 2. Config Panel (Left-Middle) -->
+                <aside id="config-panel"
+                    class="w-[320px] bg-white dark:bg-slate-900 border-r border-gray-200 dark:border-slate-700 overflow-y-auto">
+                    <div class="p-6 space-y-6">
+
+                        <!-- Header -->
+                        <div class="flex items-center justify-between">
+                            <h2
+                                class="text-sm font-semibold uppercase tracking-wide mb-4 text-slate-900 dark:text-white">
+                                Configuración del Artículo
+                            </h2>
+                            <button onclick="publishCurrentPost()"
+                                class="px-3 py-1 bg-orange-500 text-white text-sm rounded-lg hover:bg-orange-600 transition-colors">
+                                Publicar
+                            </button>
                         </div>
+
+                        <!-- Title -->
                         <div>
-                            <span class="font-bold text-sm">Editor V6.3</span>
-                            <p class="text-[10px] text-gray-500" id="save-status"></p>
+                            <label
+                                class="block text-xs font-medium mb-2 text-slate-700 dark:text-slate-300">Título</label>
+                            <input type="text" id="post-title" placeholder="Título del post..." oninput="updateSEO()"
+                                class="w-full p-3 rounded-lg border border-gray-200 dark:bg-slate-800 dark:border-slate-600 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all">
                         </div>
-                    </div>
-                    <!-- Greeting Message (shown after login) -->
-                    <div id="greeting-container"
-                        class="hidden md:flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-orange-50 to-amber-50 dark:from-orange-900/20 dark:to-amber-900/20 rounded-xl border border-orange-100 dark:border-orange-800/30">
-                        <span id="greeting-emoji" class="text-lg"></span>
+
+                        <!-- SEO Description -->
                         <div>
-                            <p id="greeting-text" class="text-xs font-semibold text-gray-700 dark:text-gray-200"></p>
-                            <p id="author-role-text" class="text-[10px] text-gray-500"></p>
+                            <label class="block text-xs font-medium mb-2 text-slate-700 dark:text-slate-300">Resumen
+                                SEO</label>
+                            <textarea id="post-desc" rows="3" placeholder="Descripción SEO..." oninput="updateSEO()"
+                                class="w-full p-3 rounded-lg border border-gray-200 dark:bg-slate-800 dark:border-slate-600 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all"></textarea>
                         </div>
-                    </div>
-                </div>
-                <div class="flex items-center gap-1">
-                    <!-- Admin Button (hidden by default, shown only for admin) -->
-                    <a id="admin-link" href="../admin/"
-                        class="hidden btn-icon flex items-center gap-2 px-3 py-2.5 text-sm font-medium bg-purple-50 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 rounded-xl"
-                        title="Panel de Administración">
-                        <ion-icon name="settings-outline"></ion-icon>
-                        <span class="hidden md:inline">Admin</span>
-                    </a>
-                    <button onclick="toggleDarkMode()" class="btn-icon p-2.5"><ion-icon name="moon-outline"
-                            class="text-lg"></ion-icon></button>
-                    <button onclick="openMobilePreview()" class="lg:hidden btn-icon p-2.5 text-accent"><ion-icon
-                            name="eye-outline" class="text-lg"></ion-icon></button>
-                    <button onclick="openLoadModal()"
-                        class="btn-icon flex items-center gap-2 px-4 py-2.5 text-sm font-medium"><ion-icon
-                            name="folder-open-outline"></ion-icon> Explorar</button>
-                    <button id="btn-logout"
-                        class="btn-icon p-2.5 text-red-500 hover:!bg-red-50 hover:!text-red-600"><ion-icon
-                            name="log-out-outline" class="text-lg"></ion-icon></button>
-                </div>
-            </div>
-        </header>
 
-        <div class="flex-1 flex overflow-hidden">
-
-            <div class="flex-1 overflow-y-auto p-6 pb-32 border-r border-gray-200 dark:border-slate-800 relative">
-                <div class="max-w-3xl mx-auto">
-                    <div
-                        class="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-2xl p-6 mb-6 shadow-sm card-hover">
-                        <div class="flex justify-between mb-4">
-                            <h2 class="text-xs font-bold uppercase text-accent tracking-wider">Configuración</h2>
-                            <button onclick="clearAll()" class="text-xs text-red-400 hover:underline">Limpiar</button>
-                        </div>
-                        <div class="space-y-4">
-                            <div class="relative">
-                                <input type="text" id="post-title"
-                                    class="w-full text-2xl font-bold bg-transparent border-b-2 border-gray-200 dark:border-slate-700 py-2 outline-none accent-input"
-                                    placeholder="Título del Artículo" oninput="updateSEO()">
-                                <div class="absolute right-0 top-3 flex items-center gap-2"><span id="title-count"
-                                        class="text-xs text-gray-400">0</span>
-                                    <div id="title-seo" class="dot bg-gray-200"></div>
-                                </div>
-                            </div>
-                            <textarea id="post-desc" rows="2"
-                                class="w-full text-sm bg-gray-50 dark:bg-slate-800 p-3 rounded outline-none resize-none"
-                                placeholder="Descripción SEO..." oninput="updateSEO()"></textarea>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div><label class="text-xs font-bold text-gray-400">Fecha</label><input type="date"
-                                        id="post-date"
-                                        class="w-full bg-transparent border-b py-1 dark:border-slate-700"></div>
-                                <div><label class="text-xs font-bold text-gray-400 flex justify-between">Autor <span
-                                            onclick="openAuthorModal()"
-                                            class="text-blue-500 cursor-pointer">+</span></label><select
-                                        id="post-author"
-                                        class="w-full bg-transparent border-b py-1 dark:border-slate-700">
-                                        <option>Cargando...</option>
-                                    </select></div>
-                            </div>
-                            <div class="flex items-center gap-2"><input type="text" id="post-hero"
-                                    class="flex-1 text-sm bg-transparent border-b py-1 dark:border-slate-700"
-                                    placeholder="Imagen Principal (URL)" oninput="renderLivePreview()"><label
-                                    class="cursor-pointer hover:bg-gray-100 p-2 rounded"><ion-icon
-                                        name="cloud-upload-outline"></ion-icon><input type="file" class="hidden"
-                                        accept="image/*" onchange="uploadHeroImage(this)"></label></div>
-                            <div class="flex items-center gap-2"><span class="text-gray-400 text-sm">#</span><input
-                                    type="text" id="tag-input" class="flex-1 text-sm bg-transparent outline-none"
-                                    placeholder="Tags (Enter)"></div>
-                            <div id="tags-container" class="flex flex-wrap gap-2"></div>
-
-                            <!-- Widget Config -->
-                            <div class="pt-4 border-t dark:border-slate-800 mt-4">
+                        <!-- Date & Author -->
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
                                 <label
-                                    class="text-xs font-bold uppercase text-accent tracking-widest mb-2 block">Widgets
-                                    de Viaje ✈️ Copiar código</label>
-                                <div class="grid grid-cols-1 gap-2">
-                                    <input type="text" id="flight-dest"
-                                        class="w-full text-xs bg-gray-50 dark:bg-slate-800 p-2 rounded outline-none border border-transparent focus:border-orange-500 accent-input"
-                                        placeholder="Destino Vuelos (Ej: Madrid)">
-                                    <input type="text" id="tour-city"
-                                        class="w-full text-xs bg-gray-50 dark:bg-slate-800 p-2 rounded outline-none border border-transparent focus:border-orange-500 accent-input"
-                                        placeholder="Ciudad Tours (Ej: Madrid)">
+                                    class="block text-xs font-medium mb-2 text-slate-700 dark:text-slate-300">Fecha</label>
+                                <input type="date" id="post-date"
+                                    class="w-full p-3 rounded-lg border border-gray-200 dark:bg-slate-800 dark:border-slate-600 text-sm">
+                            </div>
+                            <div>
+                                <label
+                                    class="block text-xs font-medium mb-2 text-slate-700 dark:text-slate-300">Autor</label>
+                                <select id="post-author"
+                                    class="w-full p-3 rounded-lg border border-gray-200 dark:bg-slate-800 dark:border-slate-600 text-sm">
+                                    <option value="">Selecciona...</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Tags -->
+                        <div>
+                            <label
+                                class="block text-xs font-medium mb-2 text-slate-700 dark:text-slate-300">Tags</label>
+                            <input type="text" id="tag-input" placeholder="# Tags (Enter)"
+                                class="w-full p-3 rounded-lg border border-gray-200 dark:bg-slate-800 dark:border-slate-600 text-sm">
+                            <div id="tags-container" class="flex flex-wrap gap-2 mt-2"></div>
+                        </div>
+
+                        <!-- Featured Image -->
+                        <div>
+                            <label class="block text-xs font-medium mb-2 text-slate-700 dark:text-slate-300">Imagen
+                                Destacada</label>
+                            <input type="text" id="post-hero" placeholder="URL de la imagen"
+                                class="w-full p-3 rounded-lg border border-gray-200 dark:bg-slate-800 dark:border-slate-600 text-sm mb-2">
+                            <input type="file" id="hero-upload" accept="image/*" class="hidden"
+                                onchange="uploadHeroImage(this)">
+                            <button type="button" onclick="document.getElementById('hero-upload').click()"
+                                class="w-full px-4 py-2 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-lg text-sm font-bold hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors flex items-center justify-center gap-2">
+                                <ion-icon name="cloud-upload-outline" class="text-lg"></ion-icon>
+                                Subir Imagen
+                            </button>
+                            <div id="hero-preview" class="mt-3 rounded-lg overflow-hidden hidden">
+                                <img id="hero-preview-img" class="w-full h-auto" alt="Preview">
+                            </div>
+                        </div>
+
+                        <!-- Table of Contents -->
+                        <div class="border-t border-gray-200 dark:border-slate-700 pt-4">
+                            <label
+                                class="block text-xs font-medium mb-3 text-slate-700 dark:text-slate-300">Índice</label>
+                            <div id="toc-list" class="space-y-2 text-sm">
+                                <div class="text-gray-400">El índice se generará automáticamente</div>
+                            </div>
+                        </div>
+
+                        <!-- Reading Time -->
+                        <div class="text-sm text-gray-500">
+                            <span class="font-semibold">Tiempo estimado:</span>
+                            <span id="reading-time">0 min</span>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="border-t border-gray-200 dark:border-slate-700 pt-4 space-y-2">
+                            <button onclick="openLoadModal()"
+                                class="w-full px-4 py-2 bg-gray-100 dark:bg-slate-800 text-gray-700 dark:text-gray-300 rounded-lg text-sm font-bold hover:bg-gray-200 dark:hover:bg-slate-700 transition-colors">
+                                Cargar Post
+                            </button>
+                            <button onclick="clearAll()"
+                                class="w-full px-4 py-2 bg-gray-100 dark:bg-slate-800 text-gray-700 dark:text-gray-300 rounded-lg text-sm font-bold hover:bg-gray-200 dark:hover:bg-slate-700 transition-colors">
+                                Limpiar Todo
+                            </button>
+                        </div>
+
+                    </div>
+                </aside>
+
+                <!-- 3. Editor Area (Center) -->
+                <main id="editor-area" class="flex-1 bg-gray-50 dark:bg-slate-800 overflow-y-auto">
+                    <div class="max-w-4xl mx-auto p-8">
+
+                        <!-- Article Title (Large) -->
+                        <h1 id="article-title-display" class="text-4xl font-bold mb-6 text-gray-900 dark:text-white">
+                            Título del Artículo
+                        </h1>
+
+                        <!-- Hero Image -->
+                        <div id="hero-display" class="mb-8 rounded-xl overflow-hidden hidden">
+                            <img id="hero-display-img" class="w-full h-auto" alt="Hero">
+                        </div>
+
+                        <!-- Tiptap Toolbar -->
+                        <div id="tiptap-toolbar"
+                            class="flex flex-wrap gap-1 p-3 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-lg mb-4">
+                            <!-- Text Formatting -->
+                            <button onclick="window.tiptapService?.editor?.chain().focus().toggleBold().run()"
+                                class="toolbar-btn" title="Negrita (Ctrl+B)">
+                                <strong>B</strong>
+                            </button>
+                            <button onclick="window.tiptapService?.editor?.chain().focus().toggleItalic().run()"
+                                class="toolbar-btn" title="Cursiva (Ctrl+I)">
+                                <em>I</em>
+                            </button>
+                            <button onclick="window.tiptapService?.editor?.chain().focus().toggleStrike().run()"
+                                class="toolbar-btn" title="Tachado">
+                                <s>S</s>
+                            </button>
+
+                            <div class="w-px h-6 bg-gray-300 dark:bg-slate-600 mx-1"></div>
+
+                            <!-- Headings -->
+                            <button
+                                onclick="window.tiptapService?.editor?.chain().focus().toggleHeading({ level: 1 }).run()"
+                                class="toolbar-btn" title="Título 1">H1</button>
+                            <button
+                                onclick="window.tiptapService?.editor?.chain().focus().toggleHeading({ level: 2 }).run()"
+                                class="toolbar-btn" title="Título 2">H2</button>
+                            <button
+                                onclick="window.tiptapService?.editor?.chain().focus().toggleHeading({ level: 3 }).run()"
+                                class="toolbar-btn" title="Título 3">H3</button>
+
+                            <div class="w-px h-6 bg-gray-300 dark:bg-slate-600 mx-1"></div>
+
+                            <!-- Lists -->
+                            <button onclick="window.tiptapService?.editor?.chain().focus().toggleBulletList().run()"
+                                class="toolbar-btn" title="Lista con viñetas">
+                                <ion-icon name="list-outline"></ion-icon>
+                            </button>
+                            <button onclick="window.tiptapService?.editor?.chain().focus().toggleOrderedList().run()"
+                                class="toolbar-btn" title="Lista numerada">
+                                <ion-icon name="list-outline"></ion-icon>
+                                <span class="text-xs">1.</span>
+                            </button>
+
+                            <div class="w-px h-6 bg-gray-300 dark:bg-slate-600 mx-1"></div>
+
+                            <!-- Blocks Button -->
+                            <button onclick="toggleBlocksMenu()"
+                                class="toolbar-btn bg-orange-500 text-white hover:bg-orange-600"
+                                title="Insertar Bloque">
+                                <ion-icon name="add-circle-outline"></ion-icon>
+                                <span class="text-xs">Bloques</span>
+                            </button>
+                        </div>
+
+                        <!-- Tiptap Editor -->
+                        <div id="editor"
+                            class="tiptap-editor w-full min-h-[600px] p-6 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-lg focus-within:border-orange-500 transition-colors">
+                        </div>
+
+                        <!-- Floating Blocks Menu -->
+                        <div id="blocks-menu"
+                            class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center"
+                            onclick="if(event.target === this) toggleBlocksMenu()">
+                            <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl p-6 max-w-2xl w-full mx-4">
+                                <div class="flex items-center justify-between mb-6">
+                                    <h3 class="text-xl font-bold">Insertar Bloque</h3>
+                                    <button onclick="toggleBlocksMenu()"
+                                        class="p-2 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-lg">
+                                        <ion-icon name="close-outline" class="text-2xl"></ion-icon>
+                                    </button>
+                                </div>
+                                <div class="grid grid-cols-3 gap-4">
+                                    <button class="block-item" onclick="insertBlock('video')">
+                                        <ion-icon name="videocam-outline"></ion-icon>
+                                        <span>Video</span>
+                                    </button>
+                                    <button class="block-item" onclick="insertBlock('cta')">
+                                        <ion-icon name="navigate-outline"></ion-icon>
+                                        <span>CTA Destino</span>
+                                    </button>
+                                    <button class="block-item" onclick="insertBlock('gallery')">
+                                        <ion-icon name="images-outline"></ion-icon>
+                                        <span>Galería</span>
+                                    </button>
+                                    <button class="block-item" onclick="insertBlock('table')">
+                                        <ion-icon name="grid-outline"></ion-icon>
+                                        <span>Tabla</span>
+                                    </button>
+                                    <button class="block-item" onclick="insertBlock('flights')">
+                                        <ion-icon name="airplane-outline"></ion-icon>
+                                        <span>Widget Vuelos</span>
+                                    </button>
+                                    <button class="block-item" onclick="insertBlock('faq')">
+                                        <ion-icon name="help-circle-outline"></ion-icon>
+                                        <span>FAQ</span>
+                                    </button>
+                                    <button class="block-item" onclick="insertBlock('quote')">
+                                        <ion-icon name="chatbox-outline"></ion-icon>
+                                        <span>Cita</span>
+                                    </button>
+                                    <button class="block-item" onclick="insertBlock('map')">
+                                        <ion-icon name="map-outline"></ion-icon>
+                                        <span>Mapa</span>
+                                    </button>
+                                    <button class="block-item" onclick="insertBlock('proscons')">
+                                        <ion-icon name="list-outline"></ion-icon>
+                                        <span>Pros & Contras</span>
+                                    </button>
                                 </div>
                             </div>
+                        </div>
 
-                            <!-- Video Button -->
-                            <div class="pt-2">
-                                <button onclick="insertVideoLink()"
-                                    class="flex items-center gap-2 px-3 py-2 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-lg text-sm font-bold hover:bg-red-200 dark:hover:bg-red-900/50 transition-colors w-full justify-center">
-                                    <ion-icon name="logo-youtube" class="text-lg"></ion-icon> Insertar Video (YouTube /
-                                    TikTok)
+                    </div>
+                </main>
+
+                <!-- 4. Preview Panel (Right) -->
+                <aside id="preview-panel"
+                    class="w-[420px] bg-white dark:bg-slate-900 border-l border-gray-200 dark:border-slate-700 overflow-y-auto">
+                    <div class="p-6 space-y-6">
+
+                        <!-- Preview Header -->
+                        <div>
+                            <h2 class="text-lg font-bold mb-3">Vista Previa</h2>
+                            <div class="flex gap-2">
+                                <button class="preview-device-btn active" data-device="desktop">
+                                    💻 Desktop
+                                </button>
+                                <button class="preview-device-btn" data-device="tablet">
+                                    📱 Tablet
+                                </button>
+                                <button class="preview-device-btn" data-device="mobile">
+                                    📱 Mobile
                                 </button>
                             </div>
                         </div>
-                    </div>
 
-                    <div
-                        class="bg-white dark:bg-slate-900 rounded-2xl shadow-lg border border-gray-200 dark:border-slate-800 overflow-hidden min-h-[500px] card-hover">
-                        <textarea id="tiny-editor" class="w-full h-full"></textarea>
-                    </div>
+                        <!-- Preview Content -->
+                        <div id="preview-container"
+                            class="border border-gray-200 dark:border-slate-700 rounded-lg overflow-hidden">
+                            <div id="live-preview-content"
+                                class="p-4 prose prose-sm dark:prose-invert max-w-none bg-white dark:bg-slate-800"
+                                style="transform-origin: top left;">
+                                <p class="text-gray-400 text-center">La vista previa aparecerá aquí...</p>
+                            </div>
+                        </div>
 
-                    <div class="mt-8 mb-8">
-                        <button onclick="publishCurrentPost()"
-                            class="w-full btn-primary text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2">
-                            <ion-icon name="rocket-outline" class="text-xl"></ion-icon> Publicar Artículo
-                        </button>
+                        <!-- SEO Score -->
+                        <div class="border border-gray-200 dark:border-slate-700 rounded-lg p-4">
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="font-bold">SEO Score</h3>
+                                <div id="seo-score-badge"
+                                    class="px-3 py-1 bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 rounded-full flex items-center gap-1">
+                                    <span class="text-6xl font-bold">0</span>
+                                    <span class="text-sm opacity-70">/ Bajo</span>
+                                </div>
+                            </div>
+                            <div id="seo-alerts" class="space-y-2 text-sm">
+                                <!-- Alerts will be inserted here -->
+                            </div>
+                        </div>
+
+                        <!-- Google Snippet Preview -->
+                        <div class="border border-gray-200 dark:border-slate-700 rounded-lg p-4">
+                            <h3 class="font-bold mb-3 text-sm">Google Snippet</h3>
+                            <div class="space-y-1">
+                                <div class="text-xs text-gray-500">www.instantetrips.com</div>
+                                <div id="snippet-title" class="text-blue-600 text-sm font-medium">Título del post</div>
+                                <div id="snippet-description" class="text-xs text-gray-600">Descripción SEO del
+                                    artículo...
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
+                </aside>
+
+            </div>
+            <!-- End V7 3-Column Editor Layout -->
+
+        </div>
+        <!-- End Editor Tab -->
+
+        <!-- 2. POSTS TAB -->
+        <div id="posts-tab" class="tab-content hidden flex-1 flex flex-col">
+            <header class="border-b border-gray-200 dark:border-slate-700 p-6 flex items-center justify-between">
+                <div>
+                    <h1 class="text-2xl font-bold text-slate-900 dark:text-white">Publicaciones</h1>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Gestiona tus posts publicados</p>
+                </div>
+                <button onclick="newPost()"
+                    class="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors flex items-center gap-2">
+                    <ion-icon name="add-outline"></ion-icon>
+                    Nuevo Post
+                </button>
+            </header>
+            <div class="p-6 border-b border-gray-200 dark:border-slate-700">
+                <input type="text" id="posts-search" placeholder="Buscar posts..."
+                    class="w-full p-3 rounded-lg border border-gray-200 dark:bg-slate-800 dark:border-slate-600 text-slate-900 dark:text-white">
+            </div>
+            <div id="posts-container" class="flex-1 overflow-y-auto p-6">
+                <div class="flex flex-col items-center justify-center h-full text-center">
+                    <ion-icon name="document-text-outline"
+                        class="text-6xl text-slate-300 dark:text-slate-600 mb-4"></ion-icon>
+                    <h3 class="text-lg font-semibold text-slate-700 dark:text-slate-300 mb-2">No hay posts aún</h3>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 mb-4">Crea tu primer post para empezar</p>
+                    <button onclick="newPost()"
+                        class="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors">Crear
+                        Post</button>
                 </div>
             </div>
+        </div>
 
-            <div class="hidden lg:block w-1/2 bg-white dark:bg-black overflow-y-auto p-12" id="live-preview-column">
-                <div class="max-w-2xl mx-auto">
-                    <div
-                        class="flex items-center gap-2 mb-6 text-xs font-bold uppercase text-gray-400 tracking-widest border-b pb-2">
-                        <ion-icon name="eye-outline"></ion-icon> Vista Previa en Vivo
-                    </div>
-                    <div id="live-preview-content" class="prose dark:prose-invert max-w-none">
-                        <h1 class="opacity-50">...</h1>
-                    </div>
+        <!-- 3. MEDIA TAB -->
+        <div id="media-tab" class="tab-content hidden flex-1 flex flex-col">
+            <header class="border-b border-gray-200 dark:border-slate-700 p-6 flex items-center justify-between">
+                <div>
+                    <h1 class="text-2xl font-bold text-slate-900 dark:text-white">Medios</h1>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Gestiona tus imágenes y archivos</p>
+                </div>
+                <button onclick="uploadMedia()"
+                    class="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors flex items-center gap-2">
+                    <ion-icon name="cloud-upload-outline"></ion-icon>
+                    Subir Imagen
+                </button>
+            </header>
+            <div class="p-6 border-b border-gray-200 dark:border-slate-700">
+                <input type="text" id="media-search" placeholder="Buscar imágenes..."
+                    class="w-full p-3 rounded-lg border border-gray-200 dark:bg-slate-800 dark:border-slate-600 text-slate-900 dark:text-white">
+            </div>
+            <div id="media-container" class="flex-1 overflow-y-auto p-6">
+                <div class="flex flex-col items-center justify-center h-full text-center">
+                    <ion-icon name="images-outline" class="text-6xl text-slate-300 dark:text-slate-600 mb-4"></ion-icon>
+                    <h3 class="text-lg font-semibold text-slate-700 dark:text-slate-300 mb-2">No hay imágenes aún</h3>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 mb-4">Sube tu primera imagen para empezar</p>
+                    <button onclick="uploadMedia()"
+                        class="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors">Subir
+                        Imagen</button>
                 </div>
             </div>
+        </div>
 
+        <!-- 4. TOURS TAB -->
+        <div id="tours-tab" class="tab-content hidden flex-1 flex flex-col">
+            <header class="border-b border-gray-200 dark:border-slate-700 p-6 flex items-center justify-between">
+                <div>
+                    <h1 class="text-2xl font-bold text-slate-900 dark:text-white">Tours</h1>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Gestiona tus tours desde Firestore</p>
+                </div>
+                <button onclick="newTour()"
+                    class="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors flex items-center gap-2">
+                    <ion-icon name="add-outline"></ion-icon>
+                    Nuevo Tour
+                </button>
+            </header>
+            <div class="p-6 border-b border-gray-200 dark:border-slate-700">
+                <input type="text" id="tours-search" placeholder="Buscar tours..."
+                    class="w-full p-3 rounded-lg border border-gray-200 dark:border-slate-600 text-slate-900 dark:text-white">
+            </div>
+            <div id="tours-container" class="flex-1 overflow-y-auto p-6">
+                <div class="flex flex-col items-center justify-center h-full text-center">
+                    <ion-icon name="videocam-outline"
+                        class="text-6xl text-slate-300 dark:text-slate-600 mb-4"></ion-icon>
+                    <h3 class="text-lg font-semibold text-slate-700 dark:text-slate-300 mb-2">No hay tours aún</h3>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 mb-4">Crea tu primer tour para empezar</p>
+                    <button onclick="newTour()"
+                        class="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors">Crear
+                        Tour</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <!-- End V7 Layout -->
+
+    </div>
+    <!-- End App Section -->
+
+    <!-- Mobile Preview Modal -->
+    <div id="preview-modal-mobile" class="modal">
+        <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-auto">
+            <div
+                class="p-4 border-b border-gray-200 dark:border-slate-800 flex items-center justify-between sticky top-0 bg-white dark:bg-slate-900">
+                <h2 class="text-lg font-bold">Vista Previa Móvil</h2>
+                <button onclick="closeMobilePreview()"
+                    class="p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors">
+                    <ion-icon name="close-outline" class="text-2xl"></ion-icon>
+                </button>
+            </div>
+            <div id="mobile-preview-content" class="p-6 prose prose-sm dark:prose-invert max-w-none"></div>
         </div>
     </div>
 
     <div id="toast-container" class="fixed bottom-6 left-6 z-[80] flex flex-col gap-2"></div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    <!-- Modular JavaScript -->
+    <!-- V7 Mockup Functions -->
+    <script src="js/seo-analyzer.js"></script>
+    <script src="js/v7-mockup.js"></script>
 
-        // TURNDOWN
-        const turndownService = new TurndownService({ headingStyle: 'atx', codeBlockStyle: 'fenced', bulletListMarker: '-' });
-        turndownService.use(turndownPluginGfm.gfm);
-        turndownService.addRule('iframe', {
-            filter: 'iframe',
-            replacement: function (content, node) {
-                const src = node.getAttribute('src');
-                return src ? '\n\n' + src + '\n\n' : '';
-            }
-        });
-        turndownService.addRule('tiktok', {
-            filter: function (node) {
-                return node.nodeName === 'BLOCKQUOTE' && node.classList.contains('tiktok-embed');
-            },
-            replacement: function (content, node) {
-                const cite = node.getAttribute('cite');
-                return cite ? '\n\n' + cite + '\n\n' : '';
-            }
-        });
-        turndownService.addRule('cta', {
-            filter: function (node) {
-                return node.nodeName === 'A' && node.classList.contains('cta-destination-card');
-            },
-            replacement: function (content, node) {
-                return '\n\n' + node.outerHTML + '\n\n';
-            }
-        });
+    <!-- Main App -->
+    <script type="module" src="js/main.js"></script>
 
-        // FIREBASE
-        const firebaseConfig = {
-            apiKey: "AIzaSyBdsu65Voj8en9u_7eL5q0YRFuCC7fUYWA",
-            authDomain: "instantetrips-editor.firebaseapp.com",
-            projectId: "instantetrips-editor",
-            storageBucket: "instantetrips-editor.firebasestorage.app",
-            messagingSenderId: "281917140804",
-            appId: "1:281917140804:web:ed712e65c9c4b77dd3b111"
-        };
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-
-        const MASTER_ADMIN_EMAIL = "danielaranadj@gmail.com";
-        const isAdmin = () => auth.currentUser && auth.currentUser.email.toLowerCase() === MASTER_ADMIN_EMAIL.toLowerCase();
-        const canDelete = isAdmin;  // Alias for backwards compatibility
-
-        // Email → Author mapping (add new authors here)
-        const EMAIL_TO_AUTHOR = {
-            'danielaranadj@gmail.com': { slug: 'daniel-arana', name: 'Daniel', role: 'Administrador' },
-            // Add more authors: 'email@example.com': { slug: 'author-slug', name: 'Display Name', role: 'Role' }
-        };
-
-        // Get current author info based on logged-in email
-        function getCurrentAuthorInfo() {
-            if (!auth.currentUser) return null;
-            const email = auth.currentUser.email.toLowerCase();
-            return EMAIL_TO_AUTHOR[email] || { slug: null, name: auth.currentUser.email.split('@')[0], role: 'Autor' };
-        }
-
-        // Time-based greeting
-        function getGreeting() {
-            const hour = new Date().getHours();
-            if (hour >= 5 && hour < 12) return { text: 'Buenos días', emoji: '☀️' };
-            if (hour >= 12 && hour < 19) return { text: 'Buenas tardes', emoji: '🌤️' };
-            return { text: 'Buenas noches', emoji: '🌙' };
-        }
-
-        // Show personalized greeting
-        function showGreeting() {
-            const authorInfo = getCurrentAuthorInfo();
-            if (!authorInfo) return;
-
-            const greeting = getGreeting();
-            const container = document.getElementById('greeting-container');
-            const emojiEl = document.getElementById('greeting-emoji');
-            const textEl = document.getElementById('greeting-text');
-            const roleEl = document.getElementById('author-role-text');
-
-            emojiEl.textContent = greeting.emoji;
-            textEl.textContent = `${greeting.text}, ${authorInfo.name}`;
-            roleEl.textContent = authorInfo.role;
-            container.classList.remove('hidden');
-            container.classList.add('flex');
-        }
-
-        let githubConfig = null;
-        let tags = [];
-        let allPosts = [];
-        let currentPostSha = null;
-        let currentPostFilename = null;
-
-        // INIT TINYMCE
-        function initTinyMCE(initialContent = '') {
-            tinymce.init({
-                selector: '#tiny-editor',
-                height: 600,
-                menubar: false,
-                skin: window.matchMedia('(prefers-color-scheme: dark)').matches ? 'oxide-dark' : 'oxide',
-                content_css: window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'default',
-                plugins: 'image media link lists table code preview wordcount help',
-                toolbar: 'undo redo | blocks fontsize | bold italic underline | bullist numlist | alignleft aligncenter alignright | link image media | customCtaBtn customVideoBtn | removeformat code',
-                content_style: 'body { font-family:Inter,sans-serif; font-size:16px; line-height:1.6 } img { max-width: 100%; height: auto; border-radius: 8px; }',
-                convert_urls: false,
-                relative_urls: false,
-                remove_script_host: false,
-                media_live_embeds: true,
-                setup: function (editor) {
-                    editor.on('init', function () { editor.setContent(initialContent); });
-                    editor.on('input change keyup', function () { renderLivePreview(); });
-
-                    editor.ui.registry.addButton('customVideoBtn', {
-                        icon: 'embed',
-                        tooltip: 'Insertar Video (YouTube/TikTok)',
-                        onAction: function (_) {
-                            const url = prompt('Pega el enlace del video (YouTube o TikTok):');
-                            if (url && url.trim()) {
-                                const cleanUrl = url.trim();
-                                editor.insertContent(`\n\n${cleanUrl}\n\n`);
-                            }
-                        }
-                    });
-
-                    editor.ui.registry.addButton('customCtaBtn', {
-                        icon: 'bookmark',
-                        tooltip: 'Insertar CTA Destino',
-                        onAction: function (_) {
-                            window.insertCtaLink();
-                        }
-                    });
-                },
-                images_upload_handler: (blobInfo, progress) => new Promise(async (resolve, reject) => {
-                    try {
-                        const file = blobInfo.blob();
-                        const b64 = await toBase64(await imageCompression(file, { maxSizeMB: 1 }));
-                        const name = `${Date.now()}-${file.name.replace(/[^a-z0-9]/gi, '-')}`;
-                        await ghFetch(`/contents/public/uploads/${name}`, 'PUT', { message: 'Tiny Upload', content: b64.split(',')[1], branch: githubConfig.branch });
-                        resolve(`/uploads/${name}`);
-                    } catch (e) { reject('Error subida: ' + e.message); }
-                })
-            });
-        }
-
-        window.insertCtaLink = () => {
-            // 1. Pedir datos al usuario
-            const url = prompt('URL del Destino (Ej: https://.../ushuaia)', 'https://www.instantetrips.com/argentina/destinos/ushuaia/');
-            if (!url) return;
-
-            const emoji = prompt('Emoji / Bandera (Ej: 🇦🇷)', '🇦🇷');
-            const label = prompt('Etiqueta Pequeña (Ej: Guía de Destino)', 'Guía de Destino');
-            const title = prompt('Título Principal (Ej: Ushuaia: El Fin del Mundo)', 'Ushuaia: El Fin del Mundo');
-            const desc = prompt('Descripción (Ej: Clima, presupuesto...)', 'Clima, presupuesto, tours y experiencias imperdibles →');
-
-            // 2. Construir HTML (usando variables CSS para Dark Mode)
-            const html = `
-            <a href="${url}" target="_blank" class="cta-destination-card" style="display:block; margin:2.5rem 0; padding:1.75rem; background:linear-gradient(135deg, rgba(244,185,66,0.08), rgba(117,170,219,0.08)); border-radius:16px; border-left:4px solid var(--accent-gold, #F4B942); text-decoration:none; color:inherit;">
-              <span style="display:inline-flex; align-items:center; gap:8px; margin-bottom:1rem;">
-                <span style="font-size:1.5rem;">${emoji}</span>
-                <span style="font-size:0.7rem; font-weight:800; text-transform:uppercase; letter-spacing:1.5px; color:var(--brand-blue, #75AADB); background:rgba(117,170,219,0.12); padding:6px 12px; border-radius:20px;">${label}</span>
-              </span>
-              <br>
-              <strong style="font-size:1.4rem; font-weight:800; color:var(--text-main, #2D3748);">${title}</strong>
-              <br>
-              <span style="color:var(--text-muted, #718096); font-size:0.95rem;">${desc}</span>
-            </a>
-            <p>&nbsp;</p>
-            `;
-
-            // 3. Insertar en TinyMCE
-            if (tinymce.activeEditor) {
-                tinymce.activeEditor.insertContent(html);
-            }
-        };
-
-        window.insertVideoLink = () => {
-            const input = prompt('Pega el enlace o código embed (YouTube/TikTok):');
-            if (!input || !input.trim()) return;
-
-            let cleanUrl = input.trim();
-
-            // Basic check for HTML embed code
-            if (cleanUrl.includes('<iframe') || cleanUrl.includes('<blockquote')) {
-                const div = document.createElement('div');
-                div.innerHTML = cleanUrl;
-
-                const iframe = div.querySelector('iframe');
-                const blockquote = div.querySelector('blockquote');
-
-                if (iframe && iframe.src) {
-                    cleanUrl = iframe.src;
-                } else if (blockquote && blockquote.getAttribute('cite')) {
-                    cleanUrl = blockquote.getAttribute('cite');
-                }
-            }
-
-            if (tinymce.activeEditor) {
-                tinymce.activeEditor.insertContent(`\n\n${cleanUrl}\n\n`);
-            }
-        };
-
-        function renderLivePreview() {
-            let content = '';
-            if (tinymce.activeEditor) content = tinymce.activeEditor.getContent();
-            const t = document.getElementById('post-title').value;
-            const h = document.getElementById('post-hero').value;
-            let finalHtml = '';
-            if (h) finalHtml += `<img src="${h}" class="w-full h-64 object-cover rounded-xl mb-6 shadow-sm">`;
-            if (t) finalHtml += `<h1 class="text-3xl font-bold mb-4">${t}</h1>`;
-            finalHtml += content;
-            const deskPreview = document.getElementById('live-preview-content');
-            if (deskPreview) deskPreview.innerHTML = finalHtml;
-            const mobPreview = document.getElementById('mobile-preview-content');
-            if (mobPreview) mobPreview.innerHTML = finalHtml;
-        }
-
-        window.openMobilePreview = () => { renderLivePreview(); document.getElementById('preview-modal-mobile').classList.add('open'); }
-        window.closeMobilePreview = () => document.getElementById('preview-modal-mobile').classList.remove('open');
-
-        const loginForm = document.getElementById('login-form');
-        loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            try { await signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('password').value); }
-            catch (error) { document.getElementById('login-error').classList.remove('hidden'); document.getElementById('login-error').textContent = "Login fallido"; }
-        });
-        document.getElementById('btn-logout').addEventListener('click', () => signOut(auth));
-
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                document.getElementById('login-section').classList.add('hidden');
-                document.getElementById('app-section').classList.remove('hidden');
-                document.getElementById('post-date').valueAsDate = new Date();
-
-                // Show admin button only for master admin
-                const adminLink = document.getElementById('admin-link');
-                if (isAdmin()) {
-                    adminLink.classList.remove('hidden');
-                } else {
-                    adminLink.classList.add('hidden');
-                }
-
-                // Show personalized greeting
-                showGreeting();
-
-                const docSnap = await getDoc(doc(db, "config", "main"));
-                if (docSnap.exists()) {
-                    githubConfig = docSnap.data();
-                    if (!githubConfig.postsPath.endsWith('/')) githubConfig.postsPath += '/';
-                    loadAuthorsFromRepo();
-                    initTinyMCE();
-                }
-            } else {
-                document.getElementById('login-section').classList.remove('hidden');
-                document.getElementById('app-section').classList.add('hidden');
-                document.getElementById('admin-link').classList.add('hidden');
-            }
-        });
-
-        async function ghFetch(ep, m = 'GET', b = null) {
-            const res = await fetch(`https://api.github.com/repos/${githubConfig.repoOwner}/${githubConfig.repoName}${ep}`, {
-                method: m,
-                headers: { 'Authorization': `token ${githubConfig.githubToken}`, 'Content-Type': 'application/json' },
-                body: b ? JSON.stringify(b) : null
-            });
-            if (!res.ok) throw new Error(`GitHub: ${res.status}`);
-            return res.json();
-        }
-
-        const toBase64 = file => new Promise(r => { const rd = new FileReader(); rd.readAsDataURL(file); rd.onload = () => r(rd.result); });
-
-        function validatePost() {
-            const title = document.getElementById('post-title').value.trim();
-            const desc = document.getElementById('post-desc').value.trim();
-            const heroImage = document.getElementById('post-hero').value.trim();
-            const content = tinymce.activeEditor ? tinymce.activeEditor.getContent() : '';
-            const errors = [];
-
-            if (!title || title.length < 10) {
-                errors.push('❌ El título debe tener al menos 10 caracteres');
-            }
-
-            if (title.length > 70) {
-                errors.push('⚠️ El título es muy largo (máx 70 caracteres para SEO)');
-            }
-
-            if (!desc || desc.length < 50) {
-                errors.push('❌ La descripción debe tener al menos 50 caracteres');
-            }
-
-            if (desc.length > 160) {
-                errors.push('⚠️ La descripción es muy larga (máx 160 para SEO)');
-            }
-
-            if (tags.length === 0) {
-                errors.push('❌ Agrega al menos un tag');
-            }
-
-            if (!heroImage) {
-                errors.push('❌ Agrega una imagen principal');
-            }
-
-            if (!content || content.length < 100) {
-                errors.push('❌ El contenido es muy corto (mínimo 100 caracteres)');
-            }
-
-            return errors;
-        }
-
-        window.publishCurrentPost = async () => {
-            // Validar antes de publicar
-            const errors = validatePost();
-            if (errors.length > 0) {
-                alert(errors.join('\n\n'));
-                return;
-            }
-
-            const btn = document.querySelector('button[onclick="publishCurrentPost()"]');
-            const orig = btn.innerText; btn.innerText = "Publicando..."; btn.disabled = true;
-            try {
-                const rawContent = tinymce.activeEditor.getContent();
-                let mdContent = turndownService.turndown(rawContent);
-                const t = document.getElementById('post-title').value;
-                const d = document.getElementById('post-desc').value;
-                const dt = document.getElementById('post-date').value;
-                const a = document.getElementById('post-author').value;
-                const h = document.getElementById('post-hero').value;
-                const fd = document.getElementById('flight-dest').value;
-                const tc = document.getElementById('tour-city').value;
-
-                let frontmatter = `---\ntitle: "${t}"\ndescription: "${d}"\npublishDate: "${dt}"\nauthor: "${a}"\nheroImage: "${h}"\nlayout: "../../layouts/BlogPost.astro"\ntags: [${tags.map(x => `"${x}"`).join(', ')}]`;
-
-                if (fd) frontmatter += `\nflight_destination: "${fd}"`;
-                if (tc) frontmatter += `\ntour_city: "${tc}"`;
-
-                frontmatter += `\n---\n\n`;
-                const finalFile = frontmatter + mdContent;
-                let fn = currentPostFilename;
-                if (!fn) { const s = t.toLowerCase().replace(/[^a-z0-9]+/g, '-'); fn = `${dt}-${s}.md`; }
-                const payload = { message: `Update ${fn}`, content: btoa(unescape(encodeURIComponent(finalFile))), branch: githubConfig.branch };
-                if (currentPostSha) payload.sha = currentPostSha;
-                const res = await ghFetch(`/contents/${githubConfig.postsPath}${fn}`, 'PUT', payload);
-                currentPostSha = res.content.sha; currentPostFilename = fn;
-                showToast("✅ Publicado con éxito");
-            } catch (e) { showToast("Error: " + e.message, "error"); }
-            btn.innerText = orig; btn.disabled = false;
-        };
-
-        window.openLoadModal = async () => {
-            document.getElementById('load-post-modal').classList.add('open');
-            const files = await ghFetch(`/contents/${githubConfig.postsPath}`);
-            allPosts = files.filter(f => f.name.endsWith('.md')).map(f => ({ name: f.name, sha: f.sha }));
-            renderPostsList(allPosts);
-        };
-
-        window.loadPost = async (name) => {
-            try {
-                const d = await ghFetch(`/contents/${githubConfig.postsPath}${name}`);
-                const raw = decodeURIComponent(escape(atob(d.content)));
-                const fmMatch = raw.match(/^---\n([\s\S]+?)\n---/);
-                if (fmMatch) {
-                    const get = k => { const m = fmMatch[1].match(new RegExp(`${k}:\\s*["'](.+?)["']`)); return m ? m[1] : ''; };
-                    document.getElementById('post-title').value = get('title');
-                    document.getElementById('post-desc').value = get('description');
-                    document.getElementById('post-date').value = get('publishDate');
-                    document.getElementById('post-author').value = get('author');
-                    document.getElementById('post-hero').value = get('heroImage');
-                    const tm = fmMatch[1].match(/tags:\s*\[(.*?)\]/);
-                    if (tm) tags = tm[1].split(',').map(x => x.trim().replace(/['"]/g, '')).filter(Boolean);
-                    renderTags();
-
-                    document.getElementById('flight-dest').value = get('flight_destination') || '';
-                    document.getElementById('tour-city').value = get('tour_city') || '';
-                }
-                const bodyMd = raw.replace(/^---[\s\S]+?---\s*/, '');
-                const bodyHtml = marked.parse(bodyMd);
-                tinymce.activeEditor.setContent(bodyHtml);
-                currentPostFilename = name; currentPostSha = d.sha;
-                closeLoadModal(); showToast("Post cargado"); renderLivePreview();
-            } catch (e) { showToast("Error cargando post", "error"); }
-        };
-
-        function renderPostsList(posts) {
-            document.getElementById('posts-list').innerHTML = posts.map(p =>
-                `<div class="flex justify-between p-3 border-b hover:bg-gray-50 dark:hover:bg-slate-800">
-                    <span onclick="loadPost('${p.name}')" class="cursor-pointer">${p.name}</span>
-                    ${canDelete() ? `<button onclick="deletePost('${p.name}', '${p.sha}')" class="text-red-500"><ion-icon name="trash-outline"></ion-icon></button>` : ''}
-                </div>`
-            ).join('');
-        }
-
-        async function loadAuthorsFromRepo() {
-            try {
-                const f = await ghFetch(`/contents/src/data/authors.ts`);
-                const c = decodeURIComponent(escape(atob(f.content)));
-                const r = /slug:\s*['"]([^'"]+)['"][\s\S]*?name:\s*['"]([^'"]+)['"]/g;
-                let m; const sel = document.getElementById('post-author');
-                sel.innerHTML = '<option>Selecciona...</option>';
-                while ((m = r.exec(c)) !== null) { sel.innerHTML += `<option value="${m[1]}">${m[2]}</option>`; }
-
-                // Auto-select author for non-admin users
-                const authorInfo = getCurrentAuthorInfo();
-                if (authorInfo && authorInfo.slug) {
-                    sel.value = authorInfo.slug;
-
-                    // Disable selector for non-admins (they can only post as themselves)
-                    if (!isAdmin()) {
-                        sel.disabled = true;
-                        sel.classList.add('opacity-60', 'cursor-not-allowed');
-                        sel.title = 'Tu autor está seleccionado automáticamente';
-                    }
-                }
-            } catch (e) { }
-        }
-
-        window.deletePost = async (n, s) => { if (confirm("¿Borrar?")) { await deleteFile(`${githubConfig.postsPath}${n}`, s); openLoadModal(); } };
-        window.uploadHeroImage = async (inp) => {
-            const f = inp.files[0];
-            const b64 = await toBase64(await imageCompression(f, { maxSizeMB: 1 }));
-            const name = `${Date.now()}-hero`;
-            await ghFetch(`/contents/public/uploads/${name}`, 'PUT', { message: 'Up', content: b64.split(',')[1], branch: githubConfig.branch });
-            document.getElementById('post-hero').value = `/uploads/${name}`;
-            renderLivePreview();
-        };
-
-        window.addTag = (e) => { if (e.key === 'Enter') { const v = e.target.value.trim(); if (v && !tags.includes(v)) { tags.push(v); e.target.value = ''; renderTags(); } } };
-        document.getElementById('tag-input').addEventListener('keydown', window.addTag);
-        function renderTags() { document.getElementById('tags-container').innerHTML = tags.map(t => `<span class="bg-gray-200 px-2 rounded text-xs">#${t} <button onclick="tags=tags.filter(x=>x!=='${t}');renderTags()">×</button></span>`).join(''); }
-
-        window.toggleDarkMode = () => document.body.classList.toggle('dark');
-        window.closeLoadModal = () => document.getElementById('load-post-modal').classList.remove('open');
-        window.closeAuthorModal = () => document.getElementById('author-modal').classList.remove('open');
-        window.clearAll = () => { if (confirm("¿Limpiar?")) { tinymce.activeEditor.setContent(''); document.getElementById('post-title').value = ''; tags = []; renderTags(); currentPostFilename = null; document.getElementById('flight-dest').value = ''; document.getElementById('tour-city').value = ''; } };
-        window.showToast = (m, t) => { const d = document.createElement('div'); d.className = `p-3 rounded text-white text-sm font-bold ${t === 'error' ? 'bg-red-500' : 'bg-black'}`; d.innerText = m; document.getElementById('toast-container').appendChild(d); setTimeout(() => d.remove(), 3000); };
-        window.updateSEO = () => {
-            const t = document.getElementById('post-title').value.length;
-            document.getElementById('title-seo').className = `dot ${t >= 50 && t <= 65 ? 'dot-green' : t > 10 ? 'dot-yellow' : 'dot-red'}`;
-            document.getElementById('title-count').innerText = t;
-            renderLivePreview();
-        };
-        // API DELETE
-        async function deleteFile(path, sha) {
-            if (!canDelete()) throw new Error("Acceso denegado");
-            await ghFetch(`/contents/${path}`, 'DELETE', { message: `Delete ${path}`, sha, branch: githubConfig.branch });
-        }
-    </script>
 </body>
 
 </html>
